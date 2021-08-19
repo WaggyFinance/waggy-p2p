@@ -6,31 +6,42 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "hardhat/console.sol";
 import "./Merchant.sol";
 import "./RewardCalculator.sol";
+import "./MerchantData.sol";
 
 contract P2PFactory is Ownable{
 
-    mapping (address => address) public merchant;
-    address[] merchants;
+    MerchantData merchantData;
+
+    constructor(address _factoryData){
+        merchantData = MerchantData(_factoryData);
+    }
 
     function updateGOVInMerchant(address _gov) public onlyOwner {
-        for(uint i = 0; i < merchants.length ;i++){
-            Merchant(merchants[i]).updateRewardCalculator(_gov);
+        for(uint i = 0; i < merchantData.getMerchantCount() ;i++){
+            Merchant(merchantData.getMerchantAtIndex(i)).updateRewardCalculator(_gov);
         }
     }
 
     function updateRewardCalculatorInMerchant(address _rewardCalculator) public onlyOwner{
-        for(uint i = 0; i < merchants.length ;i++){
-            Merchant(merchants[i]).updateRewardCalculator(_rewardCalculator);
+        for(uint i = 0; i < merchantData.getMerchantCount() ;i++){
+             Merchant(merchantData.getMerchantAtIndex(i)).updateRewardCalculator(_rewardCalculator);
         }
     }
 
-    function createNewMerchant(address _token,address _gov,address _rewardCalculator) public onlyOwner {
-        require(merchant[_token] == address(0));
-        merchant[_token] = address(new Merchant(_token,  _gov, _rewardCalculator));
-        merchants.push(merchant[_token]);
+    function getMerchantByToken(address _token) public view returns(address){
+        require(merchantData.getMerchantToken(_token) != address(0));
+        return merchantData.getMerchantToken(_token);
+    }
+
+    function createNewMerchant(address _token,address _gov,address _rewardCalculator) public onlyOwner returns(address) {
+        require(merchantData.getMerchantToken(_token) == address(0));
+        address merchantAddress = address(new Merchant(_token,  _gov, _rewardCalculator));
+        merchantData.setMerchantToken(_token,merchantAddress);
+        merchantData.addMerchantAddress(merchantAddress);
+        return merchantAddress;
     }
 
     function updateMechant(address _token,address _merchantAddress) public onlyOwner{
-         merchant[_token] = _merchantAddress;
+        merchantData.setMerchantToken(_token,_merchantAddress);
     }
 }

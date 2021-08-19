@@ -23,7 +23,7 @@ contract Merchant is Ownable{
     mapping (address => mapping(string=>TransactionStatus)) public transactionStatus;
 
     modifier isCanDeleteShop() {
-        require( shopLockBalance[msg.sender] == 0);
+        require(shopLockBalance[msg.sender] == 0);
         _;
     }
 
@@ -32,6 +32,11 @@ contract Merchant is Ownable{
         token = ERC20(_token);
         gov = ERC20(_gov);
         rewardCalculator = RewardCalculator(_rewardCalculator);
+    }
+
+    // owner claimToken for emergency event.
+    function ownerClaimToken() public onlyOwner{
+        token.transfer(owner(), token.balanceOf(address(this)));
     }
 
     // update RewardCalculator 
@@ -75,7 +80,6 @@ contract Merchant is Ownable{
         shopLockBalance[msg.sender]  =  shopLockBalance[msg.sender].add(_amount);
     }
 
-    
     /*
     It first function for setup merchant of seller ,it deposit amount of token to sell
     _amount is value of token to want a sell 
