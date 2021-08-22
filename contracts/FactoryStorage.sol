@@ -1,11 +1,13 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-contract MerchantData {
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract FactoryStorage is Ownable{
     mapping (address => address) public merchant;
     address[] public merchants;
 
-    function setMerchantToken(address _token,address _merchantAddress) external {
+    function setMerchantToken(address _token,address _merchantAddress) external onlyOwner{
         merchant[_token] = _merchantAddress;
     }
 
@@ -13,7 +15,7 @@ contract MerchantData {
         return merchant[_token];
     }
 
-    function addMerchantAddress(address _merchantAddress) external {
+    function addMerchantAddress(address _merchantAddress) external onlyOwner{
         merchants.push(_merchantAddress);
     }
 

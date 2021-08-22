@@ -6,32 +6,39 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./RewardCalculator.sol";
+import "./MerchantStorage.sol";
 
 contract Merchant is Ownable{
 
-    enum TransactionStatus { IDLE,INPROCESS,FINISH }
     using SafeMath for uint256;
 
     ERC20 token;
     ERC20 gov;
 
+    event SetupShop( address owner ,address token,uint256 amount);
+    event DeleteShop(address owner ,address token,uint256 balance);
+    event ApproveTransaction(address owner ,address token,uint256 amount);
+    event CancelTransaction(address owner ,address token,uint256 amount);
+    event ReleaseToken(address sender,address receipt ,address token,uint256 amount,uint256 reward);
+
+    MerchantStorage  merchantStorage;
     RewardCalculator rewardCalculator;
 
-    mapping (address => uint256) public shopBalance;
-    mapping (address => uint256) public shopLockBalance;
-    mapping (address => uint256) public successTransactionCount;
-    mapping (address => mapping(string=>TransactionStatus)) public transactionStatus;
-
     modifier isCanDeleteShop() {
-        require(shopLockBalance[msg.sender] == 0);
+        require(merchantStorage.getShopLockBalance(msg.sender) == 0);
         _;
     }
 
+    function getMerchantStorage() public view returns(address){
+        return address(merchantStorage);
+    }
+
     // create merchant with token for p2p transaction
-    constructor(address _token,address _gov,address _rewardCalculator){
+    constructor(address _token,address _gov,address _rewardCalculator,address _merchantStorage){
         token = ERC20(_token);
         gov = ERC20(_gov);
         rewardCalculator = RewardCalculator(_rewardCalculator);
+        merchantStorage = MerchantStorage(_merchantStorage);
     }
 
     // owner claimToken for emergency event.
@@ -50,12 +57,15 @@ contract Merchant is Ownable{
     _amount is value of token to transfer
     */
     function releaseToken(address _receipt ,uint256 _amount) public {
-        require(shopLockBalance[msg.sender]>= _amount);
+        require(merchantStorage.getShopLockBalance(msg.sender) >= _amount);
         token.transferFrom(msg.sender, _receipt, _amount);
-        shopLockBalance[msg.sender]  =  shopLockBalance[msg.sender].sub(_amount);
-        successTransactionCount[msg.sender]  = successTransactionCount[msg.sender].add(1);
+        merchantStorage.setShopLockBalance(msg.sender, merchantStorage.getShopLockBalance(msg.sender).sub(_amount));
+        merchantStorage.setTransactionSuccessCount(msg.sender, merchantStorage.getTransactionSuccessCount(msg.sender).add(1));
         // pay reward after complete transaction
-        gov.transfer(msg.sender, getReward(_amount));
+        uint256 reward = getReward(_amount);
+        gov.transfer(msg.sender, reward);
+
+        emit ReleaseToken(msg.sender,_receipt,address(token),_amount,reward);
     }
 
     /*
@@ -64,9 +74,11 @@ contract Merchant is Ownable{
     _amount is value of transaction 
     */ 
     function cancelTransaction(address _address ,uint256 _amount) public onlyOwner{
-        require(shopLockBalance[_address]>= _amount);
-        shopLockBalance[_address]  =  shopLockBalance[_address].sub(_amount);
-        shopBalance[_address]  =  shopBalance[_address].add(_amount);
+        require(merchantStorage.getShopLockBalance(_address)>= _amount);
+        merchantStorage.setShopLockBalance(_address, merchantStorage.getShopLockBalance(_address).sub(_amount));
+        merchantStorage.setShopBalance(_address, merchantStorage.getShopBalance(_address).add(_amount));
+
+        emit CancelTransaction(_address,address(token),_amount);
     }
 
     /*
@@ -75,9 +87,11 @@ contract Merchant is Ownable{
     _amount is value of buyer want it.
     */
     function approveTransaction(uint256 _amount) public {
-        require(shopBalance[msg.sender]>= _amount);
-        shopBalance[msg.sender]  =  shopBalance[msg.sender].sub(_amount);
-        shopLockBalance[msg.sender]  =  shopLockBalance[msg.sender].add(_amount);
+        require(merchantStorage.getShopBalance(msg.sender) >= _amount);
+        merchantStorage.setShopBalance(msg.sender, merchantStorage.getShopBalance(msg.sender).sub(_amount));
+        merchantStorage.setShopLockBalance(msg.sender, merchantStorage.getShopBalance(msg.sender).add(_amount));
+
+        emit ApproveTransaction(msg.sender,address(token),_amount);
     }
 
     /*
@@ -87,16 +101,21 @@ contract Merchant is Ownable{
     function setupShop(uint256 _amount) public payable{
         require(token.allowance(msg.sender, address(this)) > _amount);
         token.transferFrom(msg.sender, address(this), _amount);
-        shopBalance[msg.sender] = _amount;
+        merchantStorage.setShopBalance(msg.sender, _amount);
+
+        emit SetupShop(msg.sender,address(token),_amount);
     }
 
     /*
     The seller request delete a shop but is not had any value in lock balance, It will can delete the shop.
     */
     function deleteShop() public isCanDeleteShop{
-        require(shopBalance[msg.sender] > 0);
-        token.transferFrom(address(this),msg.sender, shopBalance[msg.sender]);
-        shopBalance[msg.sender] = 0;
+        require( merchantStorage.getShopBalance(msg.sender) > 0);
+        uint256 totalBalance = merchantStorage.getShopBalance(msg.sender);
+        token.transferFrom(address(this),msg.sender, totalBalance);
+        merchantStorage.setShopBalance(msg.sender, 0);
+
+        emit DeleteShop(msg.sender,address(token),totalBalance);
     }
 
     /*
