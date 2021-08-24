@@ -23,16 +23,16 @@ describe("P2PFactory", function () {
 
         factoryStorage.transferOwnership(p2pFactory.address);
 
-        p2pFactory.on("NewMerchantAddress",(address) =>{
-            console.log("Created new merchant : ",address);
-        })
+        const transaction = await p2pFactory.createNewMerchant(busdToken,gov,rewardCalculator.address);
+        const receipt = await transaction.wait();
 
-        const merchantAddress = await p2pFactory.createNewMerchant(busdToken,gov,rewardCalculator.address);
-        
+        expectEvent(receipt, 'NewMerchantAddress', {
+            merchantAddress: '0'
+          });
+
         const factoryStorageAddress = await p2pFactory.getFactoryStorage();
         console.log('FacetoryStorage address : ',factoryStorageAddress);
        
         expect(factoryStorageAddress).equal(factoryStorage.address);
-        expect(merchantAddress).not.equal(0);
     });
 });

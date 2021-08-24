@@ -1,5 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
-
+require("@nomiclabs/hardhat-ethers")
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -23,7 +23,13 @@ module.exports = {
         auto: true,
         interval: 5000
       }
-    }
+    },
+    rinkeby: {
+      url:'https://rinkeby.infura.io/v3/e5c040fa68e04a69a6b703e1d3e7649c',
+      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+      gas: 2100000,
+      gasPrice: 8000000000
+    },
   },
   solidity: "0.8.4",
 };

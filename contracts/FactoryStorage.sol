@@ -15,6 +15,10 @@ contract FactoryStorage is Ownable{
         return merchant[_token];
     }
 
+    function getMerchantsAddress() external view returns(address[] memory){
+        return merchants;
+    }
+
     function addMerchantAddress(address _merchantAddress) external onlyOwner{
         merchants.push(_merchantAddress);
     }

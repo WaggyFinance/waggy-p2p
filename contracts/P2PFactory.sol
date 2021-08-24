@@ -14,6 +14,7 @@ contract P2PFactory is Ownable{
     FactoryStorage factoryStorage;
 
     event NewMerchantAddress(address merchantAddress);
+    event NewMerchantStorageAddress(address merchantStorageAddress);
     event UpdateMerchantAddress(address token ,address merchantAddress);
     event UpdateGOVInMerchant(address gov);
     event UpdateRewardCalculator(address calculator);
@@ -55,7 +56,9 @@ contract P2PFactory is Ownable{
         factoryStorage.setMerchantToken(_token,merchantAddress);
         factoryStorage.addMerchantAddress(merchantAddress);
 
+        console.log("Create new merchant at address %s",merchantAddress);
         emit NewMerchantAddress(merchantAddress);
+        emit NewMerchantStorageAddress(address(merchantStorage));
     }
 
     function updateMechant(address _token,address _merchantAddress) public onlyOwner{
