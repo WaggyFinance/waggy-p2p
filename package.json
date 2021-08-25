@@ -1,6 +1,7 @@
 {
   "name": "hardhat-project",
   "scripts": {
+    "test": "npx hardhat test --logs",
     "build": "npx hardhat compile",
     "deployTest": "npx hardhat clean; npx hardhat run --network rinkeby scripts/sample-script.js --verbose",
     "deploy": "npx hardhat clean; npx hardhat run --network rinkeby scripts/deploy.js",
@@ -16,10 +17,12 @@
     "hardhat": "^2.6.0",
     "hardhat-abi-exporter": "^2.2.1",
     "hardhat-deploy": "^0.9.0",
+    "hardhat-docgen": "^1.1.1",
     "hardhat-gas-reporter": "^1.0.4",
     "web3": "^1.5.2"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.0"
+    "@openzeppelin/contracts": "^4.3.0",
+    "hardhat-tracer": "^1.0.0-alpha.6"
   }
 }

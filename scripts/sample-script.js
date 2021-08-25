@@ -22,7 +22,7 @@ async function main() {
 
 
   console.log("Greeter deployed to:", greeter.address);
-  await greeter.greet(greeter.address,{from:accounts[0].address,gasLimit:4100000});
+  await greeter.greet({from:accounts[0].address,gasLimit:4100000});
   const result = await greeter.log();
   console.log(`Say ${result}`)
 }
