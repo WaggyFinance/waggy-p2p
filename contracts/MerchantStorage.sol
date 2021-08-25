@@ -21,6 +21,10 @@ contract MerchantStorage is Ownable{
         return shopLockBalance[_owner];
     }
 
+    function getAddress() public view returns (address){
+        return address(this);
+    }
+
     function setShopLockBalance(address _owner, uint256 _balance) external onlyOwner{
         shopLockBalance[_owner] = _balance;
     }

@@ -18,8 +18,13 @@ async function main() {
   const greeter = await Greeter.deploy("Hello, Hardhat!");
 
   await greeter.deployed();
+  const accounts = await hre.ethers.getSigners();
+
 
   console.log("Greeter deployed to:", greeter.address);
+  await greeter.greet(greeter.address,{from:accounts[0].address,gasLimit:4100000});
+  const result = await greeter.log();
+  console.log(`Say ${result}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

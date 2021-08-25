@@ -48,11 +48,12 @@ contract P2PFactory is Ownable{
         return factoryStorage.getMerchantToken(_token);
     }
 
-    function createNewMerchant(address _token,address _gov,address _rewardCalculator) public onlyOwner {
+    function createNewMerchant(address _token,address _gov,address _rewardCalculator) public {
         require(factoryStorage.getMerchantToken(_token) == address(0));
         MerchantStorage merchantStorage = new MerchantStorage();
         address merchantAddress = address(new Merchant(_token,  _gov, _rewardCalculator, address(merchantStorage)));
         merchantStorage.transferOwnership(merchantAddress);
+
         factoryStorage.setMerchantToken(_token,merchantAddress);
         factoryStorage.addMerchantAddress(merchantAddress);
 

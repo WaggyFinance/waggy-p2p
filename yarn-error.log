@@ -1,0 +1,48 @@
+Arguments: 
+  /Users/nuttapol.w/.nvm/versions/node/v16.2.0/bin/node /Users/nuttapol.w/.nvm/versions/node/v10.16.3/bin/yarn add --dev hardhat-abi-exporter
+
+PATH: 
+  /Users/nuttapol.w/.nvm/versions/node/v16.2.0/bin:/Users/nuttapol.w/.nvm/versions/node/v10.16.3/bin:/Users/nuttapol.w/.nvm/versions/node/v10.16.3/bin:/Users/nuttapol.w/.nvm/versions/node/v10.16.3/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/nuttapol.w/.rvm/gems/ruby-2.7.1/bin:/Users/nuttapol.w/.rvm/gems/ruby-2.7.1@global/bin:/Users/nuttapol.w/.rvm/rubies/ruby-2.7.1/bin:/usr/local/sbin:/usr/local/opt/ruby@2.5/bin:/Users/nuttapol.w/.cargo/bin:/Users/nuttapol.w/.nvm/versions/node/v10.16.3/bin:/Users/nuttapol.w/.rvm/bin:/Users/nuttapol.w/flutter/bin:/Users/nuttapol.w/Library/Android/sdk/platform-tools:/Users/nuttapol.w/Library/Android/sdk/tools:/Users/nuttapol.w/Library/Android/sdk/tools/bin:/Users/nuttapol.w/Library/Android/sdk/emulator:/Users/nuttapol.w/flutter/bin:/Users/nuttapol.w/Library/Android/sdk/platform-tools:/Users/nuttapol.w/Library/Android/sdk/tools:/Users/nuttapol.w/Library/Android/sdk/tools/bin:/Users/nuttapol.w/Library/Android/sdk/emulator
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  16.2.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: ENOSPC: no space left on device, open '/Users/nuttapol.w/Library/Caches/Yarn/v6/npm-is-arguments-1.1.1-15b3f88fda01f2a97fec84ca761a560f123efa9b-integrity/node_modules/is-arguments/.yarn-metadata.json'
+
+npm manifest: 
+  {
+    "name": "hardhat-project",
+    "scripts": {
+      "deployTest": "npx hardhat clean; npx hardhat run --network rinkeby scripts/sample-script.js --verbose",
+      "deploy": "npx hardhat clean; npx hardhat run --network rinkeby scripts/deploy.js",
+      "deployMerchant": "npx hardhat clean; npx hardhat run --network rinkeby scripts/makeMerchant.js"
+    },
+    "devDependencies": {
+      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.10",
+      "@nomiclabs/hardhat-waffle": "^2.0.1",
+      "@nomiclabs/hardhat-web3": "^2.0.0",
+      "@openzeppelin/test-helpers": "^0.5.13",
+      "chai": "^4.3.4",
+      "ethers": "^5.4.5",
+      "hardhat": "^2.6.0",
+      "hardhat-deploy": "^0.9.0",
+      "hardhat-gas-reporter": "^1.0.4",
+      "web3": "^1.5.2"
+    },
+    "dependencies": {
+      "@openzeppelin/contracts": "^4.3.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

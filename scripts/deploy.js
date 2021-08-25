@@ -12,7 +12,7 @@ async function main() {
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
   await hre.run('compile');
-
+  const accounts = await hre.ethers.getSigners();
 // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
   const waggyToken = await WaggyToken.deploy();
@@ -39,10 +39,10 @@ async function main() {
 // deploy merchant 
 
   await factoryStorage.transferOwnership(p2pfactory.address);
+// Move to makeMerchant.js
+  // await p2pfactory.createNewMerchant(BUSDAddress,waggyToken.address,rewardCalculator.address,{from:accounts[0].address,gasLimit:4100000})
 
-  await p2pfactory.createNewMerchant(BUSDAddress,waggyToken.address,rewardCalculator.address)
-
-  const merchantsAddress = await factoryStorage.getMerchantsAddress();
+  // const merchantsAddress = await factoryStorage.getMerchantsAddress();
  
   console.log("Waggy Token address : ",waggyToken.address)
   console.log("FactoryStorage address : ",factoryStorage.address)

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -35,10 +35,10 @@ contract Merchant is Ownable{
 
     // create merchant with token for p2p transaction
     constructor(address _token,address _gov,address _rewardCalculator,address _merchantStorage){
-        token = ERC20(_token);
-        gov = ERC20(_gov);
-        rewardCalculator = RewardCalculator(_rewardCalculator);
-        merchantStorage = MerchantStorage(_merchantStorage);
+        // token = ERC20(_token);
+        // gov = ERC20(_gov);
+        // rewardCalculator = RewardCalculator(_rewardCalculator);
+        // merchantStorage = MerchantStorage(_merchantStorage);
     }
 
     // owner claimToken for emergency event.

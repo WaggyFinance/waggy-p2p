@@ -1,5 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-ethers")
+require("@nomiclabs/hardhat-ethers");
+require("hardhat-gas-reporter");
+require('hardhat-abi-exporter');
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -17,6 +19,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
+  abiExporter: {
+    path: './data/abi',
+    clear: true,
+    flat: true,
+    spacing: 2
+  },
   networks: {
     hardhat: {
       mining: {
@@ -24,12 +32,21 @@ module.exports = {
         interval: 5000
       }
     },
-    rinkeby: {
-      url:'https://rinkeby.infura.io/v3/e5c040fa68e04a69a6b703e1d3e7649c',
+    ropsten:{
+      url:'https://ropsten.infura.io/v3/d6e674a0c8044708ad1ec2d87cc2b47c',
       accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
       gas: 2100000,
       gasPrice: 8000000000
     },
+    rinkeby: {
+      url:'https://rinkeby.infura.io/v3/e5c040fa68e04a69a6b703e1d3e7649c',
+      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+    },
+  },
+  gasReporter: {
+    currency: 'ETH',
+    gasPrice: 21,
+    enabled:true
   },
   solidity: "0.8.4",
 };
