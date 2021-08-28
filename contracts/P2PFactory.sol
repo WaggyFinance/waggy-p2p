@@ -24,6 +24,7 @@ contract P2PFactory is Ownable{
     address public feeCollector;
 
     constructor(address _factoryData,address _feeCollector){
+        require(_feeCollector != address(0));
         factoryStorage = FactoryStorage(_factoryData);
         feeCollector = _feeCollector;
     }

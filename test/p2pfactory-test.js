@@ -16,14 +16,16 @@ describe("P2PFactory", function() {
   let owner;
   let account1;
   let account2;
+  let feeCollector;
   let factoryStorage;
   let p2pFactory;
   let waggyToken;
   let busdToken;
   let rewardCalculator;
+  let feeCalculator;
 
   beforeEach(async function () {
-    [owner,account1,account2] = await ethers.getSigners();
+    [owner,account1,account2,feeCollector] = await ethers.getSigners();
 
     const BUSD = await ethers.getContractFactory("BUSD");
     busdToken  = await BUSD.deploy();
@@ -35,7 +37,7 @@ describe("P2PFactory", function() {
     factoryStorage = await FactoryStorage.deploy();
 
     const P2PFactory = await ethers.getContractFactory("P2PFactory");
-    p2pFactory = await P2PFactory.deploy(factoryStorage.address);
+    p2pFactory = await P2PFactory.deploy(factoryStorage.address,feeCollector.address);
 
     factoryStorage.transferOwnership(p2pFactory.address);
 
@@ -44,10 +46,16 @@ describe("P2PFactory", function() {
     );
     rewardCalculator = await RewardCalculator.deploy();
 
+    const FeeCalculator = await ethers.getContractFactory(
+      "FeeCalculator"
+    );
+    feeCalculator = await FeeCalculator.deploy();
+
     await p2pFactory.createNewMerchant(
       busdToken.address,
       waggyToken.address,
-      rewardCalculator.address
+      rewardCalculator.address,
+      feeCalculator.address
     );
     const merchantTokenAddress = await p2pFactory.getMerchantByToken(busdToken.address);
    
@@ -101,9 +109,16 @@ describe("P2PFactory", function() {
     const receiveReward = await waggyToken.balanceOf(owner.address);
     const reward = await rewardCalculator.calculateReward(ethers.utils.parseEther(sellAmount));
     const account2balance = await busdToken.balanceOf(account2.address);
+// Fee
+    const fee = await feeCalculator.calculateFee(ethers.utils.parseEther(sellAmount));
+    console.log(ethers.utils.formatEther(fee))
+    const feeBalance = await busdToken.balanceOf(feeCollector.address);
+// Actual receive
+    const actualReceive = ethers.utils.parseEther(sellAmount).sub(fee);
+    expect(fee.toString()).equal(feeBalance.toString())
 // expected
     expect(receiveReward.toString()).equal(reward.toString())
-    expect(account2balance.toString()).equal(ethers.utils.parseEther(sellAmount).toString())
+    expect(account2balance.toString()).equal(actualReceive.toString())
   })
 
   it("sell order then cancel", async ()=>{
@@ -120,7 +135,7 @@ describe("P2PFactory", function() {
 // cancel
     await merchant.cancelTransaction(owner.address, ethers.utils.parseEther(sellAmount));
     const shopBalance = await merchant.getShopBalance(owner.address,{from:owner.address});
-    
+
     expect(ethers.utils.formatEther(shopBalance.toString())).equal(depositTargetBalance);
   })
 });
