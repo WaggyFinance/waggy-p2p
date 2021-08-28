@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "hardhat/console.sol";
 import "./Merchant.sol";
 import "./RewardCalculator.sol";
+import "./FeeCalculator.sol";
 import "./FactoryStorage.sol";
 import "./MerchantStorage.sol";
 
@@ -17,10 +18,14 @@ contract P2PFactory is Ownable{
     event NewMerchantStorageAddress(address merchantStorageAddress);
     event UpdateMerchantAddress(address token ,address merchantAddress);
     event UpdateGOVInMerchant(address gov);
-    event UpdateRewardCalculator(address calculator);
+    event UpdateRewardCalculator(address rewardCalculator);
+    event UpdateFeeCalculator(address feeCalculator);
 
-    constructor(address _factoryData){
+    address public feeCollector;
+
+    constructor(address _factoryData,address _feeCollector){
         factoryStorage = FactoryStorage(_factoryData);
+        feeCollector = _feeCollector;
     }
 
     function getFactoryStorage() public view returns(address){
@@ -43,17 +48,26 @@ contract P2PFactory is Ownable{
         emit UpdateRewardCalculator(_rewardCalculator);
     }
 
+    function updateFeeCalculatorInMerchant(address _feeCalculator) public onlyOwner{
+        for(uint i = 0; i < factoryStorage.getMerchantCount() ;i++){
+             Merchant(factoryStorage.getMerchantAtIndex(i)).updateFeeCalculator(_feeCalculator);
+        }
+
+        emit UpdateFeeCalculator(_feeCalculator);
+    }
+
     function getMerchantByToken(address _token) public view returns(address){
         require(factoryStorage.getMerchantToken(_token) != address(0));
         return factoryStorage.getMerchantToken(_token);
     }
 
-    function createNewMerchant(address _token,address _gov,address _rewardCalculator) public {
+    function createNewMerchant(address _token,address _gov,address _rewardCalculator,address _feeCalculator) public {
         require(factoryStorage.getMerchantToken(_token) == address(0));
         MerchantStorage merchantStorage = new MerchantStorage();
-        address merchantAddress = address(new Merchant(_token,  _gov, _rewardCalculator, address(merchantStorage)));
+        Merchant merchant = new Merchant(_token,  _gov, _rewardCalculator, _feeCalculator,address(merchantStorage),feeCollector);
+        address merchantAddress = address(merchant);
         merchantStorage.transferOwnership(merchantAddress);
-
+        merchant.transferOwnership(owner());
         factoryStorage.setMerchantToken(_token,merchantAddress);
         factoryStorage.addMerchantAddress(merchantAddress);
 

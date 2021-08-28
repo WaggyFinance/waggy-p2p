@@ -5,6 +5,11 @@
         "internalType": "address",
         "name": "_factoryData",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeCollector",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -61,6 +66,19 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "feeCalculator",
+        "type": "address"
+      }
+    ],
+    "name": "UpdateFeeCalculator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "gov",
         "type": "address"
       }
@@ -93,7 +111,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "calculator",
+        "name": "rewardCalculator",
         "type": "address"
       }
     ],
@@ -116,11 +134,29 @@
         "internalType": "address",
         "name": "_rewardCalculator",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeCalculator",
+        "type": "address"
       }
     ],
     "name": "createNewMerchant",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeCollector",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -184,6 +220,19 @@
       }
     ],
     "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_feeCalculator",
+        "type": "address"
+      }
+    ],
+    "name": "updateFeeCalculatorInMerchant",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

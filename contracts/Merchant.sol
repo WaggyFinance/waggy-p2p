@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./RewardCalculator.sol";
 import "./MerchantStorage.sol";
+import "./FeeCalculator.sol";
 
 contract Merchant is Ownable{
 
@@ -21,8 +22,10 @@ contract Merchant is Ownable{
     event CancelTransaction(address owner ,address token,uint256 amount);
     event ReleaseToken(address sender,address receipt ,address token,uint256 amount,uint256 reward);
 
-    MerchantStorage  merchantStorage;
-    RewardCalculator rewardCalculator;
+    MerchantStorage public merchantStorage;
+    RewardCalculator public rewardCalculator;
+    FeeCalculator public feeCalculator;
+    address public feeCollector;
 
     modifier isCanDeleteShop() {
         require(merchantStorage.getShopLockBalance(msg.sender) == 0);
@@ -34,11 +37,20 @@ contract Merchant is Ownable{
     }
 
     // create merchant with token for p2p transaction
-    constructor(address _token,address _gov,address _rewardCalculator,address _merchantStorage){
-        // token = ERC20(_token);
-        // gov = ERC20(_gov);
-        // rewardCalculator = RewardCalculator(_rewardCalculator);
-        // merchantStorage = MerchantStorage(_merchantStorage);
+    constructor(
+        address _token,
+        address _gov,
+        address _rewardCalculator,
+        address _feeCalculator,
+        address _merchantStorage,
+        address _feeCollector
+        ){
+        token = ERC20(_token);
+        gov = ERC20(_gov);
+        rewardCalculator = RewardCalculator(_rewardCalculator);
+        merchantStorage = MerchantStorage(_merchantStorage);
+        feeCalculator = FeeCalculator(_feeCalculator);
+        feeCollector = _feeCollector;
     }
 
     // owner claimToken for emergency event.
@@ -51,6 +63,11 @@ contract Merchant is Ownable{
         rewardCalculator = RewardCalculator(_rewardCalculator);
     }
 
+    // update RewardCalculator 
+    function updateFeeCalculator(address _feeCalculator) public onlyOwner{
+        feeCalculator = FeeCalculator(_feeCalculator);
+    }
+
     /* 
     For seller release token to buyer when the seller approve a evidence of faite transfer slip 
     _address is a receipt waller address
@@ -58,13 +75,16 @@ contract Merchant is Ownable{
     */
     function releaseToken(address _receipt ,uint256 _amount) public {
         require(merchantStorage.getShopLockBalance(msg.sender) >= _amount);
-        token.transferFrom(msg.sender, _receipt, _amount);
+        uint256 fee = feeCalculator.calculateFee(_amount);
+        uint256 receiptAmount = _amount.sub(fee);
+        token.transfer(feeCollector,fee);
+        token.transfer(_receipt, receiptAmount);
         merchantStorage.setShopLockBalance(msg.sender, merchantStorage.getShopLockBalance(msg.sender).sub(_amount));
         merchantStorage.setTransactionSuccessCount(msg.sender, merchantStorage.getTransactionSuccessCount(msg.sender).add(1));
         // pay reward after complete transaction
         uint256 reward = getReward(_amount);
+        console.log("Reward ",reward);
         gov.transfer(msg.sender, reward);
-
         emit ReleaseToken(msg.sender,_receipt,address(token),_amount,reward);
     }
 
@@ -99,11 +119,16 @@ contract Merchant is Ownable{
     _amount is value of token to want a sell 
     */
     function setupShop(uint256 _amount) public payable{
-        require(token.allowance(msg.sender, address(this)) > _amount);
+        require(token.allowance(msg.sender, address(this)) >= _amount);
         token.transferFrom(msg.sender, address(this), _amount);
         merchantStorage.setShopBalance(msg.sender, _amount);
 
         emit SetupShop(msg.sender,address(token),_amount);
+    }
+
+
+    function getShopBalance(address owner) public view returns(uint256){
+        return merchantStorage.getShopBalance(owner);
     }
 
     /*

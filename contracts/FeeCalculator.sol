@@ -6,17 +6,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract RewardCalculator is Ownable {
+contract FeeCalculator is Ownable {
 
     using SafeMath for uint256;
 
-    uint256 payRate = 800; //8%
+    uint256 payRate = 25; //0.25%
 
-    function calculateReward(uint256 _amount) external view returns(uint256){
+    function calculateFee(uint256 _amount) external view returns(uint256){
         return _amount.mul(payRate).div(10000);
     }
 
-    function updateRewardRate(uint256 _rate) public onlyOwner{
+    function updateFeeRate(uint256 _rate) public onlyOwner{
         payRate = _rate;
     }
 }
