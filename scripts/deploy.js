@@ -11,44 +11,55 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
-  await hre.run('compile');
+  await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
-// Waggy token
+  // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
   const waggyToken = await WaggyToken.deploy();
 
   await waggyToken.deployed();
 
-//deploy Factory storage
+  //deploy Factory storage
   const FactoryStorage = await hre.ethers.getContractFactory("FactoryStorage");
   const factoryStorage = await FactoryStorage.deploy();
 
   await factoryStorage.deployed();
-// deploy Factory 
+  // deploy Factory
   const P2PFactory = await hre.ethers.getContractFactory("P2PFactory");
-  const p2pfactory = await P2PFactory.deploy(factoryStorage.address);
+  const p2pfactory = await P2PFactory.deploy(
+    factoryStorage.address,
+    accounts[0].address
+  );
 
   await p2pfactory.deployed();
-//   
+  //
   const BUSDAddress = "0x9788f8565abea33ae86b1526f8f839ab7aca185e";
-// deploy reward calculator 
-  const RewardCalculator = await hre.ethers.getContractFactory("RewardCalculator");
+  // deploy reward calculator
+  const RewardCalculator = await hre.ethers.getContractFactory(
+    "RewardCalculator"
+  );
   const rewardCalculator = await RewardCalculator.deploy();
 
   await rewardCalculator.deployed();
-// deploy merchant 
+
+  // deploy fee calculator
+  const FeeCalculator = await hre.ethers.getContractFactory("FeeCalculator");
+  const feeCalculator = await FeeCalculator.deploy();
+
+  await feeCalculator.deployed();
+  // deploy merchant
 
   await factoryStorage.transferOwnership(p2pfactory.address);
-// Move to makeMerchant.js
+  // Move to makeMerchant.js
   // await p2pfactory.createNewMerchant(BUSDAddress,waggyToken.address,rewardCalculator.address,{from:accounts[0].address,gasLimit:4100000})
 
   // const merchantsAddress = await factoryStorage.getMerchantsAddress();
- 
-  console.log("Waggy Token address : ",waggyToken.address)
-  console.log("FactoryStorage address : ",factoryStorage.address)
-  console.log("Factory address : ",p2pfactory.address)
-  console.log("Reward Calculator address : ",rewardCalculator.address)
-  console.log("Merchants address : ",merchantsAddress.toString())
+
+  console.log("Waggy Token address : ", waggyToken.address);
+  console.log("FactoryStorage address : ", factoryStorage.address);
+  console.log("Factory address : ", p2pfactory.address);
+  console.log("Reward Calculator address : ", rewardCalculator.address);
+  console.log("Fee Calculator address : ", feeCalculator.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
