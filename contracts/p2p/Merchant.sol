@@ -36,6 +36,10 @@ contract Merchant is Ownable{
         return address(merchantStorage);
     }
 
+    function getFeeCollector() public view returns(address){
+        return feeCollector;
+    }
+
     // create merchant with token for p2p transaction
     constructor(
         address _token,

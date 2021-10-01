@@ -12,9 +12,9 @@ contract MasterWaggy is Ownable {
 
     // Info of each user.
     struct UserInfo {
-        uint256 amount; // How many Staking tokens the user has provided.
-        uint256 rewardDebt; // Reward debt. See explanation below.
-        uint256 bonusDebt; // Last block that user exec something to the pool.
+        uint256 amount;
+        uint256 rewardDebt;
+        uint256 bonusDebt;
         address fundedBy;
         uint256 depositTime;
     }
@@ -22,14 +22,16 @@ contract MasterWaggy is Ownable {
     // Info of each pool.
     struct PoolInfo {
         ERC20 rewardToken;
+        address[] users;
         uint256 lastRewardBlock;
         uint256 totalDeposit;
         uint256 fund;
     }
 
     event ADD_POOL(address _rewardToken);
-    event DEPOSIT(address _rewardToken,address _user,uint256 _amount);
-    event WITHDRAW(address _rewardToken,address _user,uint256 _amount);
+    event DEPOSIT(address _rewardToken, address _user, uint256 _amount);
+    event WITHDRAW(address _rewardToken, address _user, uint256 _amount);
+    event DIVIDEND(address _rewardToken, address _user, uint256 _amount);
 
     mapping(address => PoolInfo) pools;
     mapping(address => mapping(address => UserInfo)) public userInfo;
@@ -48,9 +50,11 @@ contract MasterWaggy is Ownable {
             "Pool already exist"
         );
 
+        address[] memory users;
         pools[_rewardToken] = PoolInfo({
             rewardToken: ERC20(_rewardToken),
             lastRewardBlock: block.number,
+            users: users,
             totalDeposit: 0,
             fund: 0
         });
@@ -80,7 +84,7 @@ contract MasterWaggy is Ownable {
 
         pool.totalDeposit = pool.totalDeposit.add(_amount);
 
-        emit DEPOSIT(_poolToken,msg.sender,_amount);
+        emit DEPOSIT(_poolToken, msg.sender, _amount);
     }
 
     function withdraw(
@@ -102,42 +106,69 @@ contract MasterWaggy is Ownable {
         pool.totalDeposit = pool.totalDeposit.sub(_amount);
         waggyToken.transferFrom(address(this), _for, _amount);
 
-        emit WITHDRAW(_poolToken,msg.sender,_amount);
+        emit WITHDRAW(_poolToken, msg.sender, _amount);
     }
 
-    function getPendingReward(address _for, address _poolToken) public view returns(uint256){
-        PoolInfo storage pool = pools[_poolToken];
+    function getPendingReward(address _for, address _poolToken)
+        public
+        view
+        returns (uint256)
+    {
         UserInfo storage user = userInfo[_for][_poolToken];
-        uint256 rewardPerWAG = pool.fund.div(pool.totalDeposit);
-        uint256 reward = rewardPerWAG * user.amount;
-        uint256 rewardDebt = block
+        return user.rewardDebt;
+    }
+
+    function distributeReward(address _poolToken, uint256 _amount) external {
+        PoolInfo storage pool = pools[_poolToken];
+        uint256 rewardPerWAG = _amount.div(pool.totalDeposit);
+        for(uint256 i=0;i< pool.users.length;i++){
+            UserInfo storage user = userInfo[pool.users[i]][_poolToken];
+            uint256 reward = rewardPerWAG.mul(user.amount);
+            uint256 rewardDebt = block
             .timestamp
             .sub(user.depositTime)
             .mul(reward)
             .div(86400);
-
-        return rewardDebt;
+            user.rewardDebt = rewardDebt;
+            user.depositTime = block.timestamp;
+        }
     }
 
     function harvest(address _for, address _poolToken) public {
         PoolInfo storage pool = pools[_poolToken];
         UserInfo storage user = userInfo[_for][_poolToken];
-        uint256 rewardDebt = getPendingReward(_for,_poolToken);
-        pool.rewardToken.transferFrom(address(this), _for, rewardDebt);
+        uint256 rewardDebt = getPendingReward(_for, _poolToken);
+        pool.rewardToken.transfer(_for, rewardDebt);
         user.rewardDebt = 0;
     }
 
     function claimAll() external {
-        for(uint i =0 ;i< poolsTokens.length;i++){
-            harvest(msg.sender,poolsTokens[i]);
+        for (uint256 i = 0; i < poolsTokens.length; i++) {
+            harvest(msg.sender, poolsTokens[i]);
         }
     }
 
-    function getTotalValueLock() external view returns(uint256){
+    function getTotalValueLock() external view returns (uint256) {
         uint256 total;
-        for(uint i =0 ;i< poolsTokens.length;i++){
-            total =total.add(pools[poolsTokens[i]].totalDeposit);
+        for (uint256 i = 0; i < poolsTokens.length; i++) {
+            total = total.add(pools[poolsTokens[i]].totalDeposit);
         }
         return total;
+    }
+
+    function dividend(address _poolToken, uint256 _amount) external onlyOwner {
+        PoolInfo storage pool = pools[_poolToken];
+        require(
+            pool.rewardToken.balanceOf(msg.sender) >= _amount,
+            "Balance not enougth"
+        );
+        require(
+            pool.rewardToken.allowance(msg.sender, address(this)) >= _amount
+        );
+
+        pool.rewardToken.transferFrom(msg.sender, address(this), _amount);
+        pool.fund = pool.fund.add(_amount);
+
+        emit DIVIDEND(_poolToken, msg.sender, _amount);
     }
 }

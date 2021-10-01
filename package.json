@@ -3,15 +3,17 @@
   "scripts": {
     "test": "npx hardhat test --logs",
     "build": "npx hardhat compile",
-    "deployTest": "npx hardhat clean; npx hardhat run --network rinkeby scripts/sample-script.js --verbose",
-    "deploy": "npx hardhat clean; npx hardhat run --network rinkeby scripts/deploy.js",
-    "deployMerchant": "npx hardhat clean; npx hardhat run --network rinkeby scripts/makeMerchant.js"
+    "deploy": "npx hardhat clean; npx hardhat run --network testnet scripts/deploy.js",
+    "deploy:merchant": "npx hardhat clean; npx hardhat run --network testnet scripts/makeMerchant.js",
+    "verify":""
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.10",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/test-helpers": "^0.5.13",
+    "@typechain/ethers-v5": "^7.1.2",
+    "@typechain/hardhat": "^2.3.0",
     "chai": "^4.3.4",
     "ethers": "^5.4.5",
     "hardhat": "^2.6.0",
@@ -19,9 +21,11 @@
     "hardhat-deploy": "^0.9.0",
     "hardhat-docgen": "^1.1.1",
     "hardhat-gas-reporter": "^1.0.4",
+    "typechain": "^5.1.2",
     "web3": "^1.5.2"
   },
   "dependencies": {
+    "@nomiclabs/hardhat-etherscan": "^2.1.6",
     "@openzeppelin/contracts": "^4.3.0",
     "hardhat-tracer": "^1.0.0-alpha.6"
   }

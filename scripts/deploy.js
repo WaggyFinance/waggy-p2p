@@ -13,6 +13,7 @@ async function main() {
   // manually to make sure everything is compiled
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
+  console.log(">> Start Deploy Contract");
   // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
   const waggyToken = await WaggyToken.deploy();
@@ -60,6 +61,39 @@ async function main() {
   console.log("Factory address : ", p2pfactory.address);
   console.log("Reward Calculator address : ", rewardCalculator.address);
   console.log("Fee Calculator address : ", feeCalculator.address);
+
+  console.log("✅ Done deploying a WAGGYTOKEN");
+  console.log(">> Start Verify Contract");
+  await hre.run("verify:verify", {
+    address: waggyToken.address,
+    contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
+    constructorArguments: [],
+  });
+  await hre.run("verify:verify", {
+    address: factoryStorage.address,
+    contract: "contracts/p2p/FactoryStorage.sol:FactoryStorage",
+    constructorArguments: [],
+  });
+  await hre.run("verify:verify", {
+    address: p2pfactory.address,
+    contract: "contracts/p2p/P2PFactory.sol:P2PFactory",
+    constructorArguments: [
+      factoryStorage.address,
+      accounts[0].address
+    ],
+  });
+  await hre.run("verify:verify", {
+    address: rewardCalculator.address,
+    contract: "contracts/p2p/RewardCalculator.sol:RewardCalculator",
+    constructorArguments: [],
+  });
+  await hre.run("verify:verify", {
+    address: feeCalculator.address,
+    contract: "contracts/p2p/FeeCalculator.sol:FeeCalculator",
+    constructorArguments: [],
+  });
+  
+  console.log("✅ Done Verify Contract");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
