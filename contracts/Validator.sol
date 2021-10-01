@@ -51,7 +51,7 @@ contract Validator is Ownable {
         string _remark
     );
 
-    ERC20 usdtInterface;
+    ERC20 erc20Interface;
     mapping(uint256 => CaseInfo) casesInfo;
 
     uint256 public maxPercentValue;
@@ -59,12 +59,12 @@ contract Validator is Ownable {
     uint256 fee;//20%
 
     constructor(
-        address _usdtAddress,
+        address _erc20Address,
         uint256 _maxPercentValue,
         uint256 _minPercentValue,
         uint256 _fee
     ) {
-        usdtInterface = ERC20(_usdtAddress);
+        erc20Interface = ERC20(_erc20Address);
         minPercentValue = _minPercentValue;
         maxPercentValue = _maxPercentValue;
         fee = _fee;
@@ -76,6 +76,15 @@ contract Validator is Ownable {
         caseInfo.totalValue = _totalValue;
 
         return autoNumberCaseId;
+    }
+
+    function getTotalCollateral()external view returns(uint256){
+        uint256 totalValue;
+        for(uint256 i=1;i<= autoNumberCaseId;i++){
+            CaseInfo storage caseInfo = casesInfo[autoNumberCaseId];
+            totalValue = totalValue.add(caseInfo.currentValue);
+        }
+        return totalValue;
     }
 
     function getCaseTotalValue(uint256 _caseId)
@@ -129,7 +138,7 @@ contract Validator is Ownable {
              uint256 totalPay = betAmount.add(fundPerUser);
              caseInfo.usersReplyAnswer[msg.sender].claimed = true;
 
-             usdtInterface.transferFrom(address(this), msg.sender, totalPay);
+             erc20Interface.transferFrom(address(this), msg.sender, totalPay);
          }
     }
 
@@ -211,7 +220,7 @@ contract Validator is Ownable {
         );
         // transfer
         require(
-            usdtInterface.transferFrom(msg.sender, address(this), _amount),
+            erc20Interface.transferFrom(msg.sender, address(this), _amount),
             "Can't transfer"
         );
         // save reply

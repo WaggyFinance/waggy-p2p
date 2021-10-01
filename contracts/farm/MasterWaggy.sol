@@ -64,6 +64,15 @@ contract MasterWaggy is Ownable {
         emit ADD_POOL(_rewardToken);
     }
 
+    function getPoolInfo(address _poolToken) external view returns(uint256 lastRewardBlock,address[] memory users,uint256 totalDeposit,uint256 fund)
+    {
+        PoolInfo storage pool = pools[_poolToken];
+        lastRewardBlock = pool.lastRewardBlock;
+        users = pool.users;
+        totalDeposit = pool.totalDeposit;
+        fund = pool.fund;
+    }
+
     function deposit(address _poolToken, uint256 _amount) external {
         require(
             waggyToken.balanceOf(msg.sender) >= _amount,

@@ -15,6 +15,7 @@ export type { P2PFactory } from "./P2PFactory";
 export type { RewardCalculator } from "./RewardCalculator";
 export type { WaggyToken } from "./WaggyToken";
 export type { Validator } from "./Validator";
+export type { WagTest } from "./WagTest";
 
 export { Ownable__factory } from "./factories/Ownable__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
@@ -30,3 +31,4 @@ export { P2PFactory__factory } from "./factories/P2PFactory__factory";
 export { RewardCalculator__factory } from "./factories/RewardCalculator__factory";
 export { WaggyToken__factory } from "./factories/WaggyToken__factory";
 export { Validator__factory } from "./factories/Validator__factory";
+export { WagTest__factory } from "./factories/WagTest__factory";
