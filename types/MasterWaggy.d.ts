@@ -29,6 +29,7 @@ interface MasterWaggyInterface extends ethers.utils.Interface {
     "getPendingReward(address,address)": FunctionFragment;
     "getPoolInfo(address)": FunctionFragment;
     "getTotalValueLock()": FunctionFragment;
+    "getUserStakeInfo(address,address)": FunctionFragment;
     "harvest(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -59,6 +60,10 @@ interface MasterWaggyInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getTotalValueLock",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserStakeInfo",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "harvest",
@@ -100,6 +105,10 @@ interface MasterWaggyInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTotalValueLock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserStakeInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
@@ -251,6 +260,18 @@ export class MasterWaggy extends BaseContract {
 
     getTotalValueLock(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getUserStakeInfo(
+      _for: string,
+      _poolToken: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        totalStaking: BigNumber;
+        rewardDebt: BigNumber;
+        depositTime: BigNumber;
+      }
+    >;
+
     harvest(
       _for: string,
       _poolToken: string,
@@ -337,6 +358,18 @@ export class MasterWaggy extends BaseContract {
 
   getTotalValueLock(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getUserStakeInfo(
+    _for: string,
+    _poolToken: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      totalStaking: BigNumber;
+      rewardDebt: BigNumber;
+      depositTime: BigNumber;
+    }
+  >;
+
   harvest(
     _for: string,
     _poolToken: string,
@@ -417,6 +450,18 @@ export class MasterWaggy extends BaseContract {
     >;
 
     getTotalValueLock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserStakeInfo(
+      _for: string,
+      _poolToken: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        totalStaking: BigNumber;
+        rewardDebt: BigNumber;
+        depositTime: BigNumber;
+      }
+    >;
 
     harvest(
       _for: string,
@@ -576,6 +621,12 @@ export class MasterWaggy extends BaseContract {
 
     getTotalValueLock(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getUserStakeInfo(
+      _for: string,
+      _poolToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     harvest(
       _for: string,
       _poolToken: string,
@@ -647,6 +698,12 @@ export class MasterWaggy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getTotalValueLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserStakeInfo(
+      _for: string,
+      _poolToken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     harvest(
       _for: string,

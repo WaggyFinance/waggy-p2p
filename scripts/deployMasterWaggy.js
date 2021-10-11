@@ -14,18 +14,20 @@ async function main() {
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
+  const WAGAdresss = "0xE3fE493a518e8EDe9755e54a8B0F53A1C6FEB62d";
   // Waggy token
-  const WagTest = await hre.ethers.getContractFactory("WagTest");
-  const wagTest = await WagTest.deploy();
+  const MasterWaggy = await hre.ethers.getContractFactory("MasterWaggy");
+  const masterWagggy = await MasterWaggy.deploy(WAGAdresss);
 
-  const tx = await wagTest.deployed();
+  await masterWagggy.deployed();
 
-
-  console.log(`WagTest address: ${wagTest.address}`)
+  console.log(`masterWagggy address: ${masterWagggy.address}`)
   await hre.run("verify:verify", {
-    address: wagTest.address,
-    contract: "contracts/WagTest.sol:WagTest",
-    constructorArguments: [],
+    address: masterWagggy.address,
+    contract: "contracts/farm/MasterWaggy.sol:MasterWaggy",
+    constructorArguments: [
+        WAGAdresss
+    ],
   });
   
   console.log("✅ Done Verify Contract");

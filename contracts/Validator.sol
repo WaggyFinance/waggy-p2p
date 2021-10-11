@@ -52,70 +52,65 @@ contract Validator is Ownable {
     );
 
     ERC20 erc20Interface;
-    mapping(uint256 => CaseInfo) casesInfo;
+    // mapping(uint256 => CaseInfo) casesInfo;
 
+    mapping(address => CaseInfo[]) casesInfo;
+    uint256 public totalCollateral;
     uint256 public maxPercentValue;
     uint256 public minPercentValue;
     uint256 fee;//20%
 
     constructor(
-        address _erc20Address,
         uint256 _maxPercentValue,
         uint256 _minPercentValue,
         uint256 _fee
     ) {
-        erc20Interface = ERC20(_erc20Address);
         minPercentValue = _minPercentValue;
         maxPercentValue = _maxPercentValue;
         fee = _fee;
     }
 
-    function addCase(uint256 _totalValue) public returns (uint256) {
+    function addCase(address _token,uint256 _totalValue) public returns (uint256) {
         autoNumberCaseId++;
-        CaseInfo storage caseInfo = casesInfo[autoNumberCaseId];
+        CaseInfo storage caseInfo = casesInfo[_token][autoNumberCaseId];
         caseInfo.totalValue = _totalValue;
 
         return autoNumberCaseId;
     }
 
     function getTotalCollateral()external view returns(uint256){
-        uint256 totalValue;
-        for(uint256 i=1;i<= autoNumberCaseId;i++){
-            CaseInfo storage caseInfo = casesInfo[autoNumberCaseId];
-            totalValue = totalValue.add(caseInfo.currentValue);
-        }
-        return totalValue;
+        return totalCollateral;
     }
 
-    function getCaseTotalValue(uint256 _caseId)
+    function getCaseTotalValue(address _token,uint256 _caseId)
         external
         view
         returns (uint256)
     {
-        CaseInfo storage caseInfo = casesInfo[_caseId];
+        CaseInfo storage caseInfo = casesInfo[_token][_caseId];
         return caseInfo.totalValue;
     }
 
-    function getCaseValue(uint256 _caseId) external view returns (uint256) {
-        CaseInfo storage caseInfo = casesInfo[_caseId];
+    function getCaseValue(address _token,uint256 _caseId) external view returns (uint256) {
+        CaseInfo storage caseInfo = casesInfo[_token][_caseId];
         return caseInfo.currentValue;
     }
 
-    function getUserDecision(uint256 _caseId, address _owner)
+    function getUserDecision(address _token,uint256 _caseId, address _owner)
         external
         view
         returns (bool)
     {
-        CaseInfo storage caseInfo = casesInfo[_caseId];
+        CaseInfo storage caseInfo = casesInfo[_token][_caseId];
         return (caseInfo.usersReplyAnswer[_owner].createdAt != 0);
     }
 
-    function getUserResultInCase(uint256 _caseId, address _userAddress)
+    function getUserResultInCase(address _token,uint256 _caseId, address _userAddress)
         public
         view
         returns (bool _isWin, uint256 _betAmount)
     {
-        CaseInfo storage caseInfo = casesInfo[_caseId];
+        CaseInfo storage caseInfo = casesInfo[_token][_caseId];
 
         UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[_userAddress];
         bytes32 answer = keccak256(
@@ -125,12 +120,12 @@ contract Validator is Ownable {
         _betAmount = userReplyAnswer.amount;
     }
 
-    function claimReward(uint256 _caseId) public {
-         CaseInfo storage caseInfo = casesInfo[_caseId];
+    function claimReward(address _token,uint256 _caseId) public {
+         CaseInfo storage caseInfo = casesInfo[_token][_caseId];
          bool isWin;
          uint256 betAmount;
          require(caseInfo.usersReplyAnswer[msg.sender].claimed != true);
-         (isWin,betAmount) = getUserResultInCase(_caseId, msg.sender);
+         (isWin,betAmount) = getUserResultInCase(_token,_caseId, msg.sender);
 
          if(isWin){
              uint256 fundAferSubFee = caseInfo.fund.sub(caseInfo.fund.mul(fee).div(100));
@@ -142,12 +137,12 @@ contract Validator is Ownable {
          }
     }
 
-    function evaluate(uint256 _caseId, bytes32 _randomness)
+    function evaluate(address _token,uint256 _caseId, bytes32 _randomness)
         external
         onlyOwner
         returns (bytes32)
     {
-        CaseInfo storage caseInfo = casesInfo[_caseId];
+        CaseInfo storage caseInfo = casesInfo[_token][_caseId];
         require(caseInfo.result[0] == 0, "This case already had result.");
         uint256 buyyerValueCount;
         uint256 sellerValueCount;
@@ -190,17 +185,18 @@ contract Validator is Ownable {
         }
         caseInfo.fund = fund;
         caseInfo.resultAt = block.timestamp;
-
+        totalCollateral = totalCollateral.sub(caseInfo.currentValue);
         return caseInfo.result;
     }
 
     function play(
+        address _token,
         uint256 _caseId,
         uint256 _amount,
         bytes32 _answer,
         string memory _remark
     ) external {
-        CaseInfo storage caseInfo = casesInfo[_caseId];
+        CaseInfo storage caseInfo = casesInfo[_token][_caseId];
         require(
             caseInfo.totalValue > caseInfo.currentValue,
             "The case is closed"
@@ -223,6 +219,8 @@ contract Validator is Ownable {
             erc20Interface.transferFrom(msg.sender, address(this), _amount),
             "Can't transfer"
         );
+        // add collateral
+        totalCollateral = totalCollateral.add(_amount);
         // save reply
         userReplyAnswer.amount = _amount;
         userReplyAnswer.answer = _answer;

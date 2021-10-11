@@ -5,33 +5,33 @@ async function main() {
   // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
   const waggyToken = await WaggyToken.attach(
-    "0x5BdFd8D6b1A9780b1248f61732B735f9a891CD56"
+    "0xE3fE493a518e8EDe9755e54a8B0F53A1C6FEB62d"
   );
   // deploy Factory
   const P2PFactory = await hre.ethers.getContractFactory("P2PFactory");
   const p2pfactory = await P2PFactory.attach(
-    "0xfdbcdd2f0562EDA9d111062681420D89537039AB"
+    "0x1a7F0446D07d346e181714Ab5EaEa3C47e77526C"
   );
   //deploy Factory storage
   const FactoryStorage = await hre.ethers.getContractFactory("FactoryStorage");
   const factoryStorage = await FactoryStorage.attach(
-    "0x027c9e7060e7b3493f2012BCF9dC9CEaa2982C4A"
+    "0x84b039326aD0f27A23728d73B0AeF2333A9429CE"
   );
   //   BUSD on BSC Testnet
-  const BUSDAddress = "0x915b0ddcefc835141d24a3eb946e5f2b22b8e705";//"0x3b1F033dD955f3BE8649Cc9825A2e3E194765a3F";
+  const BUSDAddress = "0x2Ee5433F2029F4487239168b3BFBdC76EaF56170";//"0x3b1F033dD955f3BE8649Cc9825A2e3E194765a3F";
   // deploy reward calculator
   const RewardCalculator = await hre.ethers.getContractFactory(
     "RewardCalculator"
   );
   const rewardCalculator = await RewardCalculator.attach(
-    "0xcb6249FC9022132BF68B55AdA019D3F500fbDfF8"
+    "0x42Be3F67227320441D4D8d42d2DE4412b2979070"
   );
   // deploy fee calculator
   const FeeCalculator = await hre.ethers.getContractFactory(
     "FeeCalculator"
   );
   const feeCalculator = await FeeCalculator.attach(
-    "0x96a1795EDf53Fe7eD56c3872F0E42EA4CB88a563"
+    "0xc6d72Ebe8D29f7DB1064504759442a532ad2752a"
   );
   // deploy merchant
   const estimateGas = await p2pfactory.estimateGas.createNewMerchant(
@@ -54,23 +54,23 @@ async function main() {
   await tx.wait(1);
   const merchantsAddress = await p2pfactory.getMerchantByToken(BUSDAddress);
 
-  // const Merchant =  await hre.ethers.getContractFactory(
-  //   "Merchant"
-  // );
-  // const merchant = await Merchant.attach(merchantsAddress)
+  const Merchant =  await hre.ethers.getContractFactory(
+    "Merchant"
+  );
+  const merchant = await Merchant.attach(merchantsAddress)
   console.log("Merchants address : ", merchantsAddress);
-  // const merchantStorage = await merchant.getMerchantStorage()
-  // await hre.run("verify:verify", {
-  //   address: merchantsAddress,
-  //   constructorArguments: [
-  //     BUSDAddress,
-  //     waggyToken.address,
-  //     rewardCalculator.address,
-  //     feeCalculator.address,
-  //     merchantStorage,
-  //     accounts[0].address
-  //   ],
-  // });
+  const merchantStorage = await merchant.getMerchantStorage()
+  await hre.run("verify:verify", {
+    address: merchantsAddress,
+    constructorArguments: [
+      BUSDAddress,
+      waggyToken.address,
+      rewardCalculator.address,
+      feeCalculator.address,
+      merchantStorage,
+      accounts[0].address
+    ],
+  });
 }
 
 main()

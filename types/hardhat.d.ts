@@ -29,6 +29,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
+      name: "BlackListUser",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BlackListUser__factory>;
+    getContractFactory(
       name: "MasterWaggy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MasterWaggy__factory>;
@@ -65,6 +69,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WaggyToken__factory>;
     getContractFactory(
+      name: "WERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WERC20__factory>;
+    getContractFactory(
       name: "Validator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Validator__factory>;
@@ -93,6 +101,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "BlackListUser",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BlackListUser>;
     getContractAt(
       name: "MasterWaggy",
       address: string,
@@ -138,6 +151,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WaggyToken>;
+    getContractAt(
+      name: "WERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WERC20>;
     getContractAt(
       name: "Validator",
       address: string,

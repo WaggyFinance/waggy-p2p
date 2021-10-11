@@ -1,9 +1,14 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 // require("hardhat-gas-reporter");
-require('hardhat-abi-exporter');
+// require('hardhat-abi-exporter');
 require("hardhat-tracer");
-require('hardhat-docgen');
+require('@typechain/hardhat')
+require('@nomiclabs/hardhat-ethers')
+require('@nomiclabs/hardhat-waffle')
+require("@nomiclabs/hardhat-etherscan");
+
+// require('hardhat-docgen');
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -34,10 +39,15 @@ module.exports = {
   },
   networks: {
     hardhat: {
+      allowUnlimitedContractSize: true,
       mining: {
         auto: true,
         interval: 5000
       }
+    },
+    testnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
     },
     ropsten:{
       url:'https://ropsten.infura.io/v3/d6e674a0c8044708ad1ec2d87cc2b47c',
@@ -45,15 +55,34 @@ module.exports = {
       gas: 2100000,
       gasPrice: 8000000000
     },
-    rinkeby: {
-      url:'https://rinkeby.infura.io/v3/e5c040fa68e04a69a6b703e1d3e7649c',
+    kovan: {
+      url:'https://kovan.infura.io/v3/b87b958442314159a5c79f682ccee74d',
       accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
     },
+    rinkeby: {
+      url:'https://rinkeby.infura.io/v3/c606085219ca47d2acabfe5cc00395b6',
+      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+      mining: {
+        auto: true,
+        interval: 1000
+      }
+    },
+  },
+  etherscan: {
+    apiKey:"549MN373MW3K2D4VZXMDJTKXB8U6AM569Z" //Rinkeby
+    // apiKey:"KEARCXBR66GFVV412HZRE61T92P4U5HC4K" //KOvan
+    // apiKey: "Y4QFQMQATC48JSZ81VDBVR18E118EA3Y7I"//BSC Testnet
   },
   gasReporter: {
     currency: 'ETH',
     gasPrice: 21,
     enabled:true
+  },
+  typechain: {
+    outDir: './types',
+    target: 'ethers-v5',
+    alwaysGenerateOverloads: false, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
+    externalArtifacts: ['externalArtifacts/*.json'], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
   },
   solidity: "0.8.4",
 };
