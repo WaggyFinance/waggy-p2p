@@ -4,6 +4,8 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
+const ContractJSON = require("./../contract.json");
+const fs = require("fs");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -11,6 +13,7 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
+
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
@@ -20,34 +23,37 @@ async function main() {
 
   await waggyToken.deployed();
 
+  ContractJSON.waggyToken = waggyToken.address;
+  
   //deploy Factory storage
   const FactoryStorage = await hre.ethers.getContractFactory("FactoryStorage");
   const factoryStorage = await FactoryStorage.deploy();
 
   await factoryStorage.deployed();
+  ContractJSON.factoryStorage = factoryStorage.address;
   // deploy Factory
   const P2PFactory = await hre.ethers.getContractFactory("P2PFactory");
-  const p2pfactory = await P2PFactory.deploy(
-    factoryStorage.address,
-    accounts[0].address
-  );
+  const p2pfactory = await P2PFactory.deploy(factoryStorage.address, accounts[0].address);
 
   await p2pfactory.deployed();
-  //
-  const BUSDAddress = "0x9788f8565abea33ae86b1526f8f839ab7aca185e";
+
+  ContractJSON.p2pfactory = p2pfactory.address;
+
   // deploy reward calculator
-  const RewardCalculator = await hre.ethers.getContractFactory(
-    "RewardCalculator"
-  );
+  const RewardCalculator = await hre.ethers.getContractFactory("RewardCalculator");
   const rewardCalculator = await RewardCalculator.deploy();
 
   await rewardCalculator.deployed();
+
+  ContractJSON.rewardCalculator = rewardCalculator.address;
 
   // deploy fee calculator
   const FeeCalculator = await hre.ethers.getContractFactory("FeeCalculator");
   const feeCalculator = await FeeCalculator.deploy();
 
   await feeCalculator.deployed();
+
+  ContractJSON.feeCalculator = feeCalculator.address;
   // deploy merchant
 
   await factoryStorage.transferOwnership(p2pfactory.address);
@@ -77,10 +83,7 @@ async function main() {
   await hre.run("verify:verify", {
     address: p2pfactory.address,
     contract: "contracts/p2p/P2PFactory.sol:P2PFactory",
-    constructorArguments: [
-      factoryStorage.address,
-      accounts[0].address
-    ],
+    constructorArguments: [factoryStorage.address, accounts[0].address],
   });
   await hre.run("verify:verify", {
     address: rewardCalculator.address,
@@ -92,8 +95,13 @@ async function main() {
     contract: "contracts/p2p/FeeCalculator.sol:FeeCalculator",
     constructorArguments: [],
   });
-  
+
   console.log("✅ Done Verify Contract");
+
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync("./contract.json", jsonString);
+  console.log("write file done.")
 }
 
 // We recommend this pattern to be able to use async/await everywhere

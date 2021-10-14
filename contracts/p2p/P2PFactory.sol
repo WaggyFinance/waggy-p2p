@@ -3,83 +3,87 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "hardhat/console.sol";
 import "./Merchant.sol";
-import "./RewardCalculator.sol";
-import "./FeeCalculator.sol";
 import "./FactoryStorage.sol";
 import "./MerchantStorage.sol";
 
-contract P2PFactory is Ownable{
+contract P2PFactory is Ownable {
+  event NewMerchantAddress(address merchantAddress);
+  event NewMerchantStorageAddress(address merchantStorageAddress);
+  event UpdateMerchantAddress(address token, address merchantAddress);
+  event UpdateGOVInMerchant(address gov);
+  event UpdateRewardCalculator(address rewardCalculator);
+  event UpdateFeeCalculator(address feeCalculator);
 
-    FactoryStorage factoryStorage;
+  FactoryStorage factoryStorage;
+  address public feeCollector;
 
-    event NewMerchantAddress(address merchantAddress);
-    event NewMerchantStorageAddress(address merchantStorageAddress);
-    event UpdateMerchantAddress(address token ,address merchantAddress);
-    event UpdateGOVInMerchant(address gov);
-    event UpdateRewardCalculator(address rewardCalculator);
-    event UpdateFeeCalculator(address feeCalculator);
+  constructor(address _factoryData, address _feeCollector) {
+    require(_feeCollector != address(0));
+    factoryStorage = FactoryStorage(_factoryData);
+    feeCollector = _feeCollector;
+  }
 
-    address public feeCollector;
+  function getFactoryStorage() public view returns (address) {
+    return address(factoryStorage);
+  }
 
-    constructor(address _factoryData,address _feeCollector){
-        require(_feeCollector != address(0));
-        factoryStorage = FactoryStorage(_factoryData);
-        feeCollector = _feeCollector;
-    }
+  // function updateGOVInMerchant(address _gov) public onlyOwner {
+  //   for (uint256 i = 0; i < factoryStorage.getMerchantCount(); i++) {
+  //     Merchant(factoryStorage.getMerchantAtIndex(i)).updateRewardCalculator(_gov);
+  //   }
+  //   emit UpdateGOVInMerchant(_gov);
+  // }
 
-    function getFactoryStorage() public view returns(address){
-        return address(factoryStorage);
-    }
+  // function updateRewardCalculatorInMerchant(address _rewardCalculator) public onlyOwner {
+  //   for (uint256 i = 0; i < factoryStorage.getMerchantCount(); i++) {
+  //     Merchant(factoryStorage.getMerchantAtIndex(i)).updateRewardCalculator(_rewardCalculator);
+  //   }
+  //   emit UpdateRewardCalculator(_rewardCalculator);
+  // }
 
-    function updateGOVInMerchant(address _gov) public onlyOwner {
-        for(uint i = 0; i < factoryStorage.getMerchantCount() ;i++){
-            Merchant(factoryStorage.getMerchantAtIndex(i)).updateRewardCalculator(_gov);
-        }
+  // function updateFeeCalculatorInMerchant(address _feeCalculator) public onlyOwner {
+  //   for (uint256 i = 0; i < factoryStorage.getMerchantCount(); i++) {
+  //     Merchant(factoryStorage.getMerchantAtIndex(i)).updateFeeCalculator(_feeCalculator);
+  //   }
 
-        emit UpdateGOVInMerchant(_gov);
-    }
+  //   emit UpdateFeeCalculator(_feeCalculator);
+  // }
 
-    function updateRewardCalculatorInMerchant(address _rewardCalculator) public onlyOwner{
-        for(uint i = 0; i < factoryStorage.getMerchantCount() ;i++){
-             Merchant(factoryStorage.getMerchantAtIndex(i)).updateRewardCalculator(_rewardCalculator);
-        }
+  function getMerchantByToken(address _token) public view returns (address) {
+    require(factoryStorage.getMerchantToken(_token) != address(0));
+    return factoryStorage.getMerchantToken(_token);
+  }
 
-        emit UpdateRewardCalculator(_rewardCalculator);
-    }
+  function createNewMerchant(
+    address _token,
+    address _gov,
+    address _rewardCalculator,
+    address _feeCalculator,
+    address _blackListUser
+  ) public onlyOwner {
+    require(factoryStorage.getMerchantToken(_token) == address(0));
+    MerchantStorage merchantStorage = new MerchantStorage();
+    Merchant merchant = new Merchant(
+      _token,
+      _gov,
+      _rewardCalculator,
+      _feeCalculator,
+      address(merchantStorage),
+      feeCollector,
+      _blackListUser
+    );
+    merchantStorage.transferOwnership(address(merchant));
+    merchant.transferOwnership(owner());
+    factoryStorage.setMerchantToken(_token, address(merchant));
+    factoryStorage.addMerchantAddress(address(merchant));
 
-    function updateFeeCalculatorInMerchant(address _feeCalculator) public onlyOwner{
-        for(uint i = 0; i < factoryStorage.getMerchantCount() ;i++){
-             Merchant(factoryStorage.getMerchantAtIndex(i)).updateFeeCalculator(_feeCalculator);
-        }
+    emit NewMerchantAddress(address(merchant));
+    emit NewMerchantStorageAddress(address(merchantStorage));
+  }
 
-        emit UpdateFeeCalculator(_feeCalculator);
-    }
-
-    function getMerchantByToken(address _token) public view returns(address){
-        require(factoryStorage.getMerchantToken(_token) != address(0));
-        return factoryStorage.getMerchantToken(_token);
-    }
-
-    function createNewMerchant(address _token,address _gov,address _rewardCalculator,address _feeCalculator) public onlyOwner {
-        require(factoryStorage.getMerchantToken(_token) == address(0));
-        MerchantStorage merchantStorage = new MerchantStorage();
-        Merchant merchant = new Merchant(_token,  _gov, _rewardCalculator, _feeCalculator,address(merchantStorage),feeCollector);
-        address merchantAddress = address(merchant);
-        merchantStorage.transferOwnership(merchantAddress);
-        merchant.transferOwnership(owner());
-        factoryStorage.setMerchantToken(_token,merchantAddress);
-        factoryStorage.addMerchantAddress(merchantAddress);
-
-        console.log("Create new merchant at address %s",merchantAddress);
-        emit NewMerchantAddress(merchantAddress);
-        emit NewMerchantStorageAddress(address(merchantStorage));
-    }
-
-    function updateMechant(address _token,address _merchantAddress) public onlyOwner{
-        factoryStorage.setMerchantToken(_token,_merchantAddress);
-
-        emit UpdateMerchantAddress(_token,_merchantAddress);
-    }
+  function updateMechant(address _token, address _merchantAddress) public onlyOwner {
+    factoryStorage.setMerchantToken(_token, _merchantAddress);
+    emit UpdateMerchantAddress(_token, _merchantAddress);
+  }
 }

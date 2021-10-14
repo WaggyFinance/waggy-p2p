@@ -21,22 +21,19 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface P2PFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "createNewMerchant(address,address,address,address)": FunctionFragment;
+    "createNewMerchant(address,address,address,address,address)": FunctionFragment;
     "feeCollector()": FunctionFragment;
     "getFactoryStorage()": FunctionFragment;
     "getMerchantByToken(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "updateFeeCalculatorInMerchant(address)": FunctionFragment;
-    "updateGOVInMerchant(address)": FunctionFragment;
     "updateMechant(address,address)": FunctionFragment;
-    "updateRewardCalculatorInMerchant(address)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "createNewMerchant",
-    values: [string, string, string, string]
+    values: [string, string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "feeCollector",
@@ -60,20 +57,8 @@ interface P2PFactoryInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateFeeCalculatorInMerchant",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateGOVInMerchant",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "updateMechant",
     values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateRewardCalculatorInMerchant",
-    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -102,19 +87,7 @@ interface P2PFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateFeeCalculatorInMerchant",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateGOVInMerchant",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updateMechant",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateRewardCalculatorInMerchant",
     data: BytesLike
   ): Result;
 
@@ -212,6 +185,7 @@ export class P2PFactory extends BaseContract {
       _gov: string,
       _rewardCalculator: string,
       _feeCalculator: string,
+      _blackListUser: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -235,24 +209,9 @@ export class P2PFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    updateFeeCalculatorInMerchant(
-      _feeCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updateGOVInMerchant(
-      _gov: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     updateMechant(
       _token: string,
       _merchantAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updateRewardCalculatorInMerchant(
-      _rewardCalculator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -262,6 +221,7 @@ export class P2PFactory extends BaseContract {
     _gov: string,
     _rewardCalculator: string,
     _feeCalculator: string,
+    _blackListUser: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -285,24 +245,9 @@ export class P2PFactory extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  updateFeeCalculatorInMerchant(
-    _feeCalculator: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updateGOVInMerchant(
-    _gov: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   updateMechant(
     _token: string,
     _merchantAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updateRewardCalculatorInMerchant(
-    _rewardCalculator: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -312,6 +257,7 @@ export class P2PFactory extends BaseContract {
       _gov: string,
       _rewardCalculator: string,
       _feeCalculator: string,
+      _blackListUser: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -333,21 +279,9 @@ export class P2PFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateFeeCalculatorInMerchant(
-      _feeCalculator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateGOVInMerchant(_gov: string, overrides?: CallOverrides): Promise<void>;
-
     updateMechant(
       _token: string,
       _merchantAddress: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateRewardCalculatorInMerchant(
-      _rewardCalculator: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -432,6 +366,7 @@ export class P2PFactory extends BaseContract {
       _gov: string,
       _rewardCalculator: string,
       _feeCalculator: string,
+      _blackListUser: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -455,24 +390,9 @@ export class P2PFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    updateFeeCalculatorInMerchant(
-      _feeCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateGOVInMerchant(
-      _gov: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     updateMechant(
       _token: string,
       _merchantAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateRewardCalculatorInMerchant(
-      _rewardCalculator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -483,6 +403,7 @@ export class P2PFactory extends BaseContract {
       _gov: string,
       _rewardCalculator: string,
       _feeCalculator: string,
+      _blackListUser: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -506,24 +427,9 @@ export class P2PFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateFeeCalculatorInMerchant(
-      _feeCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateGOVInMerchant(
-      _gov: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     updateMechant(
       _token: string,
       _merchantAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateRewardCalculatorInMerchant(
-      _rewardCalculator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

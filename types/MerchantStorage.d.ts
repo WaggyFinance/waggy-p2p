@@ -21,6 +21,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MerchantStorageInterface extends ethers.utils.Interface {
   functions: {
+    "appealSellToken(address,address,uint256)": FunctionFragment;
     "approveBuy(address,address,uint256)": FunctionFragment;
     "cancelSellTransaction(address,address,uint256,string)": FunctionFragment;
     "cancelTransaction(address,address,uint256,string)": FunctionFragment;
@@ -51,6 +52,10 @@ interface MerchantStorageInterface extends ethers.utils.Interface {
     "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "appealSellToken",
+    values: [string, string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "approveBuy",
     values: [string, string, BigNumberish]
@@ -158,6 +163,10 @@ interface MerchantStorageInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "appealSellToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approveBuy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelSellTransaction",
@@ -317,6 +326,13 @@ export class MerchantStorage extends BaseContract {
   interface: MerchantStorageInterface;
 
   functions: {
+    appealSellToken(
+      _owner: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     approveBuy(
       _owner: string,
       _buyer: string,
@@ -496,6 +512,13 @@ export class MerchantStorage extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  appealSellToken(
+    _owner: string,
+    _buyer: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   approveBuy(
     _owner: string,
     _buyer: string,
@@ -666,6 +689,13 @@ export class MerchantStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    appealSellToken(
+      _owner: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     approveBuy(
       _owner: string,
       _buyer: string,
@@ -862,6 +892,13 @@ export class MerchantStorage extends BaseContract {
   };
 
   estimateGas: {
+    appealSellToken(
+      _owner: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     approveBuy(
       _owner: string,
       _buyer: string,
@@ -1024,6 +1061,13 @@ export class MerchantStorage extends BaseContract {
   };
 
   populateTransaction: {
+    appealSellToken(
+      _owner: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     approveBuy(
       _owner: string,
       _buyer: string,

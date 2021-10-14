@@ -4,6 +4,8 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
+const ContractJSON = require("./../contract.json");
+const fs = require("fs");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -14,13 +16,12 @@ async function main() {
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
-  const WAGAdresss = "0xE3fE493a518e8EDe9755e54a8B0F53A1C6FEB62d";
   // Waggy token
   const MasterWaggy = await hre.ethers.getContractFactory("MasterWaggy");
-  const masterWagggy = await MasterWaggy.deploy(WAGAdresss);
+  const masterWagggy = await MasterWaggy.deploy(ContractJSON.waggyToken);
 
   await masterWagggy.deployed();
-
+  ContractJSON.masterWagggy =masterWagggy.address;
   console.log(`masterWagggy address: ${masterWagggy.address}`)
   await hre.run("verify:verify", {
     address: masterWagggy.address,
@@ -31,6 +32,12 @@ async function main() {
   });
   
   console.log("✅ Done Verify Contract");
+
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync("./contract.json", jsonString);
+  console.log("Update file done.");
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere

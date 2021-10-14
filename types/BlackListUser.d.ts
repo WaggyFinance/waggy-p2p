@@ -21,20 +21,21 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface BlackListUserInterface extends ethers.utils.Interface {
   functions: {
-    "addBlackListUser(address)": FunctionFragment;
-    "checkUserInBlackList(address)": FunctionFragment;
+    "checkUserStatus(address)": FunctionFragment;
+    "getUserStatus(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setUserStatus(address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "users(uint256)": FunctionFragment;
+    "warningUser(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "addBlackListUser",
+    functionFragment: "checkUserStatus",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "checkUserInBlackList",
+    functionFragment: "getUserStatus",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -43,17 +44,21 @@ interface BlackListUserInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setUserStatus",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "users", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "warningUser", values: [string]): string;
 
   decodeFunctionResult(
-    functionFragment: "addBlackListUser",
+    functionFragment: "checkUserStatus",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "checkUserInBlackList",
+    functionFragment: "getUserStatus",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -62,10 +67,17 @@ interface BlackListUserInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setUserStatus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "users", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "warningUser",
+    data: BytesLike
+  ): Result;
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
@@ -122,19 +134,25 @@ export class BlackListUser extends BaseContract {
   interface: BlackListUserInterface;
 
   functions: {
-    addBlackListUser(
+    checkUserStatus(
       _user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    checkUserInBlackList(
+    getUserStatus(
       _user: string,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setUserStatus(
+      _user: string,
+      _status: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -143,22 +161,28 @@ export class BlackListUser extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    warningUser(
+      _user: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  addBlackListUser(
+  checkUserStatus(
     _user: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  checkUserInBlackList(
-    _user: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  getUserStatus(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setUserStatus(
+    _user: string,
+    _status: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -167,26 +191,35 @@ export class BlackListUser extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  users(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  warningUser(
+    _user: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    addBlackListUser(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    checkUserInBlackList(
+    checkUserStatus(
       _user: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
+
+    getUserStatus(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setUserStatus(
+      _user: string,
+      _status: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    warningUser(_user: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -208,19 +241,22 @@ export class BlackListUser extends BaseContract {
   };
 
   estimateGas: {
-    addBlackListUser(
+    checkUserStatus(
       _user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    checkUserInBlackList(
-      _user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getUserStatus(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setUserStatus(
+      _user: string,
+      _status: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -229,16 +265,19 @@ export class BlackListUser extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    warningUser(
+      _user: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addBlackListUser(
+    checkUserStatus(
       _user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    checkUserInBlackList(
+    getUserStatus(
       _user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -249,14 +288,20 @@ export class BlackListUser extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setUserStatus(
+      _user: string,
+      _status: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    users(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    warningUser(
+      _user: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

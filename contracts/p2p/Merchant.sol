@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./RewardCalculator.sol";
 import "./MerchantStorage.sol";
 import "./FeeCalculator.sol";
+import "./../BlackListUser.sol";
 
 contract Merchant is Ownable {
   using SafeMath for uint256;
@@ -26,6 +27,7 @@ contract Merchant is Ownable {
   RewardCalculator public rewardCalculator;
   FeeCalculator public feeCalculator;
   address public feeCollector;
+  BlackListUser blackListUser;
 
   enum BuyerStatus {
     INIT,
@@ -45,8 +47,17 @@ contract Merchant is Ownable {
     _;
   }
 
+  modifier notSuspendUser() {
+    require(blackListUser.checkUserStatus(msg.sender) == 0, "Not allow suspend user.");
+    _;
+  }
+
   function getMerchantStorage() public view returns (address) {
     return address(merchantStorage);
+  }
+
+  function setBlackList(address _blackList) external onlyOwner {
+    blackListUser = BlackListUser(_blackList);
   }
 
   function getFeeCollector() public view returns (address) {
@@ -60,7 +71,8 @@ contract Merchant is Ownable {
     address _rewardCalculator,
     address _feeCalculator,
     address _merchantStorage,
-    address _feeCollector
+    address _feeCollector,
+    address _blackListUser
   ) {
     token = ERC20(_token);
     gov = ERC20(_gov);
@@ -68,6 +80,7 @@ contract Merchant is Ownable {
     merchantStorage = MerchantStorage(_merchantStorage);
     feeCalculator = FeeCalculator(_feeCalculator);
     feeCollector = _feeCollector;
+    blackListUser = BlackListUser(_blackListUser);
   }
 
   function sellerReleaseToken(
@@ -92,20 +105,20 @@ contract Merchant is Ownable {
     emit ReleaseToken(msg.sender, _buyer, address(token), _amount, reward);
   }
 
-  function getSellerDeposit(address _seller,address _merchant) public view returns(uint256){
-    return merchantStorage.getUserLockBalance(_seller,_merchant);
+  function getSellerDeposit(address _seller, address _merchant) public view returns (uint256) {
+    return merchantStorage.getUserLockBalance(_seller, _merchant);
   }
 
-  function sellerDeposit(address _merchant,uint256 _amount) external {
+  function sellerDeposit(address _merchant, uint256 _amount) external {
     require(token.balanceOf(msg.sender) >= _amount);
     require(token.allowance(msg.sender, address(this)) >= _amount);
-    require(getSellerDeposit(msg.sender,_merchant) == 0);
+    require(getSellerDeposit(msg.sender, _merchant) == 0);
 
-    token.transferFrom(msg.sender,address(this),_amount);
-    merchantStorage.setUserLockBalance(msg.sender,_merchant,_amount);
-    merchantStorage.requestSell(msg.sender,_merchant,_amount);
+    token.transferFrom(msg.sender, address(this), _amount);
+    merchantStorage.setUserLockBalance(msg.sender, _merchant, _amount);
+    merchantStorage.requestSell(msg.sender, _merchant, _amount);
 
-    emit SellerDeposit(msg.sender , _merchant,_amount);
+    emit SellerDeposit(msg.sender, _merchant, _amount);
   }
 
   // for backend check correctly lock amount
@@ -226,19 +239,37 @@ contract Merchant is Ownable {
     require(msg.sender == _seller || msg.sender == owner());
     require(merchantStorage.checkSellTransactionReady(_seller, _buyer, _amount) == _amount);
 
+    if (msg.sender == _seller) {
+      blackListUser.warningUser(_seller);
+    }
+
     merchantStorage.cancelSellTransaction(_seller, _buyer, _amount, _remark);
     token.transfer(_seller, _amount);
 
     emit CancelTransaction(_buyer, address(token), _amount);
   }
 
-
   function appealTransaction(
     address _merchant,
     address _buyer,
     uint256 _amount
   ) external {
-// TODO
+    // TODO
+  }
+
+  function appealSellTransaction(
+    address _seller,
+    address _buyer,
+    uint256 _amount,
+    string memory _remark
+  ) external {
+    require(msg.sender == _seller || msg.sender == owner() || msg.sender == _buyer);
+    require(merchantStorage.checkSellTransactionReady(_seller, _buyer, _amount) == _amount);
+
+    merchantStorage.cancelSellTransaction(_seller, _buyer, _amount, _remark);
+    token.transfer(_seller, _amount);
+
+    emit CancelTransaction(_buyer, address(token), _amount);
   }
 
   function getBuyerTransaction(address _merchant, address _buyer)
@@ -287,7 +318,7 @@ contract Merchant is Ownable {
     It first function for setup merchant of seller ,it deposit amount of token to sell
     _amount is value of token to want a sell 
     */
-  function setupShop(uint256 _amount) public payable {
+  function setupShop(uint256 _amount) public payable notSuspendUser {
     require(token.allowance(msg.sender, address(this)) >= _amount);
     token.transferFrom(msg.sender, address(this), _amount);
     merchantStorage.setShopBalance(msg.sender, _amount);

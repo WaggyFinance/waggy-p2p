@@ -22,6 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MerchantInterface extends ethers.utils.Interface {
   functions: {
+    "appealSellTransaction(address,address,uint256,string)": FunctionFragment;
     "appealTransaction(address,address,uint256)": FunctionFragment;
     "approveTransaction(uint256,address)": FunctionFragment;
     "cancelSellTransaction(address,address,uint256,string)": FunctionFragment;
@@ -47,12 +48,17 @@ interface MerchantInterface extends ethers.utils.Interface {
     "rewardCalculator()": FunctionFragment;
     "sellerDeposit(address,uint256)": FunctionFragment;
     "sellerReleaseToken(address,address,uint256)": FunctionFragment;
+    "setBlackList(address)": FunctionFragment;
     "setupShop(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateFeeCalculator(address)": FunctionFragment;
     "updateRewardCalculator(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "appealSellTransaction",
+    values: [string, string, BigNumberish, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "appealTransaction",
     values: [string, string, BigNumberish]
@@ -151,6 +157,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBlackList",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setupShop",
     values: [BigNumberish]
   ): string;
@@ -167,6 +177,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "appealSellTransaction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "appealTransaction",
     data: BytesLike
@@ -259,6 +273,10 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "sellerReleaseToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBlackList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setupShop", data: BytesLike): Result;
@@ -392,6 +410,14 @@ export class Merchant extends BaseContract {
   interface: MerchantInterface;
 
   functions: {
+    appealSellTransaction(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      _remark: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     appealTransaction(
       _merchant: string,
       _buyer: string,
@@ -518,6 +544,11 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setBlackList(
+      _blackList: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setupShop(
       _amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -538,6 +569,14 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  appealSellTransaction(
+    _seller: string,
+    _buyer: string,
+    _amount: BigNumberish,
+    _remark: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   appealTransaction(
     _merchant: string,
@@ -662,6 +701,11 @@ export class Merchant extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setBlackList(
+    _blackList: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setupShop(
     _amount: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -683,6 +727,14 @@ export class Merchant extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    appealSellTransaction(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      _remark: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     appealTransaction(
       _merchant: string,
       _buyer: string,
@@ -802,6 +854,8 @@ export class Merchant extends BaseContract {
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setBlackList(_blackList: string, overrides?: CallOverrides): Promise<void>;
 
     setupShop(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -964,6 +1018,14 @@ export class Merchant extends BaseContract {
   };
 
   estimateGas: {
+    appealSellTransaction(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      _remark: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     appealTransaction(
       _merchant: string,
       _buyer: string,
@@ -1081,6 +1143,11 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setBlackList(
+      _blackList: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setupShop(
       _amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -1103,6 +1170,14 @@ export class Merchant extends BaseContract {
   };
 
   populateTransaction: {
+    appealSellTransaction(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      _remark: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     appealTransaction(
       _merchant: string,
       _buyer: string,
@@ -1221,6 +1296,11 @@ export class Merchant extends BaseContract {
       _seller: string,
       _buyer: string,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBlackList(
+      _blackList: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

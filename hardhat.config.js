@@ -7,6 +7,7 @@ require('@typechain/hardhat')
 require('@nomiclabs/hardhat-ethers')
 require('@nomiclabs/hardhat-waffle')
 require("@nomiclabs/hardhat-etherscan");
+// require('hardhat-contract-sizer');
 
 // require('hardhat-docgen');
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -68,6 +69,12 @@ module.exports = {
       }
     },
   },
+  contractSizer: {
+    alphaSort: true,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
+  },
   etherscan: {
     apiKey:"549MN373MW3K2D4VZXMDJTKXB8U6AM569Z" //Rinkeby
     // apiKey:"KEARCXBR66GFVV412HZRE61T92P4U5HC4K" //KOvan
@@ -84,5 +91,13 @@ module.exports = {
     alwaysGenerateOverloads: false, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
     externalArtifacts: ['externalArtifacts/*.json'], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
   },
-  solidity: "0.8.4",
+  solidity: {
+    version:"0.8.4",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  }
 };

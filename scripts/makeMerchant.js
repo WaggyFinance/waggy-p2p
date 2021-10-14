@@ -1,6 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
+  console.log("Start deploy")
   const accounts = await hre.ethers.getSigners();
   // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
@@ -18,7 +19,7 @@ async function main() {
     "0x84b039326aD0f27A23728d73B0AeF2333A9429CE"
   );
   //   BUSD on BSC Testnet
-  const BUSDAddress = "0x2Ee5433F2029F4487239168b3BFBdC76EaF56170";//"0x3b1F033dD955f3BE8649Cc9825A2e3E194765a3F";
+  const BUSDAddress = "0x78F141CD27DfF98F0948CaB11EEc7281EE5b0c54";//"0x3b1F033dD955f3BE8649Cc9825A2e3E194765a3F";
   // deploy reward calculator
   const RewardCalculator = await hre.ethers.getContractFactory(
     "RewardCalculator"
@@ -33,6 +34,7 @@ async function main() {
   const feeCalculator = await FeeCalculator.attach(
     "0xc6d72Ebe8D29f7DB1064504759442a532ad2752a"
   );
+  console.log("call estimateGas.");
   // deploy merchant
   const estimateGas = await p2pfactory.estimateGas.createNewMerchant(
     BUSDAddress,

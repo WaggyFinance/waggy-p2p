@@ -10,6 +10,7 @@ contract MerchantStorage is Ownable {
   enum TransactionStatus {
     INIT,
     PENDING_TRANSFER_FAIT,
+    APPEAL,
     CANCELED,
     FINISH
   }
@@ -173,7 +174,24 @@ contract MerchantStorage is Ownable {
     return getTransactionByIndex(_owner, _buyer, transactionLength.sub(1));
   }
 
-  function releaseSellToken(
+  function appealSellToken(
+    address _owner,
+    address _buyer,
+    uint256 _amount
+  ) external onlyOwner {
+    UserInfo storage sellerInfoData = sellerInfo[_owner][_buyer];
+    uint256 transactionLength = sellerInfoData.transactions.length;
+    require(transactionLength != 0, "Not found transaction");
+    Transaction storage transaction = sellerInfoData.transactions[transactionLength.sub(1)];
+    require(
+      transaction.status == TransactionStatus.APPEAL,
+      "Not allow do this transaction because transaction is already appeal"
+    );
+    require(transaction.amount == _amount, "Transaction is mismatch.");
+    transaction.status = TransactionStatus.APPEAL;
+  }
+
+  function releaseSellToken(  
     address _owner,
     address _buyer,
     uint256 _amount
