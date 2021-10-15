@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
-const ContractJSON = require("./../contract.json");
+const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {
@@ -11,31 +11,20 @@ async function main() {
   // attach MasterWaggy
   const MasterWaggy = await hre.ethers.getContractFactory("MasterWaggy");
   const masterWaggy = await MasterWaggy.attach(ContractJSON.masterWaggy);
-  //  mock token
+
   const WERC20 = await hre.ethers.getContractFactory("WERC20");
-  const busdToken = await WERC20.deploy("BUSD", "BUSD");
-  const daiToken = await WERC20.deploy("DAI", "DAI");
-  const usdtToken = await WERC20.deploy("USDT", "USDT");
-  const usdcToken = await WERC20.deploy("USDC", "USDC");
-  const wbnbToken = await WERC20.deploy("WBNB", "WBNB");
+  const busdToken = await WERC20.attach(ContractJSON.busdToken)
+  const daiToken = await WERC20.attach(ContractJSON.daiToken)
+  const usdtToken = await WERC20.attach(ContractJSON.usdtToken)
+  const usdcToken = await WERC20.attach(ContractJSON.usdcToken)
+  const wbnbToken = await WERC20.attach(ContractJSON.wbnbToken)
 
-  console.log(`BUSD token address ${busdToken.address}`);
-  console.log(`DAI token address ${daiToken.address}`);
-  console.log(`USDT token address ${usdtToken.address}`);
-  console.log(`USDC token address ${usdcToken.address}`);
-  console.log(`WBNB token address ${wbnbToken.address}`);
-
-  ContractJSON.busdToken = busdToken.address;
-  ContractJSON.daiToken = daiToken.address;
-  ContractJSON.usdtToken = usdtToken.address;
-  ContractJSON.usdcToken = usdcToken.address;
-  ContractJSON.wbnbToken = wbnbToken.address;
   // init pool
-  await masterWaggy.addPool(busdToken.address);
-  await masterWaggy.addPool(daiToken.address);
-  await masterWaggy.addPool(usdtToken.address);
-  await masterWaggy.addPool(usdcToken.address);
-  await masterWaggy.addPool(wbnbToken.address);
+  await masterWaggy.addPool(ContractJSON.busdToken);
+  await masterWaggy.addPool(ContractJSON.daiToken);
+  await masterWaggy.addPool(ContractJSON.usdtToken);
+  await masterWaggy.addPool(ContractJSON.usdcToken);
+  await masterWaggy.addPool(ContractJSON.wbnbToken);
   console.log("AddPool success");
   // approve token
   await waggyToken.approve(masterWaggy.address, ethers.utils.parseEther("100000000"));

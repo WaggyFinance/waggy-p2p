@@ -4,7 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const ContractJSON = require("./../contract.json");
+const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {
@@ -17,13 +17,6 @@ async function main() {
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
-  // Waggy token
-  const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
-  const waggyToken = await WaggyToken.deploy();
-
-  await waggyToken.deployed();
-
-  ContractJSON.waggyToken = waggyToken.address;
   
   //deploy Factory storage
   const FactoryStorage = await hre.ethers.getContractFactory("FactoryStorage");
@@ -57,24 +50,13 @@ async function main() {
   // deploy merchant
 
   await factoryStorage.transferOwnership(p2pfactory.address);
-  // Move to makeMerchant.js
-  // await p2pfactory.createNewMerchant(BUSDAddress,waggyToken.address,rewardCalculator.address,{from:accounts[0].address,gasLimit:4100000})
-
-  // const merchantsAddress = await factoryStorage.getMerchantsAddress();
-
-  console.log("Waggy Token address : ", waggyToken.address);
   console.log("FactoryStorage address : ", factoryStorage.address);
   console.log("Factory address : ", p2pfactory.address);
   console.log("Reward Calculator address : ", rewardCalculator.address);
   console.log("Fee Calculator address : ", feeCalculator.address);
 
-  console.log("✅ Done deploying a WAGGYTOKEN");
+  console.log("✅ Done deploying a Factory");
   console.log(">> Start Verify Contract");
-  await hre.run("verify:verify", {
-    address: waggyToken.address,
-    contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
-    constructorArguments: [],
-  });
   await hre.run("verify:verify", {
     address: factoryStorage.address,
     contract: "contracts/p2p/FactoryStorage.sol:FactoryStorage",

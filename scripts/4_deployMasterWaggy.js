@@ -4,7 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const ContractJSON = require("./../contract.json");
+const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {

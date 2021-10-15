@@ -4,6 +4,8 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
+const ContractJSON = require("../contract.json");
+const fs = require("fs");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -11,11 +13,6 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
-const BUSD = "0x5F2A90A9Ba6D1365a9C12865371F4A619A7a43b5";
-const DAI = "0x78F141CD27DfF98F0948CaB11EEc7281EE5b0c54";
-const USDT = "0x2Ee5433F2029F4487239168b3BFBdC76EaF56170";
-const USDC = "0x674781918eBC091d1503a063123Caeeb7e2e18Af";
-const WBNB = "0xeC4506D793628DDa636D3CbEA98DAc94B83bE771";
 
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
