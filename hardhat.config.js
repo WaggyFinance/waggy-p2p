@@ -65,7 +65,7 @@ module.exports = {
       accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
       mining: {
         auto: true,
-        interval: 1000
+        interval: 100
       }
     },
   },

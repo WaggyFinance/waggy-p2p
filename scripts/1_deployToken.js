@@ -61,27 +61,26 @@ async function main() {
     constructorArguments: ["BUSD", "BUSD"],
   });
   await hre.run("verify:verify", {
-    address: busdToken.address,
+    address: daiToken.address,
     contract: "contracts/p2p/WERC20.sol:WERC20",
     constructorArguments: ["DAI", "DAI"],
   });
   await hre.run("verify:verify", {
-    address: busdToken.address,
+    address: usdtToken.address,
     contract: "contracts/p2p/WERC20.sol:WERC20",
     constructorArguments: ["USDT", "USDT"],
   });
   await hre.run("verify:verify", {
-    address: busdToken.address,
+    address: usdcToken.address,
     contract: "contracts/p2p/WERC20.sol:WERC20",
     constructorArguments: ["USDC", "USDC"],
   });
   await hre.run("verify:verify", {
-    address: busdToken.address,
+    address: wbnbToken.address,
     contract: "contracts/p2p/WERC20.sol:WERC20",
     constructorArguments: ["WBNB", "WBNB"],
   });
   
-
   console.log("✅ Done Verify Contract");
 
   const jsonString = JSON.stringify(ContractJSON, null, 2);

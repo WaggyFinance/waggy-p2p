@@ -63,7 +63,9 @@ contract P2PFactory is Ownable {
     address _blackListUser
   ) public onlyOwner {
     require(factoryStorage.getMerchantToken(_token) == address(0));
+    console.log("New merchant stroage.");
     MerchantStorage merchantStorage = new MerchantStorage();
+    console.log("Begin create merchant");
     Merchant merchant = new Merchant(
       _token,
       _gov,
@@ -73,11 +75,12 @@ contract P2PFactory is Ownable {
       feeCollector,
       _blackListUser
     );
+    console.log("Transfer owner to new merchant");
     merchantStorage.transferOwnership(address(merchant));
     merchant.transferOwnership(owner());
     factoryStorage.setMerchantToken(_token, address(merchant));
     factoryStorage.addMerchantAddress(address(merchant));
-
+    console.log("Emit event");
     emit NewMerchantAddress(address(merchant));
     emit NewMerchantStorageAddress(address(merchantStorage));
   }

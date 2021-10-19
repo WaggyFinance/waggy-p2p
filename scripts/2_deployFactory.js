@@ -47,16 +47,32 @@ async function main() {
   await feeCalculator.deployed();
 
   ContractJSON.feeCalculator = feeCalculator.address;
+  // deploy BlackListuser
+  const BlackListUser = await hre.ethers.getContractFactory(
+    "BlackListUser"
+  );
+  const blackListUser = await BlackListUser.deploy();
+  await blackListUser.deployed();
+
+  ContractJSON.blackListUser = blackListUser.address;
   // deploy merchant
+
 
   await factoryStorage.transferOwnership(p2pfactory.address);
   console.log("FactoryStorage address : ", factoryStorage.address);
   console.log("Factory address : ", p2pfactory.address);
   console.log("Reward Calculator address : ", rewardCalculator.address);
   console.log("Fee Calculator address : ", feeCalculator.address);
+  console.log("BlackListUser address : ", blackListUser.address);
 
   console.log("✅ Done deploying a Factory");
   console.log(">> Start Verify Contract");
+
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync("./contract.json", jsonString);
+  console.log("write file done.")
+  
   await hre.run("verify:verify", {
     address: factoryStorage.address,
     contract: "contracts/p2p/FactoryStorage.sol:FactoryStorage",
@@ -77,13 +93,15 @@ async function main() {
     contract: "contracts/p2p/FeeCalculator.sol:FeeCalculator",
     constructorArguments: [],
   });
+  await hre.run("verify:verify", {
+    address: blackListUser.address,
+    contract: "contracts/BlackListUser.sol:BlackListUser",
+    constructorArguments: [],
+  });
 
   console.log("✅ Done Verify Contract");
 
-  const jsonString = JSON.stringify(ContractJSON, null, 2);
-  console.log(jsonString);
-  await fs.writeFileSync("./contract.json", jsonString);
-  console.log("write file done.")
+  
 }
 
 // We recommend this pattern to be able to use async/await everywhere
