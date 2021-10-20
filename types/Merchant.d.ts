@@ -12,7 +12,6 @@ import {
   BaseContract,
   ContractTransaction,
   Overrides,
-  PayableOverrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -25,21 +24,18 @@ interface MerchantInterface extends ethers.utils.Interface {
     "appealSellTransaction(address,address,uint256,string)": FunctionFragment;
     "appealTransaction(address,address,uint256)": FunctionFragment;
     "approveTransaction(uint256,address)": FunctionFragment;
+    "buyerAcceptSellTransction()": FunctionFragment;
     "cancelSellTransaction(address,address,uint256,string)": FunctionFragment;
     "cancelTransaction(address,address,uint256,string)": FunctionFragment;
-    "createLockTokenSell(uint256)": FunctionFragment;
     "deleteShop()": FunctionFragment;
     "feeCalculator()": FunctionFragment;
     "feeCollector()": FunctionFragment;
     "getApproveTransaction(address,address,uint256)": FunctionFragment;
-    "getBuyerLockAmount()": FunctionFragment;
     "getBuyerTransaction(address,address)": FunctionFragment;
     "getFeeCollector()": FunctionFragment;
-    "getMerchantIsReleasedTokenTo(address)": FunctionFragment;
     "getMerchantStorage()": FunctionFragment;
     "getSellerDeposit(address,address)": FunctionFragment;
     "getShopBalance(address)": FunctionFragment;
-    "merchantReleaseToken(address,uint256)": FunctionFragment;
     "merchantStorage()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerClaimToken()": FunctionFragment;
@@ -68,16 +64,16 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "buyerAcceptSellTransction",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "cancelSellTransaction",
     values: [string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTransaction",
     values: [string, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createLockTokenSell",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "deleteShop",
@@ -96,20 +92,12 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBuyerLockAmount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getBuyerTransaction",
     values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getFeeCollector",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getMerchantIsReleasedTokenTo",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getMerchantStorage",
@@ -122,10 +110,6 @@ interface MerchantInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getShopBalance",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "merchantReleaseToken",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "merchantStorage",
@@ -190,15 +174,15 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "buyerAcceptSellTransction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "cancelSellTransaction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "cancelTransaction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createLockTokenSell",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deleteShop", data: BytesLike): Result;
@@ -215,19 +199,11 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBuyerLockAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getBuyerTransaction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getFeeCollector",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getMerchantIsReleasedTokenTo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -240,10 +216,6 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getShopBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "merchantReleaseToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -431,6 +403,10 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    buyerAcceptSellTransction(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     cancelSellTransaction(
       _seller: string,
       _buyer: string,
@@ -444,11 +420,6 @@ export class Merchant extends BaseContract {
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    createLockTokenSell(
-      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -467,8 +438,6 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getBuyerLockAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getBuyerTransaction(
       _merchant: string,
       _buyer: string,
@@ -486,11 +455,6 @@ export class Merchant extends BaseContract {
 
     getFeeCollector(overrides?: CallOverrides): Promise<[string]>;
 
-    getMerchantIsReleasedTokenTo(
-      _buyer: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     getMerchantStorage(overrides?: CallOverrides): Promise<[string]>;
 
     getSellerDeposit(
@@ -503,12 +467,6 @@ export class Merchant extends BaseContract {
       owner: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    merchantReleaseToken(
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     merchantStorage(overrides?: CallOverrides): Promise<[string]>;
 
@@ -551,7 +509,7 @@ export class Merchant extends BaseContract {
 
     setupShop(
       _amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     transferOwnership(
@@ -591,6 +549,10 @@ export class Merchant extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  buyerAcceptSellTransction(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   cancelSellTransaction(
     _seller: string,
     _buyer: string,
@@ -604,11 +566,6 @@ export class Merchant extends BaseContract {
     _buyer: string,
     _amount: BigNumberish,
     _remark: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  createLockTokenSell(
-    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -627,8 +584,6 @@ export class Merchant extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getBuyerLockAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
   getBuyerTransaction(
     _merchant: string,
     _buyer: string,
@@ -646,11 +601,6 @@ export class Merchant extends BaseContract {
 
   getFeeCollector(overrides?: CallOverrides): Promise<string>;
 
-  getMerchantIsReleasedTokenTo(
-    _buyer: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   getMerchantStorage(overrides?: CallOverrides): Promise<string>;
 
   getSellerDeposit(
@@ -660,12 +610,6 @@ export class Merchant extends BaseContract {
   ): Promise<BigNumber>;
 
   getShopBalance(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  merchantReleaseToken(
-    _buyer: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   merchantStorage(overrides?: CallOverrides): Promise<string>;
 
@@ -708,7 +652,7 @@ export class Merchant extends BaseContract {
 
   setupShop(
     _amount: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   transferOwnership(
@@ -748,6 +692,8 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    buyerAcceptSellTransction(overrides?: CallOverrides): Promise<void>;
+
     cancelSellTransaction(
       _seller: string,
       _buyer: string,
@@ -764,11 +710,6 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    createLockTokenSell(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     deleteShop(overrides?: CallOverrides): Promise<void>;
 
     feeCalculator(overrides?: CallOverrides): Promise<string>;
@@ -781,8 +722,6 @@ export class Merchant extends BaseContract {
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getBuyerLockAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBuyerTransaction(
       _merchant: string,
@@ -801,11 +740,6 @@ export class Merchant extends BaseContract {
 
     getFeeCollector(overrides?: CallOverrides): Promise<string>;
 
-    getMerchantIsReleasedTokenTo(
-      _buyer: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     getMerchantStorage(overrides?: CallOverrides): Promise<string>;
 
     getSellerDeposit(
@@ -818,12 +752,6 @@ export class Merchant extends BaseContract {
       owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    merchantReleaseToken(
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     merchantStorage(overrides?: CallOverrides): Promise<string>;
 
@@ -1039,6 +967,10 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    buyerAcceptSellTransction(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     cancelSellTransaction(
       _seller: string,
       _buyer: string,
@@ -1052,11 +984,6 @@ export class Merchant extends BaseContract {
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    createLockTokenSell(
-      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1075,8 +1002,6 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getBuyerLockAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
     getBuyerTransaction(
       _merchant: string,
       _buyer: string,
@@ -1084,11 +1009,6 @@ export class Merchant extends BaseContract {
     ): Promise<BigNumber>;
 
     getFeeCollector(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getMerchantIsReleasedTokenTo(
-      _buyer: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getMerchantStorage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1101,12 +1021,6 @@ export class Merchant extends BaseContract {
     getShopBalance(
       owner: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    merchantReleaseToken(
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     merchantStorage(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1150,7 +1064,7 @@ export class Merchant extends BaseContract {
 
     setupShop(
       _amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -1191,6 +1105,10 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    buyerAcceptSellTransction(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     cancelSellTransaction(
       _seller: string,
       _buyer: string,
@@ -1204,11 +1122,6 @@ export class Merchant extends BaseContract {
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createLockTokenSell(
-      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1227,10 +1140,6 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getBuyerLockAmount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBuyerTransaction(
       _merchant: string,
       _buyer: string,
@@ -1238,11 +1147,6 @@ export class Merchant extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getFeeCollector(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getMerchantIsReleasedTokenTo(
-      _buyer: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getMerchantStorage(
       overrides?: CallOverrides
@@ -1257,12 +1161,6 @@ export class Merchant extends BaseContract {
     getShopBalance(
       owner: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    merchantReleaseToken(
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     merchantStorage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1306,7 +1204,7 @@ export class Merchant extends BaseContract {
 
     setupShop(
       _amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

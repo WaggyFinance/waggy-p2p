@@ -76,10 +76,6 @@ declare module "hardhat/types/runtime" {
       name: "Validator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Validator__factory>;
-    getContractFactory(
-      name: "WagTest",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.WagTest__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -161,11 +157,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Validator>;
-    getContractAt(
-      name: "WagTest",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.WagTest>;
 
     // default types
     getContractFactory(

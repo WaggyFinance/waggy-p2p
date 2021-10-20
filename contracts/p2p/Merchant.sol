@@ -1,3 +1,12 @@
+/*
+#   __      __    _____     ________   ________ _____.___.
+#  /  \    /  \  /  _  \   /  _____/  /  _____/ \__  |   |
+#  \   \/\/   / /  /_\  \ /   \  ___ /   \  ___  /   |   |
+#   \        / /    |    \\    \_\  \\    \_\  \ \____   |
+#    \__/\  /  \____|__  / \______  / \______  / / ______|
+#         \/           \/         \/         \/  \/       
+*/
+
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
@@ -28,19 +37,6 @@ contract Merchant is Ownable {
   FeeCalculator public feeCalculator;
   address public feeCollector;
   BlackListUser blackListUser;
-
-  enum BuyerStatus {
-    INIT,
-    PENDING_TRANSFER_FIAT,
-    RELEASED_TRANSFER_TOKEN,
-    FINISH
-  }
-  struct BuyerInfo {
-    uint256 amount;
-    BuyerStatus status;
-  }
-
-  mapping(address => BuyerInfo) buyerInfo;
 
   modifier isCanDeleteShop() {
     require(merchantStorage.getTotalLockBalance(msg.sender) == 0);
@@ -83,6 +79,7 @@ contract Merchant is Ownable {
     blackListUser = BlackListUser(_blackListUser);
   }
 
+  // release seller token after receive fait.
   function sellerReleaseToken(
     address _seller,
     address _buyer,
@@ -91,9 +88,9 @@ contract Merchant is Ownable {
     require(msg.sender == _seller || msg.sender == owner());
     require(merchantStorage.checkSellTransactionReady(_seller, _buyer, _amount) == _amount);
     uint256 fee = feeCalculator.calculateFee(_amount);
-    uint256 receiptAmount = _amount.sub(fee);
+    uint256 receiverAmount = _amount.sub(fee);
     token.transfer(feeCollector, fee);
-    token.transfer(_buyer, receiptAmount);
+    token.transfer(_buyer, receiverAmount);
     merchantStorage.releaseSellToken(_seller, _buyer, _amount);
     merchantStorage.setTransactionSuccessCount(
       msg.sender,
@@ -105,10 +102,12 @@ contract Merchant is Ownable {
     emit ReleaseToken(msg.sender, _buyer, address(token), _amount, reward);
   }
 
+  // check seller deposit amount
   function getSellerDeposit(address _seller, address _merchant) public view returns (uint256) {
     return merchantStorage.getUserLockBalance(_seller, _merchant);
   }
 
+  // Seller deposit token for wait buyer transfer fait
   function sellerDeposit(address _merchant, uint256 _amount) external {
     require(token.balanceOf(msg.sender) >= _amount);
     require(token.allowance(msg.sender, address(this)) >= _amount);
@@ -119,37 +118,6 @@ contract Merchant is Ownable {
     merchantStorage.requestSell(msg.sender, _merchant, _amount);
 
     emit SellerDeposit(msg.sender, _merchant, _amount);
-  }
-
-  // for backend check correctly lock amount
-  function getBuyerLockAmount() external view returns (uint256) {
-    BuyerInfo memory userInfo = buyerInfo[msg.sender];
-    return userInfo.amount;
-  }
-
-  // Merchant began create lock token prepare to sell
-  function createLockTokenSell(uint256 _amount) external {
-    BuyerInfo storage userInfo = buyerInfo[msg.sender];
-    require(userInfo.status == BuyerStatus.INIT);
-    require(token.allowance(msg.sender, address(this)) >= _amount);
-    token.transferFrom(msg.sender, address(this), _amount);
-    userInfo.amount = _amount;
-    userInfo.status = BuyerStatus.PENDING_TRANSFER_FIAT;
-  }
-
-  // Backend recheck merchant released the token to buyer
-  function getMerchantIsReleasedTokenTo(address _buyer) external view returns (bool) {
-    BuyerInfo storage userInfo = buyerInfo[_buyer];
-    return (userInfo.status == BuyerStatus.RELEASED_TRANSFER_TOKEN);
-  }
-
-  //  Merchant release token to buyer
-  function merchantReleaseToken(address _buyer, uint256 _amount) external {
-    BuyerInfo storage userInfo = buyerInfo[_buyer];
-    require(userInfo.status == BuyerStatus.PENDING_TRANSFER_FIAT);
-    require(userInfo.amount == _amount);
-    token.transfer(_buyer, _amount);
-    userInfo.status = BuyerStatus.RELEASED_TRANSFER_TOKEN;
   }
 
   // owner claimToken for emergency event.
@@ -180,26 +148,20 @@ contract Merchant is Ownable {
     require(msg.sender == _seller || msg.sender == owner());
     require(merchantStorage.checkTransactionApproved(_seller, _buyer, _amount) == _amount);
 
-    // require(merchantStorage.getShopLockBalance(msg.sender,_buyer) >= _amount);
     uint256 fee = feeCalculator.calculateFee(_amount);
-    uint256 receiptAmount = _amount.sub(fee);
+    uint256 receiverAmount = _amount.sub(fee);
     token.transfer(feeCollector, fee);
-    token.transfer(_buyer, receiptAmount);
-
-    // uint256 lockAmount = merchantStorage.getShopLockBalance(msg.sender,_buyer).sub(_amount);
-    // merchantStorage.setShopLockBalance(msg.sender,_buyer, lockAmount);
+    token.transfer(_buyer, receiverAmount);
     merchantStorage.releaseToken(_seller, _buyer, _amount);
     merchantStorage.setTransactionSuccessCount(
       msg.sender,
       merchantStorage.getTransactionSuccessCount(msg.sender).add(1)
     );
-
     uint256 totalLockAmount = merchantStorage.getTotalLockBalance(msg.sender).sub(_amount);
     merchantStorage.setTotalLockBalance(msg.sender, totalLockAmount);
 
     // pay reward after complete transaction
     uint256 reward = getReward(_amount);
-    console.log("Reward ", reward);
     gov.transfer(msg.sender, reward);
     emit ReleaseToken(msg.sender, _buyer, address(token), _amount, reward);
   }
@@ -236,6 +198,7 @@ contract Merchant is Ownable {
     uint256 _amount,
     string memory _remark
   ) public {
+    // require countdown 15 min to cancel
     require(msg.sender == _seller || msg.sender == owner());
     require(merchantStorage.checkSellTransactionReady(_seller, _buyer, _amount) == _amount);
 
@@ -247,6 +210,10 @@ contract Merchant is Ownable {
     token.transfer(_seller, _amount);
 
     emit CancelTransaction(_buyer, address(token), _amount);
+  }
+
+  function buyerAcceptSellTransction() external {
+
   }
 
   function appealTransaction(
@@ -294,11 +261,8 @@ contract Merchant is Ownable {
     */
   function approveTransaction(uint256 _amount, address _buyer) public {
     require(merchantStorage.getShopBalance(msg.sender) >= _amount);
-
     merchantStorage.setShopBalance(msg.sender, merchantStorage.getShopBalance(msg.sender).sub(_amount));
     merchantStorage.approveBuy(msg.sender, _buyer, _amount);
-    // merchantStorage.setShopLockBalance(msg.sender,_buyer, _amount);
-
     uint256 totalLockAmount = merchantStorage.getTotalLockBalance(msg.sender).add(_amount);
     merchantStorage.setTotalLockBalance(msg.sender, totalLockAmount);
     emit ApproveTransaction(msg.sender, address(token), _amount);
@@ -311,14 +275,13 @@ contract Merchant is Ownable {
     uint256 _amount
   ) external view returns (uint256) {
     return merchantStorage.checkTransactionApproved(_seller, _buyer, _amount);
-    // return merchantStorage.getShopLockBalance(_seller, _buyer);
   }
 
   /*
     It first function for setup merchant of seller ,it deposit amount of token to sell
     _amount is value of token to want a sell 
     */
-  function setupShop(uint256 _amount) public payable notSuspendUser {
+  function setupShop(uint256 _amount) public notSuspendUser {
     require(token.allowance(msg.sender, address(this)) >= _amount);
     token.transferFrom(msg.sender, address(this), _amount);
     merchantStorage.setShopBalance(msg.sender, _amount);
@@ -335,11 +298,11 @@ contract Merchant is Ownable {
     */
   function deleteShop() public isCanDeleteShop {
     require(merchantStorage.getShopBalance(msg.sender) > 0);
-    uint256 totalBalance = merchantStorage.getShopBalance(msg.sender);
-    token.transferFrom(address(this), msg.sender, totalBalance);
+    uint256 shopBalance = merchantStorage.getShopBalance(msg.sender);
+    token.transferFrom(address(this), msg.sender, shopBalance);
     merchantStorage.setShopBalance(msg.sender, 0);
 
-    emit DeleteShop(msg.sender, address(token), totalBalance);
+    emit DeleteShop(msg.sender, address(token), shopBalance);
   }
 
   /*

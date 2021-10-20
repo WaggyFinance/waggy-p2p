@@ -17,7 +17,6 @@ export type { RewardCalculator } from "./RewardCalculator";
 export type { WaggyToken } from "./WaggyToken";
 export type { WERC20 } from "./WERC20";
 export type { Validator } from "./Validator";
-export type { WagTest } from "./WagTest";
 
 export { Ownable__factory } from "./factories/Ownable__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
@@ -35,4 +34,3 @@ export { RewardCalculator__factory } from "./factories/RewardCalculator__factory
 export { WaggyToken__factory } from "./factories/WaggyToken__factory";
 export { WERC20__factory } from "./factories/WERC20__factory";
 export { Validator__factory } from "./factories/Validator__factory";
-export { WagTest__factory } from "./factories/WagTest__factory";
