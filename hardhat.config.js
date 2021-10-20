@@ -7,6 +7,7 @@ require('@typechain/hardhat')
 require('@nomiclabs/hardhat-ethers')
 require('@nomiclabs/hardhat-waffle')
 require("@nomiclabs/hardhat-etherscan");
+require("dotenv").config();
 // require('hardhat-contract-sizer');
 
 // require('hardhat-docgen');
@@ -19,9 +20,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     console.log(account.address);
   }
 });
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -48,21 +46,21 @@ module.exports = {
     },
     testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
-      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+      accounts: { mnemonic: process.env.mnemonic },
     },
     ropsten:{
       url:'https://ropsten.infura.io/v3/d6e674a0c8044708ad1ec2d87cc2b47c',
-      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+      accounts: { mnemonic: process.env.mnemonic },
       gas: 2100000,
       gasPrice: 8000000000
     },
     kovan: {
       url:'https://kovan.infura.io/v3/b87b958442314159a5c79f682ccee74d',
-      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+      accounts: { mnemonic: process.env.mnemonic },
     },
     rinkeby: {
       url:'https://rinkeby.infura.io/v3/c606085219ca47d2acabfe5cc00395b6',
-      accounts: { mnemonic: 'obey tone fragile mail pig fork fan act delay frog crumble into' },
+      accounts: { mnemonic: process.env.mnemonic },
       mining: {
         auto: true,
         interval: 100
@@ -76,9 +74,7 @@ module.exports = {
     strict: true,
   },
   etherscan: {
-    apiKey:"549MN373MW3K2D4VZXMDJTKXB8U6AM569Z" //Rinkeby
-    // apiKey:"KEARCXBR66GFVV412HZRE61T92P4U5HC4K" //KOvan
-    // apiKey: "Y4QFQMQATC48JSZ81VDBVR18E118EA3Y7I"//BSC Testnet
+    apiKey:process.env.ether_scan_key
   },
   gasReporter: {
     currency: 'ETH',
