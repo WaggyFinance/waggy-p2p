@@ -6,6 +6,7 @@
 const hre = require("hardhat");
 const ContractJSON = require("../contract.json");
 const fs = require("fs");
+const { ethers } = require("ethers");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -17,27 +18,31 @@ async function main() {
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
   // Waggy token
-  const MasterWaggy = await hre.ethers.getContractFactory("MasterWaggy");
-  const masterWagggy = await MasterWaggy.deploy(ContractJSON.waggyToken);
+  const MasterChef = await hre.ethers.getContractFactory("MasterChef");
 
-  await masterWagggy.deployed();
-  ContractJSON.masterWagggy =masterWagggy.address;
-  console.log(`masterWagggy address: ${masterWagggy.address}`)
+  const masterChef = await MasterChef.deploy(
+    ContractJSON.waggyToken,
+    accounts[0].address,
+    ethers.utils.parseEther("80"),
+    9514490
+  );
+
+  await masterChef.deployed();
+
+  ContractJSON.masterChef = masterChef.address;
+  console.log(`masterChef address: ${masterChef.address}`);
   await hre.run("verify:verify", {
-    address: masterWagggy.address,
-    contract: "contracts/farm/MasterWaggy.sol:MasterWaggy",
-    constructorArguments: [
-      ContractJSON.waggyToken
-    ],
+    address: masterChef.address,
+    contract: "contracts/farm/MasterChef.sol:MasterChef",
+    constructorArguments: [ContractJSON.waggyToken, accounts[0].address, ethers.utils.parseEther("80"), 9514490],
   });
-  
+
   console.log("✅ Done Verify Contract");
 
   const jsonString = JSON.stringify(ContractJSON, null, 2);
   console.log(jsonString);
   await fs.writeFileSync("./contract.json", jsonString);
   console.log("Update file done.");
-
 }
 
 // We recommend this pattern to be able to use async/await everywhere

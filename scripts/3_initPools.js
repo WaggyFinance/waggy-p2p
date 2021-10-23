@@ -10,7 +10,7 @@ async function main() {
   const waggyToken = await WaggyToken.attach(ContractJSON.waggyToken);
   // attach MasterWaggy
   const MasterWaggy = await hre.ethers.getContractFactory("MasterWaggy");
-  const masterWaggy = await MasterWaggy.attach(ContractJSON.masterWaggy);
+  const masterWaggy = await MasterWaggy.attach(ContractJSON.masterWagggy);
 
   const WERC20 = await hre.ethers.getContractFactory("WERC20");
   const busdToken = await WERC20.attach(ContractJSON.busdToken)
