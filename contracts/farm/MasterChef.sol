@@ -77,6 +77,8 @@ contract MasterChef is Ownable {
     // The block number when CAKE mining starts.
     uint256 public startBlock;
 
+    uint256 public lockRewardPercent = 9000; //90%
+
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
@@ -101,7 +103,6 @@ contract MasterChef is Ownable {
         }));
 
         totalAllocPoint = 1000;
-
     }
 
     function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
@@ -198,7 +199,6 @@ contract MasterChef is Ownable {
             updatePool(pid);
         }
     }
-
 
     // Update reward variables of the given pool to be up-to-date.
     function updatePool(uint256 _pid) public {
@@ -311,8 +311,9 @@ contract MasterChef is Ownable {
      // Safe wag transfer function, just in case if rounding error causes pool to not have enough Wags.
     function safeWagTransfer(address _to, uint256 _amount) internal {
         wag.transfer(_to, _amount);
+        // lock after claim rewad
+        wag.lock(_to,_amount.mul(lockRewardPercent).div(1000));
     }
-
 
     // Update dev address by the previous dev.
     function dev(address _devaddr) public {

@@ -59,6 +59,12 @@ contract WaggyToken is ERC20, Ownable, AccessControl {
     endReleaseBlock = _endReleaseBlock;
   }
 
+  /// @dev Set endReleaseBlock
+  /// @param _endReleaseBlock The new endReleaseBlock
+  function setEndReleaseBlock(uint256 _endReleaseBlock) external onlyOwner {
+    endReleaseBlock = _endReleaseBlock;
+  }
+
   /// @dev Set cap. Cap must lower than previous cap. Only Governor can adjust
   /// @param _cap The new cap
   function setCap(uint256 _cap) external onlyGovernor {
