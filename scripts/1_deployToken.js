@@ -15,11 +15,11 @@ async function main() {
   // manually to make sure everything is compiled
 
   await hre.run("compile");
-  const accounts = await hre.ethers.getSigners();
+  const [deploer,governor] = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
   // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
-  const waggyToken = await WaggyToken.deploy();
+  const waggyToken = await hre.upgrades.deployProxy(WaggyToken,[governor.address,9544751,9944721]);
 
   await waggyToken.deployed();
   //  mock token
@@ -50,11 +50,11 @@ async function main() {
 
   console.log("✅ Done deploying a WAGGYTOKEN");
   console.log(">> Start Verify Contract");
-  await hre.run("verify:verify", {
-    address: waggyToken.address,
-    contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
-    constructorArguments: [],
-  });
+  // await hre.run("verify:verify", {
+  //   address: waggyToken.address,
+  //   contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
+  //   constructorArguments: [],
+  // });
   await hre.run("verify:verify", {
     address: busdToken.address,
     contract: "contracts/p2p/WERC20.sol:WERC20",

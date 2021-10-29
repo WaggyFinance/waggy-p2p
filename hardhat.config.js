@@ -7,6 +7,7 @@ require("@typechain/hardhat");
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require('@openzeppelin/hardhat-upgrades');
 require("dotenv").config();
 // require('hardhat-contract-sizer');
 

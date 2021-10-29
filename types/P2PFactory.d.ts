@@ -21,7 +21,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface P2PFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "createNewMerchant(address,address,address,address,address)": FunctionFragment;
     "feeCollector()": FunctionFragment;
     "getFactoryStorage()": FunctionFragment;
     "getMerchantByToken(address)": FunctionFragment;
@@ -31,10 +30,6 @@ interface P2PFactoryInterface extends ethers.utils.Interface {
     "updateMechant(address,address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "createNewMerchant",
-    values: [string, string, string, string, string]
-  ): string;
   encodeFunctionData(
     functionFragment: "feeCollector",
     values?: undefined
@@ -61,10 +56,6 @@ interface P2PFactoryInterface extends ethers.utils.Interface {
     values: [string, string]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "createNewMerchant",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "feeCollector",
     data: BytesLike
@@ -180,15 +171,6 @@ export class P2PFactory extends BaseContract {
   interface: P2PFactoryInterface;
 
   functions: {
-    createNewMerchant(
-      _token: string,
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _blackListUser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     feeCollector(overrides?: CallOverrides): Promise<[string]>;
 
     getFactoryStorage(overrides?: CallOverrides): Promise<[string]>;
@@ -215,15 +197,6 @@ export class P2PFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  createNewMerchant(
-    _token: string,
-    _gov: string,
-    _rewardCalculator: string,
-    _feeCalculator: string,
-    _blackListUser: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   feeCollector(overrides?: CallOverrides): Promise<string>;
 
@@ -252,15 +225,6 @@ export class P2PFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    createNewMerchant(
-      _token: string,
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _blackListUser: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     feeCollector(overrides?: CallOverrides): Promise<string>;
 
     getFactoryStorage(overrides?: CallOverrides): Promise<string>;
@@ -361,15 +325,6 @@ export class P2PFactory extends BaseContract {
   };
 
   estimateGas: {
-    createNewMerchant(
-      _token: string,
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _blackListUser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     feeCollector(overrides?: CallOverrides): Promise<BigNumber>;
 
     getFactoryStorage(overrides?: CallOverrides): Promise<BigNumber>;
@@ -398,15 +353,6 @@ export class P2PFactory extends BaseContract {
   };
 
   populateTransaction: {
-    createNewMerchant(
-      _token: string,
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _blackListUser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     feeCollector(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getFactoryStorage(overrides?: CallOverrides): Promise<PopulatedTransaction>;

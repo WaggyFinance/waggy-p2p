@@ -75,7 +75,7 @@ contract BlackListUser is Ownable {
       user.amount = 0;
       return uint256(user.status);
     }
-    return 0;
+    return uint256(user.status);
   }
 
   function getUserStatus(address _user) external view returns (uint256) {

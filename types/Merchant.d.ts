@@ -21,11 +21,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MerchantInterface extends ethers.utils.Interface {
   functions: {
-    "appealSellTransaction(address,address,uint256,string)": FunctionFragment;
-    "appealTransaction(address,address,uint256)": FunctionFragment;
     "approveTransaction(uint256,address)": FunctionFragment;
-    "buyerAcceptSellTransction()": FunctionFragment;
-    "cancelSellTransaction(address,address,uint256,string)": FunctionFragment;
     "cancelTransaction(address,address,uint256,string)": FunctionFragment;
     "deleteShop()": FunctionFragment;
     "feeCalculator()": FunctionFragment;
@@ -33,43 +29,27 @@ interface MerchantInterface extends ethers.utils.Interface {
     "getApproveTransaction(address,address,uint256)": FunctionFragment;
     "getBuyerTransaction(address,address)": FunctionFragment;
     "getFeeCollector()": FunctionFragment;
-    "getMerchantStorage()": FunctionFragment;
-    "getSellerDeposit(address,address)": FunctionFragment;
-    "getShopBalance(address)": FunctionFragment;
-    "merchantStorage()": FunctionFragment;
+    "getTransactionByIndex(address,address,uint256)": FunctionFragment;
+    "initialize(address,address,address,address,address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerClaimToken()": FunctionFragment;
     "releaseToken(address,address,uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "rewardCalculator()": FunctionFragment;
-    "sellerDeposit(address,uint256)": FunctionFragment;
-    "sellerReleaseToken(address,address,uint256)": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
     "setupShop(uint256)": FunctionFragment;
+    "shopBalance(address)": FunctionFragment;
+    "shopLockBalance(address)": FunctionFragment;
+    "successTransactionCount(address)": FunctionFragment;
+    "totalLockBalance(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateFeeCalculator(address)": FunctionFragment;
     "updateRewardCalculator(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "appealSellTransaction",
-    values: [string, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "appealTransaction",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "approveTransaction",
     values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "buyerAcceptSellTransction",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cancelSellTransaction",
-    values: [string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTransaction",
@@ -100,20 +80,12 @@ interface MerchantInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getMerchantStorage",
-    values?: undefined
+    functionFragment: "getTransactionByIndex",
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getSellerDeposit",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getShopBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "merchantStorage",
-    values?: undefined
+    functionFragment: "initialize",
+    values: [string, string, string, string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -133,20 +105,25 @@ interface MerchantInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "sellerDeposit",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sellerReleaseToken",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setBlackList",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setupShop",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "shopBalance", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "shopLockBalance",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "successTransactionCount",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalLockBalance",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -162,23 +139,7 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "appealSellTransaction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "appealTransaction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "approveTransaction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "buyerAcceptSellTransction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancelSellTransaction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -207,21 +168,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getMerchantStorage",
+    functionFragment: "getTransactionByIndex",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSellerDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getShopBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "merchantStorage",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerClaimToken",
@@ -240,18 +190,26 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "sellerDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "sellerReleaseToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setBlackList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setupShop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "shopBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "shopLockBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "successTransactionCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalLockBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -266,6 +224,7 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "AppealTransaction(address,address,uint256)": EventFragment;
     "ApproveTransaction(address,address,uint256)": EventFragment;
     "CancelTransaction(address,address,uint256)": EventFragment;
     "DeleteShop(address,address,uint256)": EventFragment;
@@ -275,6 +234,7 @@ interface MerchantInterface extends ethers.utils.Interface {
     "SetupShop(address,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AppealTransaction"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApproveTransaction"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CancelTransaction"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DeleteShop"): EventFragment;
@@ -284,9 +244,17 @@ interface MerchantInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SetupShop"): EventFragment;
 }
 
+export type AppealTransactionEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    seller: string;
+    buyer: string;
+    balance: BigNumber;
+  }
+>;
+
 export type ApproveTransactionEvent = TypedEvent<
   [string, string, BigNumber] & {
-    owner: string;
+    seller: string;
     token: string;
     amount: BigNumber;
   }
@@ -294,7 +262,7 @@ export type ApproveTransactionEvent = TypedEvent<
 
 export type CancelTransactionEvent = TypedEvent<
   [string, string, BigNumber] & {
-    owner: string;
+    seller: string;
     token: string;
     amount: BigNumber;
   }
@@ -302,7 +270,7 @@ export type CancelTransactionEvent = TypedEvent<
 
 export type DeleteShopEvent = TypedEvent<
   [string, string, BigNumber] & {
-    owner: string;
+    seller: string;
     token: string;
     balance: BigNumber;
   }
@@ -314,8 +282,8 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type ReleaseTokenEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber] & {
-    sender: string;
-    receipt: string;
+    seller: string;
+    buyer: string;
     token: string;
     amount: BigNumber;
     reward: BigNumber;
@@ -332,7 +300,7 @@ export type SellerDepositEvent = TypedEvent<
 
 export type SetupShopEvent = TypedEvent<
   [string, string, BigNumber] & {
-    owner: string;
+    seller: string;
     token: string;
     amount: BigNumber;
   }
@@ -382,41 +350,14 @@ export class Merchant extends BaseContract {
   interface: MerchantInterface;
 
   functions: {
-    appealSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    appealTransaction(
-      _merchant: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    buyerAcceptSellTransction(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    cancelSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     cancelTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
@@ -455,20 +396,31 @@ export class Merchant extends BaseContract {
 
     getFeeCollector(overrides?: CallOverrides): Promise<[string]>;
 
-    getMerchantStorage(overrides?: CallOverrides): Promise<[string]>;
-
-    getSellerDeposit(
+    getTransactionByIndex(
       _seller: string,
-      _merchant: string,
+      _buyer: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber, BigNumber] & {
+        status: BigNumber;
+        amount: BigNumber;
+        remark: string;
+        lockAmount: BigNumber;
+        createdAt: BigNumber;
+        updateAt: BigNumber;
+      }
+    >;
 
-    getShopBalance(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    merchantStorage(overrides?: CallOverrides): Promise<[string]>;
+    initialize(
+      _token: string,
+      _gov: string,
+      _rewardCalculator: string,
+      _feeCalculator: string,
+      _feeCollector: string,
+      _blackListUser: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -489,19 +441,6 @@ export class Merchant extends BaseContract {
 
     rewardCalculator(overrides?: CallOverrides): Promise<[string]>;
 
-    sellerDeposit(
-      _merchant: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    sellerReleaseToken(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setBlackList(
       _blackList: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -511,6 +450,23 @@ export class Merchant extends BaseContract {
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    shopBalance(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    shopLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    successTransactionCount(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    totalLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     transferOwnership(
       newOwner: string,
@@ -528,41 +484,14 @@ export class Merchant extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  appealSellTransaction(
-    _seller: string,
-    _buyer: string,
-    _amount: BigNumberish,
-    _remark: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  appealTransaction(
-    _merchant: string,
-    _buyer: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   approveTransaction(
     _amount: BigNumberish,
     _buyer: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  buyerAcceptSellTransction(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  cancelSellTransaction(
-    _seller: string,
-    _buyer: string,
-    _amount: BigNumberish,
-    _remark: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   cancelTransaction(
-    _merchant: string,
+    _seller: string,
     _buyer: string,
     _amount: BigNumberish,
     _remark: string,
@@ -601,17 +530,31 @@ export class Merchant extends BaseContract {
 
   getFeeCollector(overrides?: CallOverrides): Promise<string>;
 
-  getMerchantStorage(overrides?: CallOverrides): Promise<string>;
-
-  getSellerDeposit(
+  getTransactionByIndex(
     _seller: string,
-    _merchant: string,
+    _buyer: string,
+    _index: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<
+    [BigNumber, BigNumber, string, BigNumber, BigNumber, BigNumber] & {
+      status: BigNumber;
+      amount: BigNumber;
+      remark: string;
+      lockAmount: BigNumber;
+      createdAt: BigNumber;
+      updateAt: BigNumber;
+    }
+  >;
 
-  getShopBalance(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  merchantStorage(overrides?: CallOverrides): Promise<string>;
+  initialize(
+    _token: string,
+    _gov: string,
+    _rewardCalculator: string,
+    _feeCalculator: string,
+    _feeCollector: string,
+    _blackListUser: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -632,19 +575,6 @@ export class Merchant extends BaseContract {
 
   rewardCalculator(overrides?: CallOverrides): Promise<string>;
 
-  sellerDeposit(
-    _merchant: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  sellerReleaseToken(
-    _seller: string,
-    _buyer: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setBlackList(
     _blackList: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -654,6 +584,17 @@ export class Merchant extends BaseContract {
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  shopBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  shopLockBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  successTransactionCount(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  totalLockBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
@@ -671,39 +612,14 @@ export class Merchant extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    appealSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    appealTransaction(
-      _merchant: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    buyerAcceptSellTransction(overrides?: CallOverrides): Promise<void>;
-
-    cancelSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     cancelTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
@@ -740,20 +656,31 @@ export class Merchant extends BaseContract {
 
     getFeeCollector(overrides?: CallOverrides): Promise<string>;
 
-    getMerchantStorage(overrides?: CallOverrides): Promise<string>;
-
-    getSellerDeposit(
+    getTransactionByIndex(
       _seller: string,
-      _merchant: string,
+      _buyer: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber, BigNumber] & {
+        status: BigNumber;
+        amount: BigNumber;
+        remark: string;
+        lockAmount: BigNumber;
+        createdAt: BigNumber;
+        updateAt: BigNumber;
+      }
+    >;
 
-    getShopBalance(
-      owner: string,
+    initialize(
+      _token: string,
+      _gov: string,
+      _rewardCalculator: string,
+      _feeCalculator: string,
+      _feeCollector: string,
+      _blackListUser: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    merchantStorage(overrides?: CallOverrides): Promise<string>;
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -770,22 +697,26 @@ export class Merchant extends BaseContract {
 
     rewardCalculator(overrides?: CallOverrides): Promise<string>;
 
-    sellerDeposit(
-      _merchant: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    sellerReleaseToken(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setBlackList(_blackList: string, overrides?: CallOverrides): Promise<void>;
 
     setupShop(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    shopBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    shopLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    successTransactionCount(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -804,58 +735,76 @@ export class Merchant extends BaseContract {
   };
 
   filters: {
+    "AppealTransaction(address,address,uint256)"(
+      seller?: null,
+      buyer?: null,
+      balance?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { seller: string; buyer: string; balance: BigNumber }
+    >;
+
+    AppealTransaction(
+      seller?: null,
+      buyer?: null,
+      balance?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { seller: string; buyer: string; balance: BigNumber }
+    >;
+
     "ApproveTransaction(address,address,uint256)"(
-      owner?: null,
+      seller?: null,
       token?: null,
       amount?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; amount: BigNumber }
+      { seller: string; token: string; amount: BigNumber }
     >;
 
     ApproveTransaction(
-      owner?: null,
+      seller?: null,
       token?: null,
       amount?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; amount: BigNumber }
+      { seller: string; token: string; amount: BigNumber }
     >;
 
     "CancelTransaction(address,address,uint256)"(
-      owner?: null,
+      seller?: null,
       token?: null,
       amount?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; amount: BigNumber }
+      { seller: string; token: string; amount: BigNumber }
     >;
 
     CancelTransaction(
-      owner?: null,
+      seller?: null,
       token?: null,
       amount?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; amount: BigNumber }
+      { seller: string; token: string; amount: BigNumber }
     >;
 
     "DeleteShop(address,address,uint256)"(
-      owner?: null,
+      seller?: null,
       token?: null,
       balance?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; balance: BigNumber }
+      { seller: string; token: string; balance: BigNumber }
     >;
 
     DeleteShop(
-      owner?: null,
+      seller?: null,
       token?: null,
       balance?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; balance: BigNumber }
+      { seller: string; token: string; balance: BigNumber }
     >;
 
     "OwnershipTransferred(address,address)"(
@@ -875,16 +824,16 @@ export class Merchant extends BaseContract {
     >;
 
     "ReleaseToken(address,address,address,uint256,uint256)"(
-      sender?: null,
-      receipt?: null,
+      seller?: null,
+      buyer?: null,
       token?: null,
       amount?: null,
       reward?: null
     ): TypedEventFilter<
       [string, string, string, BigNumber, BigNumber],
       {
-        sender: string;
-        receipt: string;
+        seller: string;
+        buyer: string;
         token: string;
         amount: BigNumber;
         reward: BigNumber;
@@ -892,16 +841,16 @@ export class Merchant extends BaseContract {
     >;
 
     ReleaseToken(
-      sender?: null,
-      receipt?: null,
+      seller?: null,
+      buyer?: null,
       token?: null,
       amount?: null,
       reward?: null
     ): TypedEventFilter<
       [string, string, string, BigNumber, BigNumber],
       {
-        sender: string;
-        receipt: string;
+        seller: string;
+        buyer: string;
         token: string;
         amount: BigNumber;
         reward: BigNumber;
@@ -927,60 +876,33 @@ export class Merchant extends BaseContract {
     >;
 
     "SetupShop(address,address,uint256)"(
-      owner?: null,
+      seller?: null,
       token?: null,
       amount?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; amount: BigNumber }
+      { seller: string; token: string; amount: BigNumber }
     >;
 
     SetupShop(
-      owner?: null,
+      seller?: null,
       token?: null,
       amount?: null
     ): TypedEventFilter<
       [string, string, BigNumber],
-      { owner: string; token: string; amount: BigNumber }
+      { seller: string; token: string; amount: BigNumber }
     >;
   };
 
   estimateGas: {
-    appealSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    appealTransaction(
-      _merchant: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    buyerAcceptSellTransction(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    cancelSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     cancelTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
@@ -1010,20 +932,22 @@ export class Merchant extends BaseContract {
 
     getFeeCollector(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMerchantStorage(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSellerDeposit(
+    getTransactionByIndex(
       _seller: string,
-      _merchant: string,
+      _buyer: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getShopBalance(
-      owner: string,
-      overrides?: CallOverrides
+    initialize(
+      _token: string,
+      _gov: string,
+      _rewardCalculator: string,
+      _feeCalculator: string,
+      _feeCollector: string,
+      _blackListUser: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    merchantStorage(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1044,19 +968,6 @@ export class Merchant extends BaseContract {
 
     rewardCalculator(overrides?: CallOverrides): Promise<BigNumber>;
 
-    sellerDeposit(
-      _merchant: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    sellerReleaseToken(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setBlackList(
       _blackList: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1065,6 +976,23 @@ export class Merchant extends BaseContract {
     setupShop(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    shopBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    shopLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    successTransactionCount(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -1084,41 +1012,14 @@ export class Merchant extends BaseContract {
   };
 
   populateTransaction: {
-    appealSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    appealTransaction(
-      _merchant: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    buyerAcceptSellTransction(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    cancelSellTransaction(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      _remark: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     cancelTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       _amount: BigNumberish,
       _remark: string,
@@ -1148,22 +1049,22 @@ export class Merchant extends BaseContract {
 
     getFeeCollector(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getMerchantStorage(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSellerDeposit(
+    getTransactionByIndex(
       _seller: string,
-      _merchant: string,
+      _buyer: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getShopBalance(
-      owner: string,
-      overrides?: CallOverrides
+    initialize(
+      _token: string,
+      _gov: string,
+      _rewardCalculator: string,
+      _feeCalculator: string,
+      _feeCollector: string,
+      _blackListUser: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    merchantStorage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1184,19 +1085,6 @@ export class Merchant extends BaseContract {
 
     rewardCalculator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    sellerDeposit(
-      _merchant: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    sellerReleaseToken(
-      _seller: string,
-      _buyer: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setBlackList(
       _blackList: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1205,6 +1093,26 @@ export class Merchant extends BaseContract {
     setupShop(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    shopBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    shopLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    successTransactionCount(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalLockBalance(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

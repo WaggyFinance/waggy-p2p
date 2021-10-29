@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: Unlicense
 /*
 #   __      __    _____     ________   ________ _____.___.
 #  /  \    /  \  /  _  \   /  _____/  /  _____/ \__  |   |
@@ -7,17 +8,16 @@
 #         \/           \/         \/         \/  \/       
 */
 
-//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
-
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract WaggyToken is ERC20, Ownable, AccessControl {
+contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgradeable {
   using SafeMath for uint256;
 
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -46,12 +46,14 @@ contract WaggyToken is ERC20, Ownable, AccessControl {
 
   address[] public minters;
 
-  constructor(
+  function initialize(
     address _governor,
     uint256 _startReleaseBlock,
     uint256 _endReleaseBlock
-  ) ERC20("Waggy Token", "WAG") {
-    // _mint(msg.sender, 100000000 * 10**18);
+  ) public initializer {
+    __ERC20_init("Waggy Token", "WAG");
+    __Ownable_init();
+    __AccessControl_init();
     require(_endReleaseBlock > _startReleaseBlock, "WAG::constructor::endReleaseBlock < startReleaseBlock");
     cap = 100000000 * 10**18;
     governor = _governor;

@@ -1,59 +1,27 @@
-const hre = require("hardhat");
+const { ethers, upgrades } = require('hardhat');
 const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {
   console.log("Start deploy");
-  const accounts = await hre.ethers.getSigners();
-  // deploy Factory
-  const P2PFactory = await hre.ethers.getContractFactory("P2PFactory");
-  const p2pfactory = await P2PFactory.attach(ContractJSON.p2pfactory);
-  console.log(`Factory address : ${ContractJSON.p2pfactory}`);
-
+  const [deployer,feeCollector] = await ethers.getSigners();
   // deploy merchant
   const deployMerchant = async (targetToken,merchangeName) => {
+   
     console.log(`Start deploy merchant ${merchangeName} with address ${targetToken}`)
-    console.log("call estimateGas.");
-    const estimateGas = await p2pfactory.estimateGas.createNewMerchant(
+    const Merchant = await ethers.getContractFactory("Merchant");
+    const merchant = await upgrades.deployProxy(Merchant,[
       targetToken,
       ContractJSON.waggyToken,
       ContractJSON.rewardCalculator,
       ContractJSON.feeCalculator,
-      ContractJSON.blackListUser,
-      {
-        from: accounts[0].address,
-      }
-    );
-    console.log(`estimateGas used ${estimateGas}`);
-    const tx = await p2pfactory.createNewMerchant(
-      targetToken,
-      ContractJSON.waggyToken,
-      ContractJSON.rewardCalculator,
-      ContractJSON.feeCalculator,
-      ContractJSON.blackListUser,
-      { from: accounts[0].address, gasLimit: estimateGas.add(200000) }
-    );
-    await tx.wait(1);
-    const merchantsAddress = await p2pfactory.getMerchantByToken(targetToken);
-    const Merchant = await hre.ethers.getContractFactory("Merchant");
+      feeCollector.address,
+      ContractJSON.blackListUser
+    ])
+    await merchant.deployed();
+    const merchantsAddress = merchant.address;
     ContractJSON[merchangeName] = merchantsAddress;
-
-    const merchant = await Merchant.attach(merchantsAddress);
-    console.log("Merchants address : ", merchantsAddress);
-    const merchantStorage = await merchant.getMerchantStorage();
-    await hre.run("verify:verify", {
-      address: merchantsAddress,
-      contract: "contracts/p2p/Merchant.sol:Merchant",
-      constructorArguments: [
-        targetToken,
-        ContractJSON.waggyToken,
-        ContractJSON.rewardCalculator,
-        ContractJSON.feeCalculator,
-        merchantStorage,
-        accounts[0].address,
-        ContractJSON.blackListUser,
-      ],
-    });
+    console.log(`Deploy merchant done. at address ${merchantsAddress}`);
   };
 
   const tokenData = {
@@ -65,7 +33,7 @@ async function main() {
   }
   console.log("start factory merchant")
   for (const key in tokenData) {
-    try {
+     try {
      await deployMerchant(tokenData[key],key)
     } catch (error) {
       console.log(`Can't create merchant ${key}

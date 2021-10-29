@@ -21,23 +21,77 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface WaggyTokenInterface extends ethers.utils.Interface {
   functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "DELEGATION_TYPEHASH()": FunctionFragment;
+    "DOMAIN_TYPEHASH()": FunctionFragment;
+    "MINTER_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "canUnlockAmount(address)": FunctionFragment;
+    "cap()": FunctionFragment;
+    "checkpoints(address,uint32)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "delegate(address)": FunctionFragment;
+    "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "delegates(address)": FunctionFragment;
+    "endReleaseBlock()": FunctionFragment;
+    "getCurrentVotes(address)": FunctionFragment;
+    "getPriorVotes(address,uint256)": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "governor()": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
+    "initialize(address,uint256,uint256)": FunctionFragment;
+    "lastUnlockBlock(address)": FunctionFragment;
+    "lock(address,uint256)": FunctionFragment;
+    "lockOf(address)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
+    "minters(uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "nonces(address)": FunctionFragment;
+    "numCheckpoints(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "revokeRoles(address[])": FunctionFragment;
+    "setCap(uint256)": FunctionFragment;
+    "setEndReleaseBlock(uint256)": FunctionFragment;
+    "setGovernor(address)": FunctionFragment;
+    "setMinter(address[])": FunctionFragment;
+    "startReleaseBlock()": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
+    "totalBalanceOf(address)": FunctionFragment;
+    "totalLock()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
+    "transferAll(address)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unlock()": FunctionFragment;
+    "unlockedSupply()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DELEGATION_TYPEHASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DOMAIN_TYPEHASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MINTER_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -47,26 +101,130 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "canUnlockAmount",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "cap", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "checkpoints",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "delegate", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "delegateBySig",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "delegates", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "endReleaseBlock",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCurrentVotes",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPriorVotes",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "governor", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastUnlockBlock",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lock",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "lockOf", values: [string]): string;
+  encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "minters",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "nonces", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "numCheckpoints",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRoles",
+    values: [string[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCap",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setEndReleaseBlock",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "setGovernor", values: [string]): string;
+  encodeFunctionData(functionFragment: "setMinter", values: [string[]]): string;
+  encodeFunctionData(
+    functionFragment: "startReleaseBlock",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "totalBalanceOf",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "totalLock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -75,6 +233,7 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     functionFragment: "transfer",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "transferAll", values: [string]): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
@@ -83,32 +242,136 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "unlock", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "unlockedSupply",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DELEGATION_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DOMAIN_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MINTER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "canUnlockAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "cap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "checkpoints",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "delegate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateBySig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "endReleaseBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPriorVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastUnlockBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lock", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lockOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "minters", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "numCheckpoints",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeRoles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setCap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setEndReleaseBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setGovernor",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setMinter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "startReleaseBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalBalanceOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "totalLock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferAll",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -117,15 +380,36 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockedSupply",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "CapChanged(uint256,uint256)": EventFragment;
+    "DelegateChanged(address,address,address)": EventFragment;
+    "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
+    "GovernorChanged(address,address)": EventFragment;
+    "Lock(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CapChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GovernorChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Lock"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -137,8 +421,52 @@ export type ApprovalEvent = TypedEvent<
   }
 >;
 
+export type CapChangedEvent = TypedEvent<
+  [BigNumber, BigNumber] & { prevCap: BigNumber; newCap: BigNumber }
+>;
+
+export type DelegateChangedEvent = TypedEvent<
+  [string, string, string] & {
+    delegator: string;
+    fromDelegate: string;
+    toDelegate: string;
+  }
+>;
+
+export type DelegateVotesChangedEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    delegate: string;
+    previousBalance: BigNumber;
+    newBalance: BigNumber;
+  }
+>;
+
+export type GovernorChangedEvent = TypedEvent<
+  [string, string] & { prevGovernor: string; newGovernor: string }
+>;
+
+export type LockEvent = TypedEvent<
+  [string, BigNumber] & { to: string; value: BigNumber }
+>;
+
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string] & {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
 >;
 
 export type TransferEvent = TypedEvent<
@@ -189,6 +517,14 @@ export class WaggyToken extends BaseContract {
   interface: WaggyTokenInterface;
 
   functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+
+    MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     allowance(
       owner: string,
       spender: string,
@@ -203,6 +539,19 @@ export class WaggyToken extends BaseContract {
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    canUnlockAmount(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    cap(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    checkpoints(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     decreaseAllowance(
@@ -211,11 +560,77 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    delegate(
+      delegatee: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    delegateBySig(
+      delegatee: string,
+      nonce: BigNumberish,
+      expiry: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    delegates(delegator: string, overrides?: CallOverrides): Promise<[string]>;
+
+    endReleaseBlock(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getCurrentVotes(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getPriorVotes(
+      account: string,
+      blockNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+
+    governor(overrides?: CallOverrides): Promise<[string]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    initialize(
+      _governor: string,
+      _startReleaseBlock: BigNumberish,
+      _endReleaseBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    lastUnlockBlock(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    lock(
+      _account: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    lockOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     mint(
       _receiver: string,
@@ -223,7 +638,13 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    minters(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    nonces(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    numCheckpoints(arg0: string, overrides?: CallOverrides): Promise<[number]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -231,20 +652,76 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRoles(
+      _minters: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setCap(
+      _cap: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setEndReleaseBlock(
+      _endReleaseBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setGovernor(
+      _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinter(
+      _minters: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    startReleaseBlock(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     symbol(overrides?: CallOverrides): Promise<[string]>;
+
+    totalBalanceOf(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    totalLock(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferAll(
+      _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
+      _sender: string,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -252,7 +729,21 @@ export class WaggyToken extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    unlock(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unlockedSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+  DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+  MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     owner: string,
@@ -268,6 +759,19 @@ export class WaggyToken extends BaseContract {
 
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  canUnlockAmount(
+    _account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  cap(overrides?: CallOverrides): Promise<BigNumber>;
+
+  checkpoints(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+
   decimals(overrides?: CallOverrides): Promise<number>;
 
   decreaseAllowance(
@@ -276,11 +780,77 @@ export class WaggyToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  delegate(
+    delegatee: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  delegateBySig(
+    delegatee: string,
+    nonce: BigNumberish,
+    expiry: BigNumberish,
+    v: BigNumberish,
+    r: BytesLike,
+    s: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  delegates(delegator: string, overrides?: CallOverrides): Promise<string>;
+
+  endReleaseBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getCurrentVotes(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getPriorVotes(
+    account: string,
+    blockNumber: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+  governor(overrides?: CallOverrides): Promise<string>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  initialize(
+    _governor: string,
+    _startReleaseBlock: BigNumberish,
+    _endReleaseBlock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  lastUnlockBlock(
+    _account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  lock(
+    _account: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  lockOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   mint(
     _receiver: string,
@@ -288,7 +858,13 @@ export class WaggyToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  minters(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
   name(overrides?: CallOverrides): Promise<string>;
+
+  nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  numCheckpoints(arg0: string, overrides?: CallOverrides): Promise<number>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -296,20 +872,76 @@ export class WaggyToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRoles(
+    _minters: string[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setCap(
+    _cap: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setEndReleaseBlock(
+    _endReleaseBlock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setGovernor(
+    _governor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinter(
+    _minters: string[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  startReleaseBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   symbol(overrides?: CallOverrides): Promise<string>;
+
+  totalBalanceOf(
+    _account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  totalLock(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
-    recipient: string,
-    amount: BigNumberish,
+    _recipient: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferAll(
+    _to: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   transferFrom(
-    sender: string,
-    recipient: string,
-    amount: BigNumberish,
+    _sender: string,
+    _recipient: string,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -318,7 +950,21 @@ export class WaggyToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  unlock(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unlockedSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+    MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
+
     allowance(
       owner: string,
       spender: string,
@@ -333,11 +979,67 @@ export class WaggyToken extends BaseContract {
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    canUnlockAmount(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    cap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    checkpoints(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+
     decimals(overrides?: CallOverrides): Promise<number>;
 
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    delegate(delegatee: string, overrides?: CallOverrides): Promise<void>;
+
+    delegateBySig(
+      delegatee: string,
+      nonce: BigNumberish,
+      expiry: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    delegates(delegator: string, overrides?: CallOverrides): Promise<string>;
+
+    endReleaseBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentVotes(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPriorVotes(
+      account: string,
+      blockNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    governor(overrides?: CallOverrides): Promise<string>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -347,32 +1049,99 @@ export class WaggyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    initialize(
+      _governor: string,
+      _startReleaseBlock: BigNumberish,
+      _endReleaseBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    lastUnlockBlock(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lock(
+      _account: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    lockOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     mint(
       _receiver: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    minters(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
     name(overrides?: CallOverrides): Promise<string>;
+
+    nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    numCheckpoints(arg0: string, overrides?: CallOverrides): Promise<number>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRoles(_minters: string[], overrides?: CallOverrides): Promise<void>;
+
+    setCap(_cap: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    setEndReleaseBlock(
+      _endReleaseBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setGovernor(_governor: string, overrides?: CallOverrides): Promise<void>;
+
+    setMinter(_minters: string[], overrides?: CallOverrides): Promise<void>;
+
+    startReleaseBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     symbol(overrides?: CallOverrides): Promise<string>;
+
+    totalBalanceOf(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalLock(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    transferAll(_to: string, overrides?: CallOverrides): Promise<void>;
+
     transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
+      _sender: string,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -380,6 +1149,10 @@ export class WaggyToken extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unlock(overrides?: CallOverrides): Promise<void>;
+
+    unlockedSupply(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -401,6 +1174,84 @@ export class WaggyToken extends BaseContract {
       { owner: string; spender: string; value: BigNumber }
     >;
 
+    "CapChanged(uint256,uint256)"(
+      prevCap?: null,
+      newCap?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { prevCap: BigNumber; newCap: BigNumber }
+    >;
+
+    CapChanged(
+      prevCap?: null,
+      newCap?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { prevCap: BigNumber; newCap: BigNumber }
+    >;
+
+    "DelegateChanged(address,address,address)"(
+      delegator?: string | null,
+      fromDelegate?: string | null,
+      toDelegate?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { delegator: string; fromDelegate: string; toDelegate: string }
+    >;
+
+    DelegateChanged(
+      delegator?: string | null,
+      fromDelegate?: string | null,
+      toDelegate?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { delegator: string; fromDelegate: string; toDelegate: string }
+    >;
+
+    "DelegateVotesChanged(address,uint256,uint256)"(
+      delegate?: string | null,
+      previousBalance?: null,
+      newBalance?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { delegate: string; previousBalance: BigNumber; newBalance: BigNumber }
+    >;
+
+    DelegateVotesChanged(
+      delegate?: string | null,
+      previousBalance?: null,
+      newBalance?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { delegate: string; previousBalance: BigNumber; newBalance: BigNumber }
+    >;
+
+    "GovernorChanged(address,address)"(
+      prevGovernor?: null,
+      newGovernor?: null
+    ): TypedEventFilter<
+      [string, string],
+      { prevGovernor: string; newGovernor: string }
+    >;
+
+    GovernorChanged(
+      prevGovernor?: null,
+      newGovernor?: null
+    ): TypedEventFilter<
+      [string, string],
+      { prevGovernor: string; newGovernor: string }
+    >;
+
+    "Lock(address,uint256)"(
+      to?: string | null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
+
+    Lock(
+      to?: string | null,
+      value?: null
+    ): TypedEventFilter<[string, BigNumber], { to: string; value: BigNumber }>;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -415,6 +1266,60 @@ export class WaggyToken extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
     >;
 
     "Transfer(address,address,uint256)"(
@@ -437,6 +1342,14 @@ export class WaggyToken extends BaseContract {
   };
 
   estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     allowance(
       owner: string,
       spender: string,
@@ -451,6 +1364,19 @@ export class WaggyToken extends BaseContract {
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    canUnlockAmount(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    cap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    checkpoints(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     decreaseAllowance(
@@ -459,11 +1385,80 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    delegate(
+      delegatee: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    delegateBySig(
+      delegatee: string,
+      nonce: BigNumberish,
+      expiry: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    delegates(delegator: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    endReleaseBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCurrentVotes(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPriorVotes(
+      account: string,
+      blockNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    governor(overrides?: CallOverrides): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    initialize(
+      _governor: string,
+      _startReleaseBlock: BigNumberish,
+      _endReleaseBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    lastUnlockBlock(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lock(
+      _account: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    lockOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       _receiver: string,
@@ -471,7 +1466,13 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    minters(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    numCheckpoints(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -479,20 +1480,76 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRoles(
+      _minters: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setCap(
+      _cap: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setEndReleaseBlock(
+      _endReleaseBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setGovernor(
+      _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinter(
+      _minters: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    startReleaseBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalBalanceOf(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalLock(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    transferAll(
+      _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
+      _sender: string,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -500,9 +1557,27 @@ export class WaggyToken extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    unlock(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unlockedSupply(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    DELEGATION_TYPEHASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     allowance(
       owner: string,
       spender: string,
@@ -520,6 +1595,19 @@ export class WaggyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    canUnlockAmount(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    checkpoints(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decreaseAllowance(
@@ -528,10 +1616,85 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    delegate(
+      delegatee: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    delegateBySig(
+      delegatee: string,
+      nonce: BigNumberish,
+      expiry: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    delegates(
+      delegator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    endReleaseBlock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getCurrentVotes(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPriorVotes(
+      account: string,
+      blockNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      _governor: string,
+      _startReleaseBlock: BigNumberish,
+      _endReleaseBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lastUnlockBlock(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lock(
+      _account: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lockOf(
+      _account: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     mint(
@@ -540,7 +1703,22 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    minters(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    nonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    numCheckpoints(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -548,20 +1726,76 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRoles(
+      _minters: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCap(
+      _cap: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setEndReleaseBlock(
+      _endReleaseBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setGovernor(
+      _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinter(
+      _minters: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    startReleaseBlock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalBalanceOf(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transfer(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferAll(
+      _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
-      amount: BigNumberish,
+      _sender: string,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -569,5 +1803,11 @@ export class WaggyToken extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    unlock(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockedSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

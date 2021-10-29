@@ -24,7 +24,7 @@ describe("Merchant Buyer", () => {
     [deployer, merchantSeller, buyer, eve] = await ethers.getSigners();
 
     const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
-     waggyToken = await WaggyToken.deploy();
+    waggyToken = await WaggyToken.deploy(deployer.address,0,'1000000000');
 
     await waggyToken.deployed();
 
@@ -47,8 +47,17 @@ describe("Merchant Buyer", () => {
     // deploy fee calculator
     const FeeCalculator = await hre.ethers.getContractFactory("FeeCalculator");
     const feeCalculator = await FeeCalculator.deploy();
-
     await feeCalculator.deployed();
+
+    // deploy fee calculator
+    const BlackListUser = await hre.ethers.getContractFactory(
+      "BlackListUser"
+    );
+    const blackListUser = await BlackListUser.deploy();
+    await blackListUser.deployed();
+
+    console.log("Black list address",blackListUser.address)
+
     // deploy merchant
 
     const BUSD = await hre.ethers.getContractFactory("WERC20");
@@ -59,11 +68,13 @@ describe("Merchant Buyer", () => {
 
     await factoryStorage.transferOwnership(p2pfactory.address);
     const BUSDAddress = wbusd.address;
+    
     const estimateGas = await p2pfactory.estimateGas.createNewMerchant(
       BUSDAddress,
       waggyToken.address,
       rewardCalculator.address,
       feeCalculator.address,
+      blackListUser.address,
       {
         from: deployer.address,
       }
@@ -73,6 +84,7 @@ describe("Merchant Buyer", () => {
       BUSDAddress,
       waggyToken.address,
       rewardCalculator.address,
+      feeCalculator.address,
       feeCalculator.address,
       { from: deployer.address, gasLimit: estimateGas.add(200000) }
     );
@@ -88,14 +100,17 @@ describe("Merchant Buyer", () => {
     const sellerBalance = await wbusd.balanceOf(merchantSeller.address)
     console.log(`Seller balance ${ethers.utils.formatEther(sellerBalance)}`)
 
+    await merchant.connect(deployer).setBlackList(blackListUser.address);
+
+    await waggyToken.setMinter([deployer.address,merchant.address]);
     // redeem reward.
-    await waggyToken.connect(deployer).transfer(merchant.address,ethers.utils.parseEther("100000"))
+    await waggyToken.connect(deployer).mint(merchant.address,ethers.utils.parseEther("100000"))
     // open shop for seller
     wbusd.connect(merchantSeller).approve(merchant.address, ethers.utils.parseEther("10000"));
     const allowance = await wbusd.connect(merchantSeller).allowance(merchantSeller.address,merchant.address)
     console.log(`Allowance this contracte : ${ethers.utils.formatEther(allowance)}`)
     await merchant.connect(merchantSeller).setupShop(ethers.utils.parseEther("2000"));
-
+    console.log('open shop done.');
     const balanceOf = await  wbusd.connect(merchantSeller).balanceOf(merchantSeller.address)
     let shopBalance = await merchant.connect(merchantSeller).getShopBalance(merchantSeller.address);
     // check balance after open shop
@@ -120,6 +135,10 @@ describe("Merchant Buyer", () => {
     expect(ethers.utils.formatEther(rewardBalance)).equal("80.0") //reward 8%
     expect(ethers.utils.formatEther(shopBalance)).equal("1000.0")
     expect(ethers.utils.formatEther(buyerTokenBalance)).equal("997.5") // fee 0.25
+    console.log('Close shop')
+    await merchant.connect(merchantSeller).deleteShop();
+    shopBalance = await merchant.connect(merchantSeller).getShopBalance(merchantSeller.address);
+    expect(ethers.utils.formatEther(shopBalance)).equal("0.0")
   });
 
   it("Sell token had cancel transaction", async () => {
@@ -137,7 +156,7 @@ describe("Merchant Buyer", () => {
     shopBalance = await merchant.connect(merchantSeller).getShopBalance(merchantSeller.address);
     expect(ethers.utils.formatEther(shopBalance)).equal("2000.0")
     expect(remark).equal("Timeout")
-    expect(status).equal("2")
+    expect(status).equal("3")
     expect(ethers.utils.formatEther(buyerTokenBalance)).equal("0.0")
   });
 });
