@@ -112,6 +112,11 @@
       "address": "0x3733c020A94FFa08bD217d1F7fbF44D51b2c0bf3",
       "txHash": "0x938fc2009ff15eb24e1572f4107437a6a85c2a06b3df758c6dd9ac3d515a7c76",
       "kind": "transparent"
+    },
+    {
+      "address": "0x958A991E3861eE7692e980e6491dAC55F8997FeE",
+      "txHash": "0xb61e4cd4df744d364d47803e905011d47c4d9d3081399552cb2339d8a56d1f00",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -987,6 +992,173 @@
           },
           "t_contract(ERC20)2209": {
             "label": "contract ERC20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "48403e8560fe96786dd6ba1244fc4d7dd685e2044b3002c3b543ed07a23f0df6": {
+      "address": "0xD4B490598EF18e4634CcD989b57a6c342a178e02",
+      "txHash": "0xc4a020fb7e7fc989fc4bfd0a86296aa4007cc951077639da1ad49101b2dc2f2d",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "wag",
+            "type": "t_contract(WaggyToken)10583",
+            "src": "contracts/farm/MasterChef.sol:42"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "devaddr",
+            "type": "t_address",
+            "src": "contracts/farm/MasterChef.sol:44"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "wagPerBlock",
+            "type": "t_uint256",
+            "src": "contracts/farm/MasterChef.sol:46"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "BONUS_MULTIPLIER",
+            "type": "t_uint256",
+            "src": "contracts/farm/MasterChef.sol:48"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "migrator",
+            "type": "t_contract(IMigratorChef)3726",
+            "src": "contracts/farm/MasterChef.sol:50"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "poolInfo",
+            "type": "t_array(t_struct(PoolInfo)3746_storage)dyn_storage",
+            "src": "contracts/farm/MasterChef.sol:53"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "userInfo",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(UserInfo)3736_storage))",
+            "src": "contracts/farm/MasterChef.sol:55"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "totalAllocPoint",
+            "type": "t_uint256",
+            "src": "contracts/farm/MasterChef.sol:57"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "startBlock",
+            "type": "t_uint256",
+            "src": "contracts/farm/MasterChef.sol:59"
+          },
+          {
+            "contract": "MasterChef",
+            "label": "lockRewardPercent",
+            "type": "t_uint256",
+            "src": "contracts/farm/MasterChef.sol:61"
+          }
+        ],
+        "types": {
+          "t_contract(WaggyToken)10583": {
+            "label": "contract WaggyToken"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IMigratorChef)3726": {
+            "label": "contract IMigratorChef"
+          },
+          "t_array(t_struct(PoolInfo)3746_storage)dyn_storage": {
+            "label": "struct MasterChef.PoolInfo[]"
+          },
+          "t_struct(PoolInfo)3746_storage": {
+            "label": "struct MasterChef.PoolInfo",
+            "members": [
+              {
+                "label": "lpToken",
+                "type": "t_contract(ERC20)2209"
+              },
+              {
+                "label": "allocPoint",
+                "type": "t_uint256"
+              },
+              {
+                "label": "lastRewardBlock",
+                "type": "t_uint256"
+              },
+              {
+                "label": "accWagPerShare",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_contract(ERC20)2209": {
+            "label": "contract ERC20"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(UserInfo)3736_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct MasterChef.UserInfo))"
+          },
+          "t_mapping(t_address,t_struct(UserInfo)3736_storage)": {
+            "label": "mapping(address => struct MasterChef.UserInfo)"
+          },
+          "t_struct(UserInfo)3736_storage": {
+            "label": "struct MasterChef.UserInfo",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "rewardDebt",
+                "type": "t_uint256"
+              }
+            ]
           },
           "t_array(t_uint256)49_storage": {
             "label": "uint256[49]"

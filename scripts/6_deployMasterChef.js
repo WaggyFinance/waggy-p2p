@@ -20,22 +20,23 @@ async function main() {
   // Waggy token
   const MasterChef = await hre.ethers.getContractFactory("MasterChef");
 
-  const masterChef = await MasterChef.deploy(
+  const masterChef = await hre.upgrades.deployProxy(MasterChef, [
     ContractJSON.waggyToken,
     accounts[0].address,
     ethers.utils.parseEther("80"),
-    9514490
-  );
+    9514490,
+  ]);
 
   await masterChef.deployed();
 
   ContractJSON.masterChef = masterChef.address;
   console.log(`masterChef address: ${masterChef.address}`);
-  await hre.run("verify:verify", {
-    address: masterChef.address,
-    contract: "contracts/farm/MasterChef.sol:MasterChef",
-    constructorArguments: [ContractJSON.waggyToken, accounts[0].address, ethers.utils.parseEther("80"), 9514490],
-  });
+
+  // await hre.run("verify:verify", {
+  //   address: "0xd4b490598ef18e4634ccd989b57a6c342a178e02",
+  //   contract: "contracts/farm/MasterChef.sol:MasterChef",
+  //   constructorArguments: [],
+  // });
 
   console.log("✅ Done Verify Contract");
 

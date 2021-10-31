@@ -10,50 +10,24 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./../p2p/WaggyToken.sol";
 
 interface IMigratorChef {
-  // Perform LP token migration from legacy PancakeSwap to CakeSwap.
-  // Take the current LP token address and return the new LP token address.
-  // Migrator should have full access to the caller's LP token.
-  // Return the new LP token address.
-  //
-  // XXX Migrator must have allowance access to PancakeSwap LP tokens.
-  // CakeSwap must mint EXACTLY the same amount of CakeSwap LP tokens or
-  // else something bad will happen. Traditional PancakeSwap does not
-  // do that so be careful!
   function migrate(ERC20 token) external returns (ERC20);
 }
 
-// MasterChef is the master of Cake. He can make Cake and he is a fair guy.
-//
-// Note that it's ownable and the owner wields tremendous power. The ownership
-// will be transferred to a governance smart contract once CAKE is sufficiently
-// distributed and the community can show to govern itself.
-//
-// Have fun reading it. Hopefully it's bug-free. God bless.
-contract MasterChef is Ownable {
+contract MasterChef is OwnableUpgradeable {
   using SafeMath for uint256;
 
   // Info of each user.
   struct UserInfo {
     uint256 amount; // How many LP tokens the user has provided.
     uint256 rewardDebt; // Reward debt. See explanation below.
-    //
-    // We do some fancy math here. Basically, any point in time, the amount of CAKEs
-    // entitled to a user but is pending to be distributed is:
-    //
-    //   pending reward = (user.amount * pool.accWagPerShare) - user.rewardDebt
-    //
-    // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
-    //   1. The pool's `accWagPerShare` (and `lastRewardBlock`) gets updated.
-    //   2. User receives the pending reward sent to his/her address.
-    //   3. User's `amount` gets updated.
-    //   4. User's `rewardDebt` gets updated.
   }
 
   // Info of each pool.
@@ -71,7 +45,7 @@ contract MasterChef is Ownable {
   // WAG tokens created per block.
   uint256 public wagPerBlock;
   // Bonus muliplier for early cake makers.
-  uint256 public BONUS_MULTIPLIER = 1;
+  uint256 public BONUS_MULTIPLIER;
   // The migrator contract. It has a lot of power. Can only be set through governance (owner).
   IMigratorChef public migrator;
 
@@ -80,22 +54,25 @@ contract MasterChef is Ownable {
   // Info of each user that stakes LP tokens.
   mapping(uint256 => mapping(address => UserInfo)) public userInfo;
   // Total allocation points. Must be the sum of all allocation points in all pools.
-  uint256 public totalAllocPoint = 0;
+  uint256 public totalAllocPoint;
   // The block number when CAKE mining starts.
   uint256 public startBlock;
 
-  uint256 public lockRewardPercent = 900; //90%
+  uint256 public lockRewardPercent;
 
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
   event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
-  constructor(
+  function initialize(
     address _wag,
     address _devaddr,
     uint256 _wagPerBlock,
     uint256 _startBlock
-  ) public {
+  ) public initializer {
+
+    BONUS_MULTIPLIER = 1;
+    lockRewardPercent = 900;//90%
     wag = WaggyToken(_wag);
     devaddr = _devaddr;
     wagPerBlock = _wagPerBlock;
@@ -103,7 +80,6 @@ contract MasterChef is Ownable {
 
     // staking pool
     poolInfo.push(PoolInfo({ lpToken: ERC20(_wag), allocPoint: 1000, lastRewardBlock: startBlock, accWagPerShare: 0 }));
-
     totalAllocPoint = 1000;
   }
 
@@ -163,8 +139,8 @@ contract MasterChef is Ownable {
     }
   }
 
-  function setLockRewardPercent(uint256 _amount) external onlyOwner{
-    require(_amount <= 1000,"not allow over 100%");
+  function setLockRewardPercent(uint256 _amount) external onlyOwner {
+    require(_amount <= 1000, "not allow over 100%");
     lockRewardPercent = _amount;
   }
 
@@ -324,7 +300,7 @@ contract MasterChef is Ownable {
   function safeWagTransfer(address _to, uint256 _amount) internal {
     wag.transfer(_to, _amount);
     // lock after claim rewad
-    uint256 lockAmount= _amount.mul(lockRewardPercent).div(1000);
+    uint256 lockAmount = _amount.mul(lockRewardPercent).div(1000);
     wag.lock(_to, lockAmount);
   }
 

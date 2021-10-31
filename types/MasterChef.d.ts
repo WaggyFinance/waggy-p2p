@@ -29,6 +29,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     "emergencyWithdraw(uint256)": FunctionFragment;
     "enterStaking(uint256)": FunctionFragment;
     "getMultiplier(uint256,uint256)": FunctionFragment;
+    "initialize(address,address,uint256,uint256)": FunctionFragment;
     "leaveStaking(uint256)": FunctionFragment;
     "lockRewardPercent()": FunctionFragment;
     "massUpdatePools()": FunctionFragment;
@@ -78,6 +79,10 @@ interface MasterChefInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getMultiplier",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "leaveStaking",
@@ -176,6 +181,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "getMultiplier",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "leaveStaking",
     data: BytesLike
@@ -352,6 +358,14 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    initialize(
+      _wag: string,
+      _devaddr: string,
+      _wagPerBlock: BigNumberish,
+      _startBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     leaveStaking(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -489,6 +503,14 @@ export class MasterChef extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  initialize(
+    _wag: string,
+    _devaddr: string,
+    _wagPerBlock: BigNumberish,
+    _startBlock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   leaveStaking(
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -622,6 +644,14 @@ export class MasterChef extends BaseContract {
       _to: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    initialize(
+      _wag: string,
+      _devaddr: string,
+      _wagPerBlock: BigNumberish,
+      _startBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     leaveStaking(
       _amount: BigNumberish,
@@ -820,6 +850,14 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initialize(
+      _wag: string,
+      _devaddr: string,
+      _wagPerBlock: BigNumberish,
+      _startBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     leaveStaking(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -944,6 +982,14 @@ export class MasterChef extends BaseContract {
       _from: BigNumberish,
       _to: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      _wag: string,
+      _devaddr: string,
+      _wagPerBlock: BigNumberish,
+      _startBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     leaveStaking(

@@ -10,13 +10,14 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./../p2p/WaggyToken.sol";
 
-contract WaggyStaking is Ownable {
+contract WaggyStaking is OwnableUpgradeable {
   using SafeMath for uint256;
 
   // Info of each user.
@@ -50,11 +51,11 @@ contract WaggyStaking is Ownable {
   event Withdraw(address indexed user, uint256 amount);
   event EmergencyWithdraw(address indexed user, uint256 amount);
 
-  constructor(
+  function initialize(
     ERC20 _lp,
     address _adminAddress,
     address _waggyToken
-  ) public {
+  ) public initializer {
     adminAddress = _adminAddress;
     waggyToken = WaggyToken(_waggyToken);
 

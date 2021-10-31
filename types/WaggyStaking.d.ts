@@ -25,6 +25,7 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     "adminAddress()": FunctionFragment;
     "deposit(uint256,uint256)": FunctionFragment;
     "emergencyWithdraw(uint256)": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingReward(uint256,address)": FunctionFragment;
     "poolInfo(uint256)": FunctionFragment;
@@ -53,6 +54,10 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "emergencyWithdraw",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -103,6 +108,7 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     functionFragment: "emergencyWithdraw",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pendingReward",
@@ -219,6 +225,13 @@ export class WaggyStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    initialize(
+      _lp: string,
+      _adminAddress: string,
+      _waggyToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pendingReward(
@@ -302,6 +315,13 @@ export class WaggyStaking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  initialize(
+    _lp: string,
+    _adminAddress: string,
+    _waggyToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   pendingReward(
@@ -382,6 +402,13 @@ export class WaggyStaking extends BaseContract {
 
     emergencyWithdraw(
       _pid: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initialize(
+      _lp: string,
+      _adminAddress: string,
+      _waggyToken: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -530,6 +557,13 @@ export class WaggyStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    initialize(
+      _lp: string,
+      _adminAddress: string,
+      _waggyToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pendingReward(
@@ -594,6 +628,13 @@ export class WaggyStaking extends BaseContract {
 
     emergencyWithdraw(
       _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      _lp: string,
+      _adminAddress: string,
+      _waggyToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
