@@ -158,7 +158,7 @@ contract Merchant is OwnableUpgradeable {
     address _buyer,
     uint256 _amount,
     string memory _remark
-  ) public onlyOwner {
+  ) public {
     require(msg.sender == _seller || msg.sender == owner(), "only owner.");
     require(checkTransactionApproved(_seller, _buyer, _amount) == _amount);
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
@@ -234,7 +234,7 @@ contract Merchant is OwnableUpgradeable {
     address _seller,
     address _buyer,
     uint256 _amount
-  ) internal onlyOwner {
+  ) external  {
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
@@ -262,7 +262,7 @@ contract Merchant is OwnableUpgradeable {
     return shopBalance[_owner];
   }
 
-  function setShopBalance(address _owner, uint256 _balance) internal onlyOwner {
+  function setShopBalance(address _owner, uint256 _balance) internal {
     shopBalance[_owner] = _balance;
   }
 
@@ -339,7 +339,7 @@ contract Merchant is OwnableUpgradeable {
     address _seller,
     address _buyer,
     uint256 _balance
-  ) internal onlyOwner {
+  ) internal  {
     lockUserTokenInfo[_seller][_buyer] = _balance;
   }
 
@@ -347,7 +347,7 @@ contract Merchant is OwnableUpgradeable {
     address _seller,
     address _buyer,
     uint256 _balance
-  ) internal onlyOwner {
+  ) internal  {
     lockTokenInfo[_seller][_buyer] = _balance;
   }
 
@@ -355,7 +355,7 @@ contract Merchant is OwnableUpgradeable {
     return successTransactionCount[_seller];
   }
 
-  function setTransactionSuccessCount(address _seller, uint256 _count) internal onlyOwner {
+  function setTransactionSuccessCount(address _seller, uint256 _count) internal  {
     successTransactionCount[_seller] = _count;
   }
 

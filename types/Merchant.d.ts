@@ -21,6 +21,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MerchantInterface extends ethers.utils.Interface {
   functions: {
+    "appeal(address,address,uint256)": FunctionFragment;
     "approveTransaction(uint256,address)": FunctionFragment;
     "cancelTransaction(address,address,uint256,string)": FunctionFragment;
     "deleteShop()": FunctionFragment;
@@ -47,6 +48,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     "updateRewardCalculator(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "appeal",
+    values: [string, string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "approveTransaction",
     values: [BigNumberish, string]
@@ -138,6 +143,7 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "appeal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveTransaction",
     data: BytesLike
@@ -350,6 +356,13 @@ export class Merchant extends BaseContract {
   interface: MerchantInterface;
 
   functions: {
+    appeal(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
@@ -484,6 +497,13 @@ export class Merchant extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  appeal(
+    _seller: string,
+    _buyer: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   approveTransaction(
     _amount: BigNumberish,
     _buyer: string,
@@ -612,6 +632,13 @@ export class Merchant extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    appeal(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
@@ -895,6 +922,13 @@ export class Merchant extends BaseContract {
   };
 
   estimateGas: {
+    appeal(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,
@@ -1012,6 +1046,13 @@ export class Merchant extends BaseContract {
   };
 
   populateTransaction: {
+    appeal(
+      _seller: string,
+      _buyer: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     approveTransaction(
       _amount: BigNumberish,
       _buyer: string,

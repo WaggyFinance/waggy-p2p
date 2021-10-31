@@ -16,7 +16,7 @@ async function main() {
   // verify merchant
   // console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   await hre.run("verify:verify", {
-    address: "0xa933d4b0d40ffa698997f55ef1212f6a34298852",
+    address: "0xe8cc7d7cc5c9658f1d3906667ae823e062ac86c7",
     contract: "contracts/p2p/Merchant.sol:Merchant",
     constructorArguments: [],
   });

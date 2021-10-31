@@ -40,6 +40,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     "poolLength()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "set(uint256,uint256,bool)": FunctionFragment;
+    "setLockRewardPercent(uint256)": FunctionFragment;
     "setMigrator(address)": FunctionFragment;
     "startBlock()": FunctionFragment;
     "totalAllocPoint()": FunctionFragment;
@@ -115,6 +116,10 @@ interface MasterChefInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "set",
     values: [BigNumberish, BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLockRewardPercent",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setMigrator", values: [string]): string;
   encodeFunctionData(
@@ -194,6 +199,10 @@ interface MasterChefInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "set", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setLockRewardPercent",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setMigrator",
     data: BytesLike
@@ -394,6 +403,11 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setLockRewardPercent(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setMigrator(
       _migrator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -526,6 +540,11 @@ export class MasterChef extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setLockRewardPercent(
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setMigrator(
     _migrator: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -645,6 +664,11 @@ export class MasterChef extends BaseContract {
       _pid: BigNumberish,
       _allocPoint: BigNumberish,
       _withUpdate: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLockRewardPercent(
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -837,6 +861,11 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setLockRewardPercent(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setMigrator(
       _migrator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -958,6 +987,11 @@ export class MasterChef extends BaseContract {
       _pid: BigNumberish,
       _allocPoint: BigNumberish,
       _withUpdate: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLockRewardPercent(
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

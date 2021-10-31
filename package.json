@@ -14,6 +14,7 @@
     "deploy:pools": "npx hardhat clean; npx hardhat run --network rinkeby scripts/3_initPools.js",
     "test:unit:masterWaggy": "hardhat test --no-compile ./test/unit/MasterWaggy.test.js",
     "test:unit:masterChef": "hardhat test --no-compile ./test/unit/MasterChef.test.js",
+    "test:unit:waggyStaking": "hardhat test --no-compile ./test/unit/WaggyStaking.test.js",
     "test:unit:validator": "hardhat test --no-compile ./test/unit/Validator.test.js",
     "test:unit:merchantSell": "hardhat test --no-compile ./test/unit/MerchantSell.test.js",
     "test:unit:merchantBuy": "hardhat test --no-compile ./test/unit/MerchantBuy.test.js"

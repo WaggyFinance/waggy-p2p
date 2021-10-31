@@ -16,7 +16,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./../p2p/WaggyToken.sol";
 
-
 interface IMigratorChef {
   // Perform LP token migration from legacy PancakeSwap to CakeSwap.
   // Take the current LP token address and return the new LP token address.
@@ -85,7 +84,7 @@ contract MasterChef is Ownable {
   // The block number when CAKE mining starts.
   uint256 public startBlock;
 
-  uint256 public lockRewardPercent = 9000; //90%
+  uint256 public lockRewardPercent = 900; //90%
 
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
@@ -164,6 +163,11 @@ contract MasterChef is Ownable {
     }
   }
 
+  function setLockRewardPercent(uint256 _amount) external onlyOwner{
+    require(_amount <= 1000,"not allow over 100%");
+    lockRewardPercent = _amount;
+  }
+
   // Set the migrator contract. Can only be called by the owner.
   function setMigrator(IMigratorChef _migrator) public onlyOwner {
     migrator = _migrator;
@@ -211,37 +215,21 @@ contract MasterChef is Ownable {
   // Update reward variables of the given pool to be up-to-date.
   function updatePool(uint256 _pid) public {
     PoolInfo storage pool = poolInfo[_pid];
-    console.log("Block time ",block.number);
-    console.log("lastRewardBlock ",pool.lastRewardBlock);
     if (block.number <= pool.lastRewardBlock) {
       return;
     }
     uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-     console.log("lpSupply ",lpSupply);
     if (lpSupply == 0) {
       pool.lastRewardBlock = block.number;
       return;
     }
     uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-    console.log("multiplier",multiplier);
     uint256 wagReward = multiplier.mul(wagPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-    console.log("wagReward",wagReward);
     wag.mint(devaddr, wagReward.div(10));
     wag.mint(address(this), wagReward);
-    
     pool.accWagPerShare = pool.accWagPerShare.add(wagReward.mul(1e12).div(lpSupply));
-     console.log("accWagPerShare",pool.accWagPerShare);
     pool.lastRewardBlock = block.number;
   }
-
-//   function refillFee(uint256 _pid, uint256 _amount) public {
-//     PoolInfo storage pool = poolInfo[_pid];
-//     // transfer fee to pool
-//     fee.transferFrom(msg.sender,address(this),_amount);
-//     pool.currentFee =pool.currentFee.add(_amount);
-//     uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-//     pool.accWagPerShare = pool.currentFee.div(lpSupply);
-//   }
 
   // Deposit LP tokens to MasterChef for CAKE allocation.
   function deposit(uint256 _pid, uint256 _amount) public {
@@ -259,7 +247,7 @@ contract MasterChef is Ownable {
       pool.lpToken.transferFrom(address(msg.sender), address(this), _amount);
       user.amount = user.amount.add(_amount);
     }
-    
+
     user.rewardDebt = user.amount.mul(pool.accWagPerShare).div(1e12);
     emit Deposit(msg.sender, _pid, _amount);
   }
@@ -299,9 +287,7 @@ contract MasterChef is Ownable {
       pool.lpToken.transferFrom(address(msg.sender), address(this), _amount);
       user.amount = user.amount.add(_amount);
     }
-    console.log("accWagPerShare",pool.accWagPerShare);
     user.rewardDebt = user.amount.mul(pool.accWagPerShare).div(1e12);
-    console.log("rewardDebt",user.rewardDebt);
     emit Deposit(msg.sender, 0, _amount);
   }
 
@@ -312,7 +298,6 @@ contract MasterChef is Ownable {
     require(user.amount >= _amount, "withdraw: not good");
     updatePool(0);
     uint256 pending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
-    console.log("pending ",pending);
     if (pending > 0) {
       safeWagTransfer(msg.sender, pending);
     }
@@ -339,7 +324,8 @@ contract MasterChef is Ownable {
   function safeWagTransfer(address _to, uint256 _amount) internal {
     wag.transfer(_to, _amount);
     // lock after claim rewad
-    wag.lock(_to, _amount.mul(lockRewardPercent).div(1000));
+    uint256 lockAmount= _amount.mul(lockRewardPercent).div(1000);
+    wag.lock(_to, lockAmount);
   }
 
   // Update dev address by the previous dev.

@@ -77,6 +77,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MasterWaggy__factory>;
     getContractFactory(
+      name: "WaggyStaking",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WaggyStaking__factory>;
+    getContractFactory(
       name: "BUSD",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BUSD__factory>;
@@ -197,6 +201,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MasterWaggy>;
+    getContractAt(
+      name: "WaggyStaking",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WaggyStaking>;
     getContractAt(
       name: "BUSD",
       address: string,
