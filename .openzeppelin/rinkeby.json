@@ -117,6 +117,11 @@
       "address": "0x958A991E3861eE7692e980e6491dAC55F8997FeE",
       "txHash": "0xb61e4cd4df744d364d47803e905011d47c4d9d3081399552cb2339d8a56d1f00",
       "kind": "transparent"
+    },
+    {
+      "address": "0xa6Fa96814fa908bf108E37965C59F6e752fd293B",
+      "txHash": "0x26aa408707f1698129db16cbb5a7a9650deb310842bb1aa9416e05ab7f55d81c",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -1168,6 +1173,148 @@
           },
           "t_bool": {
             "label": "bool"
+          }
+        }
+      }
+    },
+    "4ba41f86f3b4e9622a05b61d3f70a6a6293d60151001fd54fc063d683379f350": {
+      "address": "0x3B7DDe7E9333e9b761f726dEfA3130139Ece07ec",
+      "txHash": "0xfc4ebd89cbfb0e5cf3e7f5f39c9d6b33e8f11fd53f1711754235bf72c6c24031",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "contract": "WaggyStaking",
+            "label": "adminAddress",
+            "type": "t_address",
+            "src": "contracts/farm/WaggyStaking.sol:40"
+          },
+          {
+            "contract": "WaggyStaking",
+            "label": "poolInfo",
+            "type": "t_array(t_struct(PoolInfo)5883_storage)dyn_storage",
+            "src": "contracts/farm/WaggyStaking.sol:42"
+          },
+          {
+            "contract": "WaggyStaking",
+            "label": "userInfo",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(UserInfo)5871_storage))",
+            "src": "contracts/farm/WaggyStaking.sol:44"
+          },
+          {
+            "contract": "WaggyStaking",
+            "label": "totalAllocPoint",
+            "type": "t_uint256",
+            "src": "contracts/farm/WaggyStaking.sol:46"
+          },
+          {
+            "contract": "WaggyStaking",
+            "label": "waggyToken",
+            "type": "t_contract(WaggyToken)10582",
+            "src": "contracts/farm/WaggyStaking.sol:48"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_struct(PoolInfo)5883_storage)dyn_storage": {
+            "label": "struct WaggyStaking.PoolInfo[]"
+          },
+          "t_struct(PoolInfo)5883_storage": {
+            "label": "struct WaggyStaking.PoolInfo",
+            "members": [
+              {
+                "label": "lpToken",
+                "type": "t_contract(ERC20)2209"
+              },
+              {
+                "label": "supply",
+                "type": "t_uint256"
+              },
+              {
+                "label": "allocPoint",
+                "type": "t_uint256"
+              },
+              {
+                "label": "lastRewardBlock",
+                "type": "t_uint256"
+              },
+              {
+                "label": "accWagPerShare",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_contract(ERC20)2209": {
+            "label": "contract ERC20"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(UserInfo)5871_storage))": {
+            "label": "mapping(uint256 => mapping(address => struct WaggyStaking.UserInfo))"
+          },
+          "t_mapping(t_address,t_struct(UserInfo)5871_storage)": {
+            "label": "mapping(address => struct WaggyStaking.UserInfo)"
+          },
+          "t_struct(UserInfo)5871_storage": {
+            "label": "struct WaggyStaking.UserInfo",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "rewardDebt",
+                "type": "t_uint256"
+              },
+              {
+                "label": "inBlackList",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_contract(WaggyToken)10582": {
+            "label": "contract WaggyToken"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
           }
         }
       }

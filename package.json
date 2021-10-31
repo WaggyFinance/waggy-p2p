@@ -10,6 +10,7 @@
     "verify:merchant": "npx hardhat run --network rinkeby scripts/verifyMerchant.js",
     "deploy:masterWaggy": "npx hardhat clean; npx hardhat run --network rinkeby scripts/4_deployMasterWaggy.js",
     "deploy:masterChef": "npx hardhat clean; npx hardhat run --network rinkeby scripts/6_deployMasterChef.js",
+    "deploy:waggyStaking": "npx hardhat clean; npx hardhat run --network rinkeby scripts/7_deployWaggyStaking.js",
     "deploy:validator": "npx hardhat clean; npx hardhat run --network rinkeby scripts/5_deployValidator.js",
     "deploy:pools": "npx hardhat clean; npx hardhat run --network rinkeby scripts/3_initPools.js",
     "test:unit:masterWaggy": "hardhat test --no-compile ./test/unit/MasterWaggy.test.js",

@@ -43,7 +43,7 @@ contract WaggyStaking is OwnableUpgradeable {
   // Info of each user that stakes LP tokens.
   mapping(uint256 => mapping(address => UserInfo)) public userInfo;
   // Total allocation poitns. Must be the sum of all allocation points in all pools.
-  uint256 public totalAllocPoint = 0;
+  uint256 public totalAllocPoint;
 
   WaggyToken public waggyToken;
 
