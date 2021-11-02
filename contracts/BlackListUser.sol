@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: Unlicense
 /*
 #   __      __    _____     ________   ________ _____.___.
 #  /  \    /  \  /  _  \   /  _____/  /  _____/ \__  |   |
@@ -7,7 +8,6 @@
 #         \/           \/         \/         \/  \/       
 */
 
-//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
@@ -34,7 +34,7 @@ contract BlackListUser is Ownable {
     uint256 suspendAt;
   }
 
-  mapping(address => UserInfo) userInfo;
+  mapping(address => UserInfo) public userInfo;
 
   // Status 0 normal, 1 temporary,2 suspend
   function setUserStatus(address _user, uint256 _status) external onlyOwner {

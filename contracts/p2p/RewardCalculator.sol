@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: Unlicense
 /*
 #   __      __    _____     ________   ________ _____.___.
 #  /  \    /  \  /  _  \   /  _____/  /  _____/ \__  |   |
@@ -6,8 +7,6 @@
 #    \__/\  /  \____|__  / \______  / \______  / / ______|
 #         \/           \/         \/         \/  \/       
 */
-
-//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
@@ -19,7 +18,7 @@ contract RewardCalculator is Ownable {
 
     using SafeMath for uint256;
 
-    uint256 payRate = 800; //8%
+    uint256 public payRate = 800; //8%
 
     function calculateReward(uint256 _amount) external view returns(uint256){
         return _amount.mul(payRate).div(10000);

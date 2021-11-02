@@ -23,6 +23,7 @@ interface RewardCalculatorInterface extends ethers.utils.Interface {
   functions: {
     "calculateReward(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "payRate()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateRewardRate(uint256)": FunctionFragment;
@@ -33,6 +34,7 @@ interface RewardCalculatorInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "payRate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -51,6 +53,7 @@ interface RewardCalculatorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "payRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -126,6 +129,8 @@ export class RewardCalculator extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    payRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -148,6 +153,8 @@ export class RewardCalculator extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  payRate(overrides?: CallOverrides): Promise<BigNumber>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -169,6 +176,8 @@ export class RewardCalculator extends BaseContract {
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    payRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -209,6 +218,8 @@ export class RewardCalculator extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    payRate(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -231,6 +242,8 @@ export class RewardCalculator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    payRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }

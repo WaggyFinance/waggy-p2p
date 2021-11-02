@@ -27,7 +27,7 @@ describe("P2PFactory", function() {
   beforeEach(async function () {
     [owner,account1,account2,feeCollector] = await ethers.getSigners();
 
-    const BUSD = await ethers.getContractFactory("BUSD");
+    const BUSD = await ethers.getContractFactory("WERC20");
     busdToken  = await BUSD.deploy();
 
     const WaggyToken = await ethers.getContractFactory("WaggyToken");

@@ -81,14 +81,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WaggyStaking__factory>;
     getContractFactory(
-      name: "BUSD",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BUSD__factory>;
-    getContractFactory(
-      name: "FactoryStorage",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FactoryStorage__factory>;
-    getContractFactory(
       name: "FeeCalculator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeCalculator__factory>;
@@ -96,14 +88,6 @@ declare module "hardhat/types/runtime" {
       name: "Merchant",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Merchant__factory>;
-    getContractFactory(
-      name: "MerchantStorage",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MerchantStorage__factory>;
-    getContractFactory(
-      name: "P2PFactory",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.P2PFactory__factory>;
     getContractFactory(
       name: "RewardCalculator",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -207,16 +191,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.WaggyStaking>;
     getContractAt(
-      name: "BUSD",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.BUSD>;
-    getContractAt(
-      name: "FactoryStorage",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.FactoryStorage>;
-    getContractAt(
       name: "FeeCalculator",
       address: string,
       signer?: ethers.Signer
@@ -226,16 +200,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Merchant>;
-    getContractAt(
-      name: "MerchantStorage",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MerchantStorage>;
-    getContractAt(
-      name: "P2PFactory",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.P2PFactory>;
     getContractAt(
       name: "RewardCalculator",
       address: string,

@@ -27,6 +27,7 @@ interface BlackListUserInterface extends ethers.utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "setUserStatus(address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "userInfo(address)": FunctionFragment;
     "warningUser(address)": FunctionFragment;
   };
 
@@ -51,6 +52,7 @@ interface BlackListUserInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "userInfo", values: [string]): string;
   encodeFunctionData(functionFragment: "warningUser", values: [string]): string;
 
   decodeFunctionResult(
@@ -74,6 +76,7 @@ interface BlackListUserInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "userInfo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "warningUser",
     data: BytesLike
@@ -161,6 +164,19 @@ export class BlackListUser extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    userInfo(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [number, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        status: number;
+        amount: BigNumber;
+        totalWarning: BigNumber;
+        lastWarning: BigNumber;
+        suspendAt: BigNumber;
+      }
+    >;
+
     warningUser(
       _user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -191,6 +207,19 @@ export class BlackListUser extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  userInfo(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [number, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      status: number;
+      amount: BigNumber;
+      totalWarning: BigNumber;
+      lastWarning: BigNumber;
+      suspendAt: BigNumber;
+    }
+  >;
+
   warningUser(
     _user: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -218,6 +247,19 @@ export class BlackListUser extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userInfo(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [number, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        status: number;
+        amount: BigNumber;
+        totalWarning: BigNumber;
+        lastWarning: BigNumber;
+        suspendAt: BigNumber;
+      }
+    >;
 
     warningUser(_user: string, overrides?: CallOverrides): Promise<void>;
   };
@@ -265,6 +307,8 @@ export class BlackListUser extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    userInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     warningUser(
       _user: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -297,6 +341,11 @@ export class BlackListUser extends BaseContract {
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userInfo(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     warningUser(
