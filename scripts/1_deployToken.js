@@ -50,11 +50,7 @@ async function main() {
 
   console.log("✅ Done deploying a WAGGYTOKEN");
   console.log(">> Start Verify Contract");
-  // await hre.run("verify:verify", {
-  //   address: waggyToken.address,
-  //   contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
-  //   constructorArguments: [],
-  // });
+//  Call merchant verify to verify waggy token.
   await hre.run("verify:verify", {
     address: busdToken.address,
     contract: "contracts/p2p/WERC20.sol:WERC20",

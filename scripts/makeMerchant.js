@@ -1,20 +1,19 @@
-const { ethers, upgrades } = require('hardhat');
+const { ethers, upgrades } = require("hardhat");
 const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {
   console.log("Start deploy");
-  const [deployer,feeCollector] = await ethers.getSigners();
+  const [deployer, feeCollector] = await ethers.getSigners();
   // deploy merchant
-  const deployMerchant = async (targetToken,merchangeName) => {
-   
-    // console.log(`Start deploy merchant ${merchangeName} with address ${targetToken}`)
-    console.log(`Start upgrade merchant ${merchangeName} with address ${ContractJSON[merchangeName]}`)
+  const deployMerchant = async (targetToken, merchangeName) => {
+    //  Upgrade Merchant contract
+    console.log(`Start upgrade merchant ${merchangeName} with address ${ContractJSON[merchangeName]}`);
     const Merchant = await ethers.getContractFactory("Merchant");
-    const merchant = await upgrades.upgradeProxy(ContractJSON[merchangeName],Merchant)
+    const merchant = await upgrades.upgradeProxy(ContractJSON[merchangeName], Merchant);
     await merchant.deployed();
-      
 
+    //  Deploy new merchamt contract
     // const merchant = await upgrades.deployProxy(Merchant,[
     //   targetToken,
     //   ContractJSON.waggyToken,
@@ -30,20 +29,20 @@ async function main() {
   };
 
   const tokenData = {
-    'merchantWBNB': ContractJSON.wbnbToken,
-    'merchantBUSD': ContractJSON.busdToken,
-    'merchantUSDT': ContractJSON.usdtToken,
-    'merchantUSDC': ContractJSON.usdcToken,
-    'merchantDAI': ContractJSON.daiToken
-  }
-  console.log("start factory merchant")
+    merchantWBNB: ContractJSON.wbnbToken,
+    merchantBUSD: ContractJSON.busdToken,
+    merchantUSDT: ContractJSON.usdtToken,
+    merchantUSDC: ContractJSON.usdcToken,
+    merchantDAI: ContractJSON.daiToken,
+  };
+  console.log("start factory merchant");
   for (const key in tokenData) {
-     try {
-     await deployMerchant(tokenData[key],key)
+    try {
+      await deployMerchant(tokenData[key], key);
     } catch (error) {
       console.log(`Can't create merchant ${key}
       with address ${tokenData[key]}
-      with error ${JSON.stringify(error,null,2)}`);
+      with error ${JSON.stringify(error, null, 2)}`);
     }
   }
 
