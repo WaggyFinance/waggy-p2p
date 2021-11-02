@@ -8,29 +8,9 @@ const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
-  
-  //deploy Factory storage
-  const FactoryStorage = await hre.ethers.getContractFactory("FactoryStorage");
-  const factoryStorage = await FactoryStorage.deploy();
-
-  await factoryStorage.deployed();
-  ContractJSON.factoryStorage = factoryStorage.address;
-  // deploy Factory
-  const P2PFactory = await hre.ethers.getContractFactory("P2PFactory");
-  const p2pfactory = await P2PFactory.deploy(factoryStorage.address, accounts[0].address);
-
-  await p2pfactory.deployed();
-
-  ContractJSON.p2pfactory = p2pfactory.address;
 
   // deploy reward calculator
   const RewardCalculator = await hre.ethers.getContractFactory("RewardCalculator");
@@ -48,19 +28,12 @@ async function main() {
 
   ContractJSON.feeCalculator = feeCalculator.address;
   // deploy BlackListuser
-  const BlackListUser = await hre.ethers.getContractFactory(
-    "BlackListUser"
-  );
+  const BlackListUser = await hre.ethers.getContractFactory("BlackListUser");
   const blackListUser = await BlackListUser.deploy();
   await blackListUser.deployed();
 
   ContractJSON.blackListUser = blackListUser.address;
-  // deploy merchant
 
-
-  await factoryStorage.transferOwnership(p2pfactory.address);
-  console.log("FactoryStorage address : ", factoryStorage.address);
-  console.log("Factory address : ", p2pfactory.address);
   console.log("Reward Calculator address : ", rewardCalculator.address);
   console.log("Fee Calculator address : ", feeCalculator.address);
   console.log("BlackListUser address : ", blackListUser.address);
@@ -71,18 +44,8 @@ async function main() {
   const jsonString = JSON.stringify(ContractJSON, null, 2);
   console.log(jsonString);
   await fs.writeFileSync("./contract.json", jsonString);
-  console.log("write file done.")
-  
-  await hre.run("verify:verify", {
-    address: factoryStorage.address,
-    contract: "contracts/p2p/FactoryStorage.sol:FactoryStorage",
-    constructorArguments: [],
-  });
-  await hre.run("verify:verify", {
-    address: p2pfactory.address,
-    contract: "contracts/p2p/P2PFactory.sol:P2PFactory",
-    constructorArguments: [factoryStorage.address, accounts[0].address],
-  });
+  console.log("write file done.");
+
   await hre.run("verify:verify", {
     address: rewardCalculator.address,
     contract: "contracts/p2p/RewardCalculator.sol:RewardCalculator",
@@ -100,8 +63,6 @@ async function main() {
   });
 
   console.log("✅ Done Verify Contract");
-
-  
 }
 
 // We recommend this pattern to be able to use async/await everywhere

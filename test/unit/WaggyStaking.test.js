@@ -21,11 +21,8 @@ describe("WaggyStaking", () => {
   beforeEach(async () => {
     [deployer, alice, bob, eve] = await ethers.getSigners();
 
-    const BUSD = await ethers.getContractFactory("BUSD");
-    busdToken = await BUSD.deploy();
-    await busdToken.deployed();
-
     const WERC20 = await ethers.getContractFactory("WERC20");
+    busdToken = await WERC20.deploy("BUSD Token", "BUSD");
     lp1 = await WERC20.deploy("LP1", "LP1");
     lp2 = await WERC20.deploy("LP2", "LP2");
     lp3 = await WERC20.deploy("LP3", "LP3");

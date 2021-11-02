@@ -21,8 +21,8 @@ describe("MasterChef", () => {
   beforeEach(async () => {
     [deployer, alice, bob, eve] = await ethers.getSigners();
 
-    const BUSD = await ethers.getContractFactory("BUSD");
-    busdToken = await BUSD.deploy();
+    const BUSD = await hre.ethers.getContractFactory("WERC20");
+    busdToken = await BUSD.deploy("BUSD", "Binacne USD");
     await busdToken.deployed();
 
     const WERC20 = await ethers.getContractFactory("WERC20");

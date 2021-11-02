@@ -4,7 +4,7 @@
     "test": "npx hardhat test --logs",
     "build": "npx hardhat compile",
     "deploy:token": "npx hardhat clean; npx hardhat run --network rinkeby scripts/1_deployToken.js",
-    "deploy:factory": "npx hardhat clean; npx hardhat run --network rinkeby scripts/2_deployFactory.js",
+    "deploy:calculator": "npx hardhat clean; npx hardhat run --network rinkeby scripts/2_deployCalculator.js",
     "deploy:test": "npx hardhat clean; npx hardhat run --network rinkeby scripts/deployTest.js",
     "deploy:merchant": "npx hardhat clean; npx hardhat run --network rinkeby scripts/makeMerchant.js",
     "verify:merchant": "npx hardhat run --network rinkeby scripts/verifyMerchant.js",
