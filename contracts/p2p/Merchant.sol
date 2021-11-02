@@ -23,6 +23,8 @@ contract Merchant is OwnableUpgradeable {
   using SafeMath for uint256;
 
   event SetupShop(address seller, address token, uint256 amount);
+  event Deposit(address seller, address token, uint256 amount);
+  event Withdraw(address seller, address token, uint256 amount);
   event DeleteShop(address seller, address token, uint256 balance);
   event AppealTransaction(address seller, address buyer, uint256 balance);
   event ApproveTransaction(address seller, address token, uint256 amount);
@@ -82,6 +84,22 @@ contract Merchant is OwnableUpgradeable {
     feeCalculator = FeeCalculator(_feeCalculator);
     feeCollector = _feeCollector;
     blackListUser = BlackListUser(_blackListUser);
+  }
+
+  function deposit(uint256 _amount) external notSuspendUser{
+    require(token.allowance(msg.sender, address(this)) >= _amount,"credit not enougth");
+    token.transferFrom(msg.sender, address(this), _amount);
+    setShopBalance(msg.sender, getShopBalance(msg.sender).add(_amount)); 
+    
+    emit Deposit(msg.sender,address(token), _amount);
+  }
+
+  function withdraw(uint256 _amount) external notSuspendUser{
+    require(getShopBalance(msg.sender)>0,"balance not enougth");
+    setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
+    token.transfer(msg.sender, _amount);
+
+    emit Withdraw(msg.sender,address(token), _amount);
   }
 
   /*
