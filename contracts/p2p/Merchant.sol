@@ -14,12 +14,29 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./RewardCalculator.sol";
 import "./FeeCalculator.sol";
 import "./../BlackListUser.sol";
 
+enum ValidatorRemark {
+  NOT_TRANSFER,
+  CANCEL_TRANSACTION
+}
+
+interface IValidator {
+  function addCase(
+    address _token,
+    address _seller,
+    address _buyer,
+    uint256 _remark
+  ) external returns (uint256);
+}
+
+// Not support deflationary token โทเคนที่มีการหัก%
 contract Merchant is OwnableUpgradeable {
   using SafeMath for uint256;
+  using SafeERC20 for ERC20;
 
   event SetupShop(address seller, address token, uint256 amount);
   event Deposit(address seller, address token, uint256 amount);
@@ -49,10 +66,14 @@ contract Merchant is OwnableUpgradeable {
   struct UserInfo {
     Transaction[] transactions;
   }
+  struct SuccessTransactionInfo {
+    uint256 totalSellAmount;
+    uint256 totalSellCount;
+  }
 
   mapping(address => uint256) public shopBalance;
   mapping(address => uint256) public shopLockBalance;
-  mapping(address => uint256) public successTransactionCount;
+  mapping(address => SuccessTransactionInfo) public successTransactionCount;
   // merchant-> buyer-> lock amount
   mapping(address => mapping(address => uint256)) public lockTokenInfo;
   mapping(address => mapping(address => uint256)) public lockUserTokenInfo;
@@ -63,6 +84,7 @@ contract Merchant is OwnableUpgradeable {
   FeeCalculator public feeCalculator;
   address public feeCollector;
   BlackListUser public blackListUser;
+  IValidator public validator;
 
   ERC20 public token;
   ERC20 public gov;
@@ -85,10 +107,14 @@ contract Merchant is OwnableUpgradeable {
     blackListUser = BlackListUser(_blackListUser);
   }
 
+  function setValidator(address _validator) external onlyOwner {
+    validator = IValidator(_validator);
+  }
+
   // Merchant increase balance.
   function deposit(uint256 _amount) public notSuspendUser {
     require(token.allowance(msg.sender, address(this)) >= _amount, "credit not enougth");
-    token.transferFrom(msg.sender, address(this), _amount);
+    token.safeTransferFrom(msg.sender, address(this), _amount);
     setShopBalance(msg.sender, getShopBalance(msg.sender).add(_amount));
 
     emit Deposit(msg.sender, address(token), _amount);
@@ -98,32 +124,9 @@ contract Merchant is OwnableUpgradeable {
   function withdraw(uint256 _amount) public notSuspendUser {
     require(getShopBalance(msg.sender) > 0 && getShopBalance(msg.sender) <= _amount, "balance not enougth");
     setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
-    token.transfer(msg.sender, _amount);
+    token.safeTransfer(msg.sender, _amount);
 
     emit Withdraw(msg.sender, address(token), _amount);
-  }
-
-  /*
-    Step 1 
-    It first function for setup merchant of seller ,it deposit amount of token to sell
-    _amount is value of token to want a sell 
-    */
-  function setupShop(uint256 _amount) public notSuspendUser {
-    require(token.allowance(msg.sender, address(this)) >= _amount);
-    deposit(_amount);
-
-    emit SetupShop(msg.sender, address(token), _amount);
-  }
-
-  /*
-    The seller request delete a shop but is not had any value in lock balance, It will can delete the shop.
-    */
-  function deleteShop() public isCanDeleteShop {
-    require(getShopBalance(msg.sender) > 0);
-    require(getTotalLockBalance(msg.sender) == 0);
-    withdraw(getShopBalance(msg.sender));
-
-    emit DeleteShop(msg.sender, address(token), getShopBalance(msg.sender));
   }
 
   /*
@@ -152,24 +155,17 @@ contract Merchant is OwnableUpgradeable {
     buyerInfoData.transactions.push(
       Transaction(TransactionStatus.PENDING_TRANSFER_FAIT, _amount, "", _amount, block.timestamp, block.timestamp)
     );
-    //reserve token to release
-    setUserLockBalance(msg.sender, _buyer, _amount);
     // update total lock balance
     setTotalLockBalance(msg.sender, getTotalLockBalance(msg.sender).add(_amount));
     emit ApproveTransaction(msg.sender, address(token), _amount);
   }
 
   // for dev recheck balance is realy lock .
-  function checkTransactionApproved(
-    address _owner,
-    address _buyer,
-    uint256 _amount
-  ) internal view returns (uint256) {
-    UserInfo storage buyerInfoData = buyerInfo[_owner][_buyer];
+  function fetchTransactionApproved(address _seller, address _buyer) public view returns (uint256) {
+    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength > 0, "Buyer never had transaction before.");
     Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
-    require(transaction.lockAmount == _amount, "Amount is mismatch.");
     require(transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT, "Transaction status is outof flow.");
     return transaction.lockAmount;
   }
@@ -179,35 +175,20 @@ contract Merchant is OwnableUpgradeable {
     _address is address of seller 
     _amount is value of transaction 
     */
-  function cancelTransaction(
-    address _seller,
-    address _buyer,
-    uint256 _amount,
-    string memory _remark
-  ) public {
-    require(msg.sender == _seller || msg.sender == owner(), "only owner.");
-    require(checkTransactionApproved(_seller, _buyer, _amount) == _amount);
-    require(getUserLockBalance(_seller, _buyer) == _amount);
-    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
+  function cancelTransactionSeller(address _buyer, string memory _remark) public {
+    UserInfo storage buyerInfoData = buyerInfo[msg.sender][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
     // get last transaction
     Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
-    require(transaction.amount == _amount, "Transaction is mismatch.");
     require(transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT, "Only pending transfer fait it can cancel.");
     require(block.timestamp - transaction.updateAt >= 15 minutes, "Can't cancel because in delay time.");
     transaction.remark = _remark;
     transaction.status = TransactionStatus.CANCELED;
+    // move to validator to decition
+    validator.addCase(address(token), msg.sender, _buyer, uint256(ValidatorRemark.CANCEL_TRANSACTION));
 
-    if (msg.sender != owner()) {
-      blackListUser.warningUser(msg.sender);
-    }
-
-    setUserLockBalance(_seller, _buyer, 0);
-    setShopBalance(_seller, getShopBalance(_seller).add(_amount));
-    setTotalLockBalance(_seller, getTotalLockBalance(_seller).sub(_amount));
-
-    emit CancelTransaction(_buyer, address(token), _amount);
+    emit CancelTransaction(_buyer, address(token), transaction.amount);
   }
 
   /* 
@@ -216,41 +197,34 @@ contract Merchant is OwnableUpgradeable {
     _address is a receipt waller address
     _amount is value of token to transfer
     */
-  function releaseToken(
-    address _seller,
-    address _buyer,
-    uint256 _amount
-  ) public {
-    require(msg.sender == _seller || msg.sender == owner());
-    require(checkTransactionApproved(_seller, _buyer, _amount) == _amount);
-    require(getUserLockBalance(_seller, _buyer) == _amount);
-
-    uint256 fee = feeCalculator.calculateFee(_amount);
-    uint256 receiverAmount = _amount.sub(fee);
-    token.transfer(feeCollector, fee);
-    token.transfer(_buyer, receiverAmount);
-
-    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
+  function releaseTokenBySeller(address _buyer) public {
+    UserInfo storage buyerInfoData = buyerInfo[msg.sender][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
     Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
     require(
-      transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT || transaction.status == TransactionStatus.APPEAL,
+      transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT,
       "Not allow do this transaction because transaction is not waiting transfer fait."
     );
-    require(transaction.amount == _amount, "Transaction is mismatch.");
     transaction.lockAmount = 0;
     transaction.status = TransactionStatus.FINISH;
     transaction.updateAt = block.timestamp;
 
-    setUserLockBalance(_seller, _buyer, 0);
-    setTransactionSuccessCount(msg.sender, getTransactionSuccessCount(msg.sender).add(1));
-    setTotalLockBalance(msg.sender, getTotalLockBalance(msg.sender).sub(_amount));
+    uint256 fee = feeCalculator.calculateFee(transaction.amount);
+    uint256 receiverAmount = transaction.amount.sub(fee);
+    token.safeTransfer(feeCollector, fee);
+    token.safeTransfer(_buyer, receiverAmount);
+
+    SuccessTransactionInfo storage successTransactionInfo = successTransactionCount[msg.sender];
+    successTransactionInfo.totalSellAmount = successTransactionInfo.totalSellAmount.add(transaction.amount);
+    successTransactionInfo.totalSellCount = successTransactionInfo.totalSellCount.add(1);
+
+    setTotalLockBalance(msg.sender, getTotalLockBalance(msg.sender).sub(transaction.amount));
 
     // pay reward after complete transaction
-    uint256 reward = getReward(_amount);
-    gov.transfer(msg.sender, reward);
-    emit ReleaseToken(msg.sender, _buyer, address(token), _amount, reward);
+    uint256 reward = getReward(transaction.amount);
+    gov.safeTransfer(msg.sender, reward);
+    emit ReleaseToken(msg.sender, _buyer, address(token), transaction.amount, reward);
   }
 
   /* 
@@ -260,11 +234,8 @@ contract Merchant is OwnableUpgradeable {
     _buyer is a buyer waller address
     _amount is value of token to transfer
     */
-  function appeal(
-    address _seller,
-    address _buyer,
-    uint256 _amount
-  ) external {
+  function appeal(address _seller, address _buyer) external {
+    require(msg.sender == _seller || msg.sender == _buyer, "Not allow other appeal.");
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
@@ -273,11 +244,12 @@ contract Merchant is OwnableUpgradeable {
       transaction.status != TransactionStatus.CANCELED,
       "Not allow do this transaction because transaction is cancel."
     );
-    require(transaction.amount == _amount, "Transaction is mismatch.");
     transaction.status = TransactionStatus.APPEAL;
     transaction.updateAt = block.timestamp;
 
-    emit AppealTransaction(_seller, _buyer, _amount);
+    validator.addCase(address(token), _seller, _buyer, 0);
+
+    emit AppealTransaction(_seller, _buyer, transaction.amount);
   }
 
   function setTotalLockBalance(address _owner, uint256 _amount) internal {
@@ -351,14 +323,6 @@ contract Merchant is OwnableUpgradeable {
     return getTransactionByIndex(_seller, _buyer, transactionLength.sub(1));
   }
 
-  function setUserLockBalance(
-    address _seller,
-    address _buyer,
-    uint256 _balance
-  ) internal {
-    lockUserTokenInfo[_seller][_buyer] = _balance;
-  }
-
   function setShopLockBalance(
     address _seller,
     address _buyer,
@@ -367,12 +331,13 @@ contract Merchant is OwnableUpgradeable {
     lockTokenInfo[_seller][_buyer] = _balance;
   }
 
-  function getTransactionSuccessCount(address _seller) internal view returns (uint256) {
-    return successTransactionCount[_seller];
-  }
-
-  function setTransactionSuccessCount(address _seller, uint256 _count) internal {
-    successTransactionCount[_seller] = _count;
+  function getTransactionSuccessCount(address _seller)
+    internal
+    view
+    returns (uint256 totalSellAmount, uint256 totalSellCount)
+  {
+    totalSellAmount = successTransactionCount[_seller].totalSellAmount;
+    totalSellCount = successTransactionCount[_seller].totalSellCount;
   }
 
   modifier isCanDeleteShop() {
