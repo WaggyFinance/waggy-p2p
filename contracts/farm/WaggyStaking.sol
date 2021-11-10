@@ -16,7 +16,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./../p2p/WaggyToken.sol";
-
+// TODO Lock deposit time
 contract WaggyStaking is OwnableUpgradeable {
   using SafeMath for uint256;
 

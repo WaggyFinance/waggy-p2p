@@ -21,16 +21,21 @@ import "./../BlackListUser.sol";
 
 enum ValidatorRemark {
   NOT_TRANSFER,
-  CANCEL_TRANSACTION
+  BUYER_APPEAL,
+  SELLER_APPEAL,
+  BUYER_CANCEL_TRANSACTION,
+  SELLER_CANCEL_TRANSACTION
 }
 
 interface IValidator {
   function addCase(
+    uint256 _blockNumber,
     address _token,
     address _seller,
     address _buyer,
-    uint256 _remark
-  ) external returns (uint256);
+    uint256 _remark,
+    uint256 _amount
+  ) external;
 }
 
 // Not support deflationary token โทเคนที่มีการหัก%
@@ -42,7 +47,7 @@ contract Merchant is OwnableUpgradeable {
   event Deposit(address seller, address token, uint256 amount);
   event Withdraw(address seller, address token, uint256 amount);
   event DeleteShop(address seller, address token, uint256 balance);
-  event AppealTransaction(address seller, address buyer, uint256 balance);
+  event AppealTransaction(uint256 blockNumber,address seller, address buyer, uint256 balance);
   event ApproveTransaction(address seller, address token, uint256 amount);
   event CancelTransaction(address seller, address token, uint256 amount);
   event ReleaseToken(address seller, address buyer, address token, uint256 amount, uint256 reward);
@@ -185,8 +190,8 @@ contract Merchant is OwnableUpgradeable {
     require(block.timestamp - transaction.updateAt >= 15 minutes, "Can't cancel because in delay time.");
     transaction.remark = _remark;
     transaction.status = TransactionStatus.CANCELED;
-    // move to validator to decition
-    validator.addCase(address(token), msg.sender, _buyer, uint256(ValidatorRemark.CANCEL_TRANSACTION));
+    // move to validator to decision
+    validator.addCase(block.number,address(token), msg.sender, _buyer, uint256(ValidatorRemark.SELLER_CANCEL_TRANSACTION), transaction.amount);
 
     emit CancelTransaction(_buyer, address(token), transaction.amount);
   }
@@ -227,14 +232,42 @@ contract Merchant is OwnableUpgradeable {
     emit ReleaseToken(msg.sender, _buyer, address(token), transaction.amount, reward);
   }
 
+   /* 
+    Option admin manual release it not has reward and statistics
+    For seller release token to buyer when the seller approve a evidence of faite transfer slip 
+    _address is a receipt waller address
+    _amount is value of token to transfer
+    */
+  function releaseTokenByAdmin(address _seller ,address _buyer) public onlyOwner {
+    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
+    uint256 transactionLength = buyerInfoData.transactions.length;
+    require(transactionLength != 0, "Not found transaction");
+    Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
+    require(
+      transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT,
+      "Not allow do this transaction because transaction is not waiting transfer fait."
+    );
+    transaction.lockAmount = 0;
+    transaction.status = TransactionStatus.FINISH;
+    transaction.updateAt = block.timestamp;
+    transaction.remark = "Release by admin";
+
+    uint256 fee = feeCalculator.calculateFee(transaction.amount);
+    uint256 receiverAmount = transaction.amount.sub(fee);
+    token.safeTransfer(feeCollector, fee);
+    token.safeTransfer(_buyer, receiverAmount);
+
+    setTotalLockBalance(_seller, getTotalLockBalance(_seller).sub(transaction.amount));
+  }
+
   /* 
     Option 
   Seller or buyer appeal this transaction
     _seller is a seller waller address
     _buyer is a buyer waller address
-    _amount is value of token to transfer
+    _remark is value of 1 is buyer is appeal 2 is seller is appeal
     */
-  function appeal(address _seller, address _buyer) external {
+  function appeal(address _seller, address _buyer,uint256 _remark) external {
     require(msg.sender == _seller || msg.sender == _buyer, "Not allow other appeal.");
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
@@ -246,10 +279,9 @@ contract Merchant is OwnableUpgradeable {
     );
     transaction.status = TransactionStatus.APPEAL;
     transaction.updateAt = block.timestamp;
+    validator.addCase(block.number,address(token), _seller, _buyer,_remark,transaction.amount);
 
-    validator.addCase(address(token), _seller, _buyer, 0);
-
-    emit AppealTransaction(_seller, _buyer, transaction.amount);
+    emit AppealTransaction(block.number,_seller, _buyer, transaction.amount);
   }
 
   function setTotalLockBalance(address _owner, uint256 _amount) internal {

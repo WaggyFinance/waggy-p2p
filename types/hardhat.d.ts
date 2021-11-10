@@ -65,10 +65,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BlackListUser__factory>;
     getContractFactory(
-      name: "IMigratorChef",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IMigratorChef__factory>;
-    getContractFactory(
       name: "MasterChef",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MasterChef__factory>;
@@ -84,6 +80,10 @@ declare module "hardhat/types/runtime" {
       name: "FeeCalculator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeCalculator__factory>;
+    getContractFactory(
+      name: "IValidator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IValidator__factory>;
     getContractFactory(
       name: "Merchant",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -171,11 +171,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.BlackListUser>;
     getContractAt(
-      name: "IMigratorChef",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IMigratorChef>;
-    getContractAt(
       name: "MasterChef",
       address: string,
       signer?: ethers.Signer
@@ -195,6 +190,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FeeCalculator>;
+    getContractAt(
+      name: "IValidator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IValidator>;
     getContractAt(
       name: "Merchant",
       address: string,

@@ -21,18 +21,20 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface ValidatorInterface extends ethers.utils.Interface {
   functions: {
-    "addCase(address,uint256)": FunctionFragment;
-    "claimReward(address,uint256)": FunctionFragment;
-    "evaluate(address,uint256,bytes32)": FunctionFragment;
-    "getCaseTotalValue(address,uint256)": FunctionFragment;
-    "getCaseValue(address,uint256)": FunctionFragment;
+    "addCase(uint256,address,address,address,uint256,uint256)": FunctionFragment;
+    "claimReward(uint256)": FunctionFragment;
+    "erc20Interface()": FunctionFragment;
+    "evaluate(uint256,bytes32)": FunctionFragment;
+    "fee()": FunctionFragment;
+    "getCaseInfo(uint256)": FunctionFragment;
     "getTotalCollateral()": FunctionFragment;
-    "getUserDecision(address,uint256,address)": FunctionFragment;
-    "getUserResultInCase(address,uint256,address)": FunctionFragment;
+    "getUserDecision(uint256,address)": FunctionFragment;
+    "getUserReply(uint256,address)": FunctionFragment;
+    "getUserResultInCase(uint256,address)": FunctionFragment;
     "maxPercentValue()": FunctionFragment;
     "minPercentValue()": FunctionFragment;
     "owner()": FunctionFragment;
-    "play(address,uint256,uint256,bytes32,string)": FunctionFragment;
+    "play(uint256,uint256,bytes32,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "totalCollateral()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -40,23 +42,24 @@ interface ValidatorInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addCase",
-    values: [string, BigNumberish]
+    values: [BigNumberish, string, string, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "claimReward",
-    values: [string, BigNumberish]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "erc20Interface",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "evaluate",
-    values: [string, BigNumberish, BytesLike]
+    values: [BigNumberish, BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getCaseTotalValue",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getCaseValue",
-    values: [string, BigNumberish]
+    functionFragment: "getCaseInfo",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalCollateral",
@@ -64,11 +67,15 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserDecision",
-    values: [string, BigNumberish, string]
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserReply",
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserResultInCase",
-    values: [string, BigNumberish, string]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "maxPercentValue",
@@ -81,7 +88,7 @@ interface ValidatorInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "play",
-    values: [string, BigNumberish, BigNumberish, BytesLike, string]
+    values: [BigNumberish, BigNumberish, BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -101,13 +108,14 @@ interface ValidatorInterface extends ethers.utils.Interface {
     functionFragment: "claimReward",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "evaluate", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getCaseTotalValue",
+    functionFragment: "erc20Interface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "evaluate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getCaseValue",
+    functionFragment: "getCaseInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -116,6 +124,10 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getUserDecision",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserReply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -231,48 +243,85 @@ export class Validator extends BaseContract {
 
   functions: {
     addCase(
+      _blockNumber: BigNumberish,
       _token: string,
-      _totalValue: BigNumberish,
+      _seller: string,
+      _buyer: string,
+      _remark: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     claimReward(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    erc20Interface(overrides?: CallOverrides): Promise<[string]>;
+
     evaluate(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _randomness: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getCaseTotalValue(
-      _token: string,
-      _caseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    fee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getCaseValue(
-      _token: string,
-      _caseId: BigNumberish,
+    getCaseInfo(
+      _blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<
+      [
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber
+      ] & {
+        seller: string;
+        buyer: string;
+        token: string;
+        currentValue: BigNumber;
+        totalValue: BigNumber;
+        fund: BigNumber;
+        result: string;
+        resultAt: BigNumber;
+        randomness: string;
+        remark: BigNumber;
+        status: BigNumber;
+      }
+    >;
 
     getTotalCollateral(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUserDecision(
-      _token: string,
-      _caseId: BigNumberish,
-      _owner: string,
+      _blockNumber: BigNumberish,
+      _userReply: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    getUserReply(
+      _blockNumber: BigNumberish,
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string, BigNumber, boolean] & {
+        answer: string;
+        amount: BigNumber;
+        remark: string;
+        createdAt: BigNumber;
+        claimed: boolean;
+      }
+    >;
+
     getUserResultInCase(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<
@@ -286,8 +335,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     play(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -307,48 +355,85 @@ export class Validator extends BaseContract {
   };
 
   addCase(
+    _blockNumber: BigNumberish,
     _token: string,
-    _totalValue: BigNumberish,
+    _seller: string,
+    _buyer: string,
+    _remark: BigNumberish,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   claimReward(
-    _token: string,
-    _caseId: BigNumberish,
+    _blockNumber: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  erc20Interface(overrides?: CallOverrides): Promise<string>;
+
   evaluate(
-    _token: string,
-    _caseId: BigNumberish,
+    _blockNumber: BigNumberish,
     _randomness: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getCaseTotalValue(
-    _token: string,
-    _caseId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  fee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getCaseValue(
-    _token: string,
-    _caseId: BigNumberish,
+  getCaseInfo(
+    _blockNumber: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<
+    [
+      string,
+      string,
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      string,
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber
+    ] & {
+      seller: string;
+      buyer: string;
+      token: string;
+      currentValue: BigNumber;
+      totalValue: BigNumber;
+      fund: BigNumber;
+      result: string;
+      resultAt: BigNumber;
+      randomness: string;
+      remark: BigNumber;
+      status: BigNumber;
+    }
+  >;
 
   getTotalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserDecision(
-    _token: string,
-    _caseId: BigNumberish,
-    _owner: string,
+    _blockNumber: BigNumberish,
+    _userReply: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  getUserReply(
+    _blockNumber: BigNumberish,
+    _user: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, string, BigNumber, boolean] & {
+      answer: string;
+      amount: BigNumber;
+      remark: string;
+      createdAt: BigNumber;
+      claimed: boolean;
+    }
+  >;
+
   getUserResultInCase(
-    _token: string,
-    _caseId: BigNumberish,
+    _blockNumber: BigNumberish,
     _userAddress: string,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber] & { _isWin: boolean; _betAmount: BigNumber }>;
@@ -360,8 +445,7 @@ export class Validator extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   play(
-    _token: string,
-    _caseId: BigNumberish,
+    _blockNumber: BigNumberish,
     _amount: BigNumberish,
     _answer: BytesLike,
     _remark: string,
@@ -381,48 +465,85 @@ export class Validator extends BaseContract {
 
   callStatic: {
     addCase(
+      _blockNumber: BigNumberish,
       _token: string,
-      _totalValue: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    claimReward(
-      _token: string,
-      _caseId: BigNumberish,
+      _seller: string,
+      _buyer: string,
+      _remark: BigNumberish,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    claimReward(
+      _blockNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    erc20Interface(overrides?: CallOverrides): Promise<string>;
+
     evaluate(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _randomness: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getCaseTotalValue(
-      _token: string,
-      _caseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getCaseValue(
-      _token: string,
-      _caseId: BigNumberish,
+    getCaseInfo(
+      _blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber
+      ] & {
+        seller: string;
+        buyer: string;
+        token: string;
+        currentValue: BigNumber;
+        totalValue: BigNumber;
+        fund: BigNumber;
+        result: string;
+        resultAt: BigNumber;
+        randomness: string;
+        remark: BigNumber;
+        status: BigNumber;
+      }
+    >;
 
     getTotalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserDecision(
-      _token: string,
-      _caseId: BigNumberish,
-      _owner: string,
+      _blockNumber: BigNumberish,
+      _userReply: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    getUserReply(
+      _blockNumber: BigNumberish,
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string, BigNumber, boolean] & {
+        answer: string;
+        amount: BigNumber;
+        remark: string;
+        createdAt: BigNumber;
+        claimed: boolean;
+      }
+    >;
+
     getUserResultInCase(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<
@@ -436,8 +557,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     play(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -550,48 +670,51 @@ export class Validator extends BaseContract {
 
   estimateGas: {
     addCase(
+      _blockNumber: BigNumberish,
       _token: string,
-      _totalValue: BigNumberish,
+      _seller: string,
+      _buyer: string,
+      _remark: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     claimReward(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    erc20Interface(overrides?: CallOverrides): Promise<BigNumber>;
+
     evaluate(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _randomness: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getCaseTotalValue(
-      _token: string,
-      _caseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getCaseValue(
-      _token: string,
-      _caseId: BigNumberish,
+    getCaseInfo(
+      _blockNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTotalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserDecision(
-      _token: string,
-      _caseId: BigNumberish,
-      _owner: string,
+      _blockNumber: BigNumberish,
+      _userReply: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserReply(
+      _blockNumber: BigNumberish,
+      _user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserResultInCase(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -603,8 +726,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     play(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -625,33 +747,32 @@ export class Validator extends BaseContract {
 
   populateTransaction: {
     addCase(
+      _blockNumber: BigNumberish,
       _token: string,
-      _totalValue: BigNumberish,
+      _seller: string,
+      _buyer: string,
+      _remark: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     claimReward(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    erc20Interface(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     evaluate(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _randomness: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getCaseTotalValue(
-      _token: string,
-      _caseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getCaseValue(
-      _token: string,
-      _caseId: BigNumberish,
+    getCaseInfo(
+      _blockNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -660,15 +781,19 @@ export class Validator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getUserDecision(
-      _token: string,
-      _caseId: BigNumberish,
-      _owner: string,
+      _blockNumber: BigNumberish,
+      _userReply: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserReply(
+      _blockNumber: BigNumberish,
+      _user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserResultInCase(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -680,8 +805,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     play(
-      _token: string,
-      _caseId: BigNumberish,
+      _blockNumber: BigNumberish,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,

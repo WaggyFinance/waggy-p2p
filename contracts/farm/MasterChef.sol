@@ -10,19 +10,16 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./../p2p/WaggyToken.sol";
 
-interface IMigratorChef {
-  function migrate(ERC20 token) external returns (ERC20);
-}
-
-contract MasterChef is OwnableUpgradeable {
+contract MasterChef is Ownable {
   using SafeMath for uint256;
+  using SafeERC20 for ERC20;
 
   // Info of each user.
   struct UserInfo {
@@ -46,9 +43,6 @@ contract MasterChef is OwnableUpgradeable {
   uint256 public wagPerBlock;
   // Bonus muliplier for early cake makers.
   uint256 public BONUS_MULTIPLIER;
-  // The migrator contract. It has a lot of power. Can only be set through governance (owner).
-  IMigratorChef public migrator;
-
   // Info of each pool.
   PoolInfo[] public poolInfo;
   // Info of each user that stakes LP tokens.
@@ -64,15 +58,14 @@ contract MasterChef is OwnableUpgradeable {
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
   event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
-  function initialize(
+  constructor(
     address _wag,
     address _devaddr,
     uint256 _wagPerBlock,
     uint256 _startBlock
-  ) public initializer {
-
+  ) {
     BONUS_MULTIPLIER = 1;
-    lockRewardPercent = 900;//90%
+    lockRewardPercent = 900; //90%
     wag = WaggyToken(_wag);
     devaddr = _devaddr;
     wagPerBlock = _wagPerBlock;
@@ -142,23 +135,6 @@ contract MasterChef is OwnableUpgradeable {
   function setLockRewardPercent(uint256 _amount) external onlyOwner {
     require(_amount <= 1000, "not allow over 100%");
     lockRewardPercent = _amount;
-  }
-
-  // Set the migrator contract. Can only be called by the owner.
-  function setMigrator(IMigratorChef _migrator) public onlyOwner {
-    migrator = _migrator;
-  }
-
-  // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
-  function migrate(uint256 _pid) public {
-    require(address(migrator) != address(0), "migrate: no migrator");
-    PoolInfo storage pool = poolInfo[_pid];
-    ERC20 lpToken = pool.lpToken;
-    uint256 bal = lpToken.balanceOf(address(this));
-    lpToken.approve(address(migrator), bal);
-    ERC20 newLpToken = migrator.migrate(lpToken);
-    require(bal == newLpToken.balanceOf(address(this)), "migrate: bad");
-    pool.lpToken = newLpToken;
   }
 
   // Return reward multiplier over the given _from to _to block.

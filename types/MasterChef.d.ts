@@ -29,12 +29,9 @@ interface MasterChefInterface extends ethers.utils.Interface {
     "emergencyWithdraw(uint256)": FunctionFragment;
     "enterStaking(uint256)": FunctionFragment;
     "getMultiplier(uint256,uint256)": FunctionFragment;
-    "initialize(address,address,uint256,uint256)": FunctionFragment;
     "leaveStaking(uint256)": FunctionFragment;
     "lockRewardPercent()": FunctionFragment;
     "massUpdatePools()": FunctionFragment;
-    "migrate(uint256)": FunctionFragment;
-    "migrator()": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingWag(uint256,address)": FunctionFragment;
     "poolInfo(uint256)": FunctionFragment;
@@ -42,7 +39,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "set(uint256,uint256,bool)": FunctionFragment;
     "setLockRewardPercent(uint256)": FunctionFragment;
-    "setMigrator(address)": FunctionFragment;
     "startBlock()": FunctionFragment;
     "totalAllocPoint()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -81,10 +77,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "leaveStaking",
     values: [BigNumberish]
   ): string;
@@ -96,11 +88,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "massUpdatePools",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "migrate",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "migrator", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "pendingWag",
@@ -126,7 +113,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "setLockRewardPercent",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "setMigrator", values: [string]): string;
   encodeFunctionData(
     functionFragment: "startBlock",
     values?: undefined
@@ -181,7 +167,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "getMultiplier",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "leaveStaking",
     data: BytesLike
@@ -194,8 +179,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "massUpdatePools",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "migrate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "migrator", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pendingWag", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "poolInfo", data: BytesLike): Result;
@@ -207,10 +190,6 @@ interface MasterChefInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "set", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setLockRewardPercent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMigrator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "startBlock", data: BytesLike): Result;
@@ -358,14 +337,6 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    initialize(
-      _wag: string,
-      _devaddr: string,
-      _wagPerBlock: BigNumberish,
-      _startBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     leaveStaking(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -376,13 +347,6 @@ export class MasterChef extends BaseContract {
     massUpdatePools(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    migrate(
-      _pid: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    migrator(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -419,11 +383,6 @@ export class MasterChef extends BaseContract {
 
     setLockRewardPercent(
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMigrator(
-      _migrator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -503,14 +462,6 @@ export class MasterChef extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  initialize(
-    _wag: string,
-    _devaddr: string,
-    _wagPerBlock: BigNumberish,
-    _startBlock: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   leaveStaking(
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -521,13 +472,6 @@ export class MasterChef extends BaseContract {
   massUpdatePools(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  migrate(
-    _pid: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  migrator(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -564,11 +508,6 @@ export class MasterChef extends BaseContract {
 
   setLockRewardPercent(
     _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMigrator(
-    _migrator: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -645,14 +584,6 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      _wag: string,
-      _devaddr: string,
-      _wagPerBlock: BigNumberish,
-      _startBlock: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     leaveStaking(
       _amount: BigNumberish,
       overrides?: CallOverrides
@@ -661,10 +592,6 @@ export class MasterChef extends BaseContract {
     lockRewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
     massUpdatePools(overrides?: CallOverrides): Promise<void>;
-
-    migrate(_pid: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    migrator(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -701,8 +628,6 @@ export class MasterChef extends BaseContract {
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    setMigrator(_migrator: string, overrides?: CallOverrides): Promise<void>;
 
     startBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -850,14 +775,6 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      _wag: string,
-      _devaddr: string,
-      _wagPerBlock: BigNumberish,
-      _startBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     leaveStaking(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -868,13 +785,6 @@ export class MasterChef extends BaseContract {
     massUpdatePools(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    migrate(
-      _pid: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    migrator(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -901,11 +811,6 @@ export class MasterChef extends BaseContract {
 
     setLockRewardPercent(
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMigrator(
-      _migrator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -984,14 +889,6 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    initialize(
-      _wag: string,
-      _devaddr: string,
-      _wagPerBlock: BigNumberish,
-      _startBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     leaveStaking(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1002,13 +899,6 @@ export class MasterChef extends BaseContract {
     massUpdatePools(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    migrate(
-      _pid: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    migrator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1038,11 +928,6 @@ export class MasterChef extends BaseContract {
 
     setLockRewardPercent(
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMigrator(
-      _migrator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

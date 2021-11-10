@@ -12,10 +12,20 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Validator is Ownable {
   using SafeMath for uint256;
+  using SafeERC20 for ERC20;
+
+  enum CaseStatus {
+    START,
+    INPROGRESS,
+    SUMMARY,
+    DONE
+  }
 
   bytes32 internal constant BUYYER = "BUYYER";
   bytes32 internal constant SELLER = "SELLER";
@@ -29,32 +39,35 @@ contract Validator is Ownable {
     bool claimed;
   }
 
-  uint256 autoNumberCaseId;
-
   struct CaseInfo {
     mapping(address => UserReplyAnswer) usersReplyAnswer;
     address[] users;
     address[] winners;
+    address seller;
+    address buyer;
+    address token;
     uint256 currentValue;
     uint256 totalValue;
     uint256 fund;
     bytes32 result;
     uint256 resultAt;
     bytes32 randomness;
+    uint256 remark;
+    CaseStatus status;
   }
 
   event USER_DECISION(address _sender, uint256 _caseId, uint256 _amount, bytes32 _answer, string _remark);
   event CASE_VOTE_DONE(uint256 _caseId);
   event CASE_GEN_RESULT(address _sender, uint256 _caseId, uint256 _amount, bytes32 _answer, string _remark);
 
-  ERC20 erc20Interface;
-  // mapping(uint256 => CaseInfo) casesInfo;
+  ERC20 public erc20Interface;
 
-  mapping(address => CaseInfo[]) casesInfo;
+  mapping(uint256 => CaseInfo) internal casesInfo;
+
   uint256 public totalCollateral;
   uint256 public maxPercentValue;
   uint256 public minPercentValue;
-  uint256 fee; //20%
+  uint256 public fee; //20%
 
   constructor(
     uint256 _maxPercentValue,
@@ -66,43 +79,88 @@ contract Validator is Ownable {
     fee = _fee;
   }
 
-  function addCase(address _token, uint256 _totalValue) public returns (uint256) {
-    autoNumberCaseId++;
-    CaseInfo storage caseInfo = casesInfo[_token][autoNumberCaseId];
-    caseInfo.totalValue = _totalValue;
-
-    return autoNumberCaseId;
+  function addCase(
+    uint256 _blockNumber,
+    address _token,
+    address _seller,
+    address _buyer,
+    uint256 _remark,
+    uint256 _amount
+  ) external {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
+    caseInfo.seller = _seller;
+    caseInfo.buyer = _buyer;
+    caseInfo.token = _token;
+    caseInfo.remark = _remark;
+    caseInfo.totalValue = _amount;
   }
 
   function getTotalCollateral() external view returns (uint256) {
     return totalCollateral;
   }
 
-  function getCaseTotalValue(address _token, uint256 _caseId) external view returns (uint256) {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
-    return caseInfo.totalValue;
+  function getUserReply(uint256 _blockNumber, address _user)
+    external
+    view
+    returns (
+      bytes32 answer,
+      uint256 amount,
+      string memory remark,
+      uint256 createdAt,
+      bool claimed
+    )
+  {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
+    UserReplyAnswer memory userReply = caseInfo.usersReplyAnswer[_user];
+    answer = userReply.answer;
+    amount = userReply.amount;
+    remark = userReply.remark;
+    createdAt = userReply.createdAt;
+    claimed = userReply.claimed;
   }
 
-  function getCaseValue(address _token, uint256 _caseId) external view returns (uint256) {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
-    return caseInfo.currentValue;
+  function getCaseInfo(uint256 _blockNumber)
+    external
+    view
+    returns (
+      address seller,
+      address buyer,
+      address token,
+      uint256 currentValue,
+      uint256 totalValue,
+      uint256 fund,
+      bytes32 result,
+      uint256 resultAt,
+      bytes32 randomness,
+      uint256 remark,
+      uint256 status
+    )
+  {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
+    seller = caseInfo.seller;
+    buyer = caseInfo.buyer;
+    token = caseInfo.token;
+    currentValue = caseInfo.currentValue;
+    totalValue = caseInfo.totalValue;
+    fund = caseInfo.fund;
+    result = caseInfo.result;
+    resultAt = caseInfo.resultAt;
+    randomness = caseInfo.randomness;
+    remark = caseInfo.remark;
+    status = uint256(caseInfo.status);
   }
 
-  function getUserDecision(
-    address _token,
-    uint256 _caseId,
-    address _owner
-  ) external view returns (bool) {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
-    return (caseInfo.usersReplyAnswer[_owner].createdAt != 0);
+  function getUserDecision(uint256 _blockNumber, address _userReply) external view returns (bool) {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
+    return (caseInfo.usersReplyAnswer[_userReply].createdAt != 0);
   }
 
-  function getUserResultInCase(
-    address _token,
-    uint256 _caseId,
-    address _userAddress
-  ) public view returns (bool _isWin, uint256 _betAmount) {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
+  function getUserResultInCase(uint256 _blockNumber, address _userAddress)
+    public
+    view
+    returns (bool _isWin, uint256 _betAmount)
+  {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
 
     UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[_userAddress];
     bytes32 answer = keccak256(abi.encodePacked(userReplyAnswer.answer, caseInfo.randomness));
@@ -110,12 +168,12 @@ contract Validator is Ownable {
     _betAmount = userReplyAnswer.amount;
   }
 
-  function claimReward(address _token, uint256 _caseId) public {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
+  function claimReward(uint256 _blockNumber) public {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
     bool isWin;
     uint256 betAmount;
     require(caseInfo.usersReplyAnswer[msg.sender].claimed != true);
-    (isWin, betAmount) = getUserResultInCase(_token, _caseId, msg.sender);
+    (isWin, betAmount) = getUserResultInCase(_blockNumber, msg.sender);
 
     if (isWin) {
       uint256 fundAferSubFee = caseInfo.fund.sub(caseInfo.fund.mul(fee).div(100));
@@ -123,16 +181,12 @@ contract Validator is Ownable {
       uint256 totalPay = betAmount.add(fundPerUser);
       caseInfo.usersReplyAnswer[msg.sender].claimed = true;
 
-      erc20Interface.transferFrom(address(this), msg.sender, totalPay);
+      erc20Interface.safeTransferFrom(address(this), msg.sender, totalPay);
     }
   }
 
-  function evaluate(
-    address _token,
-    uint256 _caseId,
-    bytes32 _randomness
-  ) external onlyOwner returns (bytes32) {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
+  function evaluate(uint256 _blockNumber, bytes32 _randomness) external onlyOwner returns (bytes32) {
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
     require(caseInfo.result[0] == 0, "This case already had result.");
     uint256 buyyerValueCount;
     uint256 sellerValueCount;
@@ -172,13 +226,12 @@ contract Validator is Ownable {
   }
 
   function play(
-    address _token,
-    uint256 _caseId,
+    uint256 _blockNumber,
     uint256 _amount,
     bytes32 _answer,
     string memory _remark
   ) external {
-    CaseInfo storage caseInfo = casesInfo[_token][_caseId];
+    CaseInfo storage caseInfo = casesInfo[_blockNumber];
     require(caseInfo.totalValue > caseInfo.currentValue, "The case is closed");
     UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[msg.sender];
     require(userReplyAnswer.createdAt == 0, "Not allow user reply again");
@@ -189,7 +242,7 @@ contract Validator is Ownable {
     // check amount in range
     require(_amount <= maxAmount && _amount >= minAmount, "amount is not in range limit.");
     // transfer
-    require(erc20Interface.transferFrom(msg.sender, address(this), _amount), "Can't transfer");
+    erc20Interface.safeTransferFrom(msg.sender, address(this), _amount);
     // add collateral
     totalCollateral = totalCollateral.add(_amount);
     // save reply
@@ -202,10 +255,10 @@ contract Validator is Ownable {
     // update progress
     caseInfo.currentValue = caseInfo.currentValue.add(_amount);
     // emit event
-    emit USER_DECISION(msg.sender, _caseId, _amount, _answer, _remark);
+    emit USER_DECISION(msg.sender, _blockNumber, _amount, _answer, _remark);
 
     if (caseInfo.currentValue >= caseInfo.totalValue) {
-      emit CASE_VOTE_DONE(_caseId);
+      emit CASE_VOTE_DONE(_blockNumber);
     }
   }
 }
