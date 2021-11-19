@@ -10,11 +10,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_blockNumber",
-        type: "uint256",
-      },
-      {
         internalType: "address",
         name: "_token",
         type: "address",

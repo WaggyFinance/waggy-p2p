@@ -16,10 +16,18 @@ async function main() {
   // verify merchant
   // console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   await hre.run("verify:verify", {
-    address: "0xe8cc7d7cc5c9658f1d3906667ae823e062ac86c7",
+    address: "0x71f9855ae6c613b3eab28be18fd415f1cfc0da97",
     contract: "contracts/p2p/Merchant.sol:Merchant",
     constructorArguments: [],
   });
+
+  // await hre.run("verify:verify", {
+  //   address: "0x5953029e5e7c0a9ee5b251f50378742dbe8b7c21",
+  //   contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
+  //   constructorArguments: [],
+  // });
+
+  
 
   console.log("verify merchant done.");
 }

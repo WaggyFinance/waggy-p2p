@@ -13,6 +13,7 @@
     "deploy:waggyStaking": "npx hardhat clean; npx hardhat run --network rinkeby scripts/7_deployWaggyStaking.js",
     "deploy:validator": "npx hardhat clean; npx hardhat run --network rinkeby scripts/5_deployValidator.js",
     "deploy:pools": "npx hardhat clean; npx hardhat run --network rinkeby scripts/3_initPools.js",
+    "mint:stable": "npx hardhat run --network rinkeby scripts/mintStable.js",
     "test:unit:masterWaggy": "hardhat test --no-compile ./test/unit/MasterWaggy.test.js",
     "test:unit:masterChef": "hardhat test --no-compile ./test/unit/MasterChef.test.js",
     "test:unit:waggyStaking": "hardhat test --no-compile ./test/unit/WaggyStaking.test.js",

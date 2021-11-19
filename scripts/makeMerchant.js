@@ -8,7 +8,7 @@ async function main() {
   // deploy merchant
   const deployMerchant = async (targetToken, merchangeName) => {
     //  Upgrade Merchant contract
-    console.log(`Start upgrade merchant ${merchangeName} with address ${ContractJSON[merchangeName]}`);
+    // console.log(`Start upgrade merchant ${merchangeName} with address ${ContractJSON[merchangeName]}`);
     const Merchant = await ethers.getContractFactory("Merchant");
     const merchant = await upgrades.upgradeProxy(ContractJSON[merchangeName], Merchant);
     await merchant.deployed();
@@ -22,10 +22,10 @@ async function main() {
     //   feeCollector.address,
     //   ContractJSON.blackListUser
     // ])
-    // await merchant.deployed();
-    // const merchantsAddress = merchant.address;
-    // ContractJSON[merchangeName] = merchantsAddress;
-    // console.log(`Deploy merchant done. at address ${merchantsAddress}`);
+    await merchant.deployed();
+    const merchantsAddress = merchant.address;
+    ContractJSON[merchangeName] = merchantsAddress;
+    console.log(`Deploy merchant done. at address ${merchantsAddress}`);
   };
 
   const tokenData = {

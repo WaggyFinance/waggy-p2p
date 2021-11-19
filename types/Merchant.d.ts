@@ -284,7 +284,7 @@ interface MerchantInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "AppealTransaction(uint256,address,address,uint256)": EventFragment;
+    "AppealTransaction(address,address,uint256)": EventFragment;
     "ApproveTransaction(address,address,uint256)": EventFragment;
     "CancelTransaction(address,address,uint256)": EventFragment;
     "DeleteShop(address,address,uint256)": EventFragment;
@@ -309,8 +309,7 @@ interface MerchantInterface extends ethers.utils.Interface {
 }
 
 export type AppealTransactionEvent = TypedEvent<
-  [BigNumber, string, string, BigNumber] & {
-    blockNumber: BigNumber;
+  [string, string, BigNumber] & {
     seller: string;
     buyer: string;
     balance: BigNumber;
@@ -929,34 +928,22 @@ export class Merchant extends BaseContract {
   };
 
   filters: {
-    "AppealTransaction(uint256,address,address,uint256)"(
-      blockNumber?: null,
+    "AppealTransaction(address,address,uint256)"(
       seller?: null,
       buyer?: null,
       balance?: null
     ): TypedEventFilter<
-      [BigNumber, string, string, BigNumber],
-      {
-        blockNumber: BigNumber;
-        seller: string;
-        buyer: string;
-        balance: BigNumber;
-      }
+      [string, string, BigNumber],
+      { seller: string; buyer: string; balance: BigNumber }
     >;
 
     AppealTransaction(
-      blockNumber?: null,
       seller?: null,
       buyer?: null,
       balance?: null
     ): TypedEventFilter<
-      [BigNumber, string, string, BigNumber],
-      {
-        blockNumber: BigNumber;
-        seller: string;
-        buyer: string;
-        balance: BigNumber;
-      }
+      [string, string, BigNumber],
+      { seller: string; buyer: string; balance: BigNumber }
     >;
 
     "ApproveTransaction(address,address,uint256)"(
