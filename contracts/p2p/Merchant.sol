@@ -29,6 +29,7 @@ enum ValidatorRemark {
 interface IValidator {
   function addCase(
     address _token,
+    string memory _txId,
     address _seller,
     address _buyer,
     uint256 _remark,
@@ -179,7 +180,7 @@ contract Merchant is OwnableUpgradeable {
     _address is address of seller 
     _amount is value of transaction 
     */
-  function cancelTransactionSeller(address _buyer, string memory _remark) public {
+  function cancelTransactionSeller(string memory _txId,address _buyer, string memory _remark) public {
     UserInfo storage buyerInfoData = buyerInfo[msg.sender][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
@@ -191,7 +192,7 @@ contract Merchant is OwnableUpgradeable {
     transaction.status = TransactionStatus.CANCELED;
     // move to validator to decision
   
-    validator.addCase(address(token), msg.sender, _buyer, uint256(ValidatorRemark.SELLER_CANCEL_TRANSACTION), transaction.amount);
+    validator.addCase(address(token),_txId, msg.sender, _buyer, uint256(ValidatorRemark.SELLER_CANCEL_TRANSACTION), transaction.amount);
     // web3 filter event
     // get task filter by block number 
 
@@ -269,7 +270,7 @@ contract Merchant is OwnableUpgradeable {
     _buyer is a buyer waller address
     _remark is value of 1 is buyer is appeal 2 is seller is appeal
     */
-  function appeal(address _seller, address _buyer,uint256 _remark) external {
+  function appeal(string memory _txId,address _seller, address _buyer,uint256 _remark) external {
     require(msg.sender == _seller || msg.sender == _buyer, "Not allow other appeal.");
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
@@ -281,7 +282,7 @@ contract Merchant is OwnableUpgradeable {
     );
     transaction.status = TransactionStatus.APPEAL;
     transaction.updateAt = block.number;
-    validator.addCase(address(token), _seller, _buyer,_remark,transaction.amount);
+    validator.addCase(address(token),_txId, _seller, _buyer,_remark,transaction.amount);
 
     emit AppealTransaction(_seller, _buyer, transaction.amount);
   }

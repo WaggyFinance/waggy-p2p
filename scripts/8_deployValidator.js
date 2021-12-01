@@ -6,6 +6,7 @@
 const hre = require("hardhat");
 const ContractJSON = require("../contract.json");
 const fs = require("fs");
+const { ethers } = require("ethers");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -13,39 +14,33 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
-
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
-  // Validator token
+  // Waggy token
   const Validator = await hre.ethers.getContractFactory("Validator");
-  const validator = await Validator.deploy(
-      30,
-      10,
-      20
-  );
 
-  const tx = await validator.deployed();
-  // await tx.wait(1);
+  const validator = await Validator.deploy(300,100,50);
 
-  await validator.setAdmin("0x727618192f7E29721cbd2a518DFc0A3B66720829",true);
-  
-  // console.log("Validator BUSD Token address : ", validator.address);
+  await validator.deployed();
 
-  console.log("✅ Done deploying a Validator");
-  console.log(">> Start Verify Contract");
+  ContractJSON.validator = validator.address;
+  console.log(`validator address: ${validator.address}`);
+
   await hre.run("verify:verify", {
     address: validator.address,
     contract: "contracts/Validator.sol:Validator",
     constructorArguments: [
-        30,
-        10,
-        20 
+      300,100,50
     ],
   });
-  
-  
+
   console.log("✅ Done Verify Contract");
+
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync("./contract.json", jsonString);
+  console.log("Update file done.");
 }
 
 // We recommend this pattern to be able to use async/await everywhere

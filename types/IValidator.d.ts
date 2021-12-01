@@ -21,12 +21,12 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IValidatorInterface extends ethers.utils.Interface {
   functions: {
-    "addCase(address,address,address,uint256,uint256)": FunctionFragment;
+    "addCase(address,string,address,address,uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "addCase",
-    values: [string, string, string, BigNumberish, BigNumberish]
+    values: [string, string, string, string, BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "addCase", data: BytesLike): Result;
@@ -80,6 +80,7 @@ export class IValidator extends BaseContract {
   functions: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -90,6 +91,7 @@ export class IValidator extends BaseContract {
 
   addCase(
     _token: string,
+    _txId: string,
     _seller: string,
     _buyer: string,
     _remark: BigNumberish,
@@ -100,6 +102,7 @@ export class IValidator extends BaseContract {
   callStatic: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -113,6 +116,7 @@ export class IValidator extends BaseContract {
   estimateGas: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -124,6 +128,7 @@ export class IValidator extends BaseContract {
   populateTransaction: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,

@@ -15,6 +15,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "string",
+        name: "_txId",
+        type: "string",
+      },
+      {
         internalType: "address",
         name: "_seller",
         type: "address",

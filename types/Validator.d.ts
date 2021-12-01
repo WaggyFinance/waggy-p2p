@@ -21,44 +21,46 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface ValidatorInterface extends ethers.utils.Interface {
   functions: {
-    "addCase(address,address,address,uint256,uint256)": FunctionFragment;
-    "casesInfo(uint256)": FunctionFragment;
-    "claimReward(uint256)": FunctionFragment;
+    "addCase(address,string,address,address,uint256,uint256)": FunctionFragment;
+    "adminRole(address)": FunctionFragment;
+    "appeal(string)": FunctionFragment;
+    "casesInfo(string)": FunctionFragment;
+    "decideByAdmin(string,string)": FunctionFragment;
+    "encode(string)": FunctionFragment;
     "erc20Interface()": FunctionFragment;
-    "evaluate(uint256,bytes32)": FunctionFragment;
+    "evaluate(string)": FunctionFragment;
     "fee()": FunctionFragment;
     "getTotalCollateral()": FunctionFragment;
-    "getUserDecision(uint256,address)": FunctionFragment;
-    "getUserResultInCase(uint256,address)": FunctionFragment;
+    "getUserDecision(string,address)": FunctionFragment;
+    "getUserResultInCase(string,address)": FunctionFragment;
     "maxPercentValue()": FunctionFragment;
     "minPercentValue()": FunctionFragment;
     "owner()": FunctionFragment;
-    "play(uint256,uint256,bytes32,string)": FunctionFragment;
+    "play(string,uint256,bytes32,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setAdmin(address,bool)": FunctionFragment;
+    "setCaseStatusDone(string)": FunctionFragment;
     "totalCollateral()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "addCase",
-    values: [string, string, string, BigNumberish, BigNumberish]
+    values: [string, string, string, string, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "adminRole", values: [string]): string;
+  encodeFunctionData(functionFragment: "appeal", values: [string]): string;
+  encodeFunctionData(functionFragment: "casesInfo", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "casesInfo",
-    values: [BigNumberish]
+    functionFragment: "decideByAdmin",
+    values: [string, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "claimReward",
-    values: [BigNumberish]
-  ): string;
+  encodeFunctionData(functionFragment: "encode", values: [string]): string;
   encodeFunctionData(
     functionFragment: "erc20Interface",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "evaluate",
-    values: [BigNumberish, BytesLike]
-  ): string;
+  encodeFunctionData(functionFragment: "evaluate", values: [string]): string;
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTotalCollateral",
@@ -66,11 +68,11 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getUserDecision",
-    values: [BigNumberish, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserResultInCase",
-    values: [BigNumberish, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "maxPercentValue",
@@ -83,11 +85,19 @@ interface ValidatorInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "play",
-    values: [BigNumberish, BigNumberish, BytesLike, string]
+    values: [string, BigNumberish, BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAdmin",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCaseStatusDone",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "totalCollateral",
@@ -99,11 +109,14 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "addCase", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "adminRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "appeal", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "casesInfo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "claimReward",
+    functionFragment: "decideByAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "encode", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "erc20Interface",
     data: BytesLike
@@ -136,6 +149,11 @@ interface ValidatorInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setCaseStatusDone",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "totalCollateral",
     data: BytesLike
@@ -146,55 +164,73 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AddCase(uint256,address,address,uint256)": EventFragment;
-    "CaseGenResult(address,uint256,uint256,bytes32,string)": EventFragment;
-    "CaseVoteDone(uint256)": EventFragment;
-    "ClaimReward(uint256,address,bool)": EventFragment;
-    "EvaluateResult(uint256,bytes32)": EventFragment;
+    "AddCase(string,string,address,address,uint256)": EventFragment;
+    "CaseAppeal(string)": EventFragment;
+    "CaseGenResult(address,string,uint256,bytes32,string)": EventFragment;
+    "CaseVoteDone(string)": EventFragment;
+    "ChangeStatus(string,string)": EventFragment;
+    "ClaimReward(string,address,bool)": EventFragment;
+    "DoneResult(string,string)": EventFragment;
+    "EvaluateResult(string,string,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "UserDecision(address,uint256,uint256,bytes32,string)": EventFragment;
+    "UserDecision(address,string,uint256,bytes32,string)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AddCase"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CaseAppeal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CaseGenResult"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CaseVoteDone"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ChangeStatus"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ClaimReward"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DoneResult"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EvaluateResult"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UserDecision"): EventFragment;
 }
 
 export type AddCaseEvent = TypedEvent<
-  [BigNumber, string, string, BigNumber] & {
-    key: BigNumber;
+  [string, string, string, string, BigNumber] & {
+    txKey: string;
+    txId: string;
     seller: string;
     buyer: string;
     amount: BigNumber;
   }
 >;
 
+export type CaseAppealEvent = TypedEvent<[string] & { txKey: string }>;
+
 export type CaseGenResultEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string] & {
-    _sender: string;
-    _key: BigNumber;
-    _amount: BigNumber;
-    _answer: string;
-    _remark: string;
+  [string, string, BigNumber, string, string] & {
+    sender: string;
+    txKey: string;
+    amount: BigNumber;
+    answer: string;
+    remark: string;
   }
 >;
 
-export type CaseVoteDoneEvent = TypedEvent<[BigNumber] & { _key: BigNumber }>;
+export type CaseVoteDoneEvent = TypedEvent<[string] & { txKey: string }>;
+
+export type ChangeStatusEvent = TypedEvent<
+  [string, string] & { txKey: string; status: string }
+>;
 
 export type ClaimRewardEvent = TypedEvent<
-  [BigNumber, string, boolean] & {
-    key: BigNumber;
-    user: string;
-    result: boolean;
-  }
+  [string, string, boolean] & { txKey: string; user: string; result: boolean }
+>;
+
+export type DoneResultEvent = TypedEvent<
+  [string, string] & { txKey: string; result: string }
 >;
 
 export type EvaluateResultEvent = TypedEvent<
-  [BigNumber, string] & { key: BigNumber; result: string }
+  [string, string, BigNumber, BigNumber] & {
+    txKey: string;
+    result: string;
+    buyerAmount: BigNumber;
+    sellerAmount: BigNumber;
+  }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -202,12 +238,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 >;
 
 export type UserDecisionEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string] & {
-    _sender: string;
-    _key: BigNumber;
-    _amount: BigNumber;
-    _answer: string;
-    _remark: string;
+  [string, string, BigNumber, string, string] & {
+    sender: string;
+    txKey: string;
+    amount: BigNumber;
+    answer: string;
+    remark: string;
   }
 >;
 
@@ -257,6 +293,7 @@ export class Validator extends BaseContract {
   functions: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -264,8 +301,15 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    adminRole(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    appeal(
+      _key: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     casesInfo(
-      arg0: BigNumberish,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -295,16 +339,18 @@ export class Validator extends BaseContract {
       }
     >;
 
-    claimReward(
-      _key: BigNumberish,
+    decideByAdmin(
+      _key: string,
+      _result: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    encode(_key: string, overrides?: CallOverrides): Promise<[string]>;
 
     erc20Interface(overrides?: CallOverrides): Promise<[string]>;
 
     evaluate(
-      _key: BigNumberish,
-      _randomness: BytesLike,
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -313,13 +359,13 @@ export class Validator extends BaseContract {
     getTotalCollateral(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getUserDecision(
-      _key: BigNumberish,
+      _key: string,
       _userReply: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     getUserResultInCase(
-      _key: BigNumberish,
+      _key: string,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<
@@ -333,7 +379,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     play(
-      _key: BigNumberish,
+      _key: string,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -341,6 +387,17 @@ export class Validator extends BaseContract {
     ): Promise<ContractTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setAdmin(
+      _admin: string,
+      _isAdmin: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setCaseStatusDone(
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -354,6 +411,7 @@ export class Validator extends BaseContract {
 
   addCase(
     _token: string,
+    _txId: string,
     _seller: string,
     _buyer: string,
     _remark: BigNumberish,
@@ -361,8 +419,15 @@ export class Validator extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  adminRole(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  appeal(
+    _key: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   casesInfo(
-    arg0: BigNumberish,
+    arg0: string,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -392,16 +457,18 @@ export class Validator extends BaseContract {
     }
   >;
 
-  claimReward(
-    _key: BigNumberish,
+  decideByAdmin(
+    _key: string,
+    _result: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  encode(_key: string, overrides?: CallOverrides): Promise<string>;
 
   erc20Interface(overrides?: CallOverrides): Promise<string>;
 
   evaluate(
-    _key: BigNumberish,
-    _randomness: BytesLike,
+    _key: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -410,13 +477,13 @@ export class Validator extends BaseContract {
   getTotalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
   getUserDecision(
-    _key: BigNumberish,
+    _key: string,
     _userReply: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   getUserResultInCase(
-    _key: BigNumberish,
+    _key: string,
     _userAddress: string,
     overrides?: CallOverrides
   ): Promise<[boolean, BigNumber] & { _isWin: boolean; _betAmount: BigNumber }>;
@@ -428,7 +495,7 @@ export class Validator extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   play(
-    _key: BigNumberish,
+    _key: string,
     _amount: BigNumberish,
     _answer: BytesLike,
     _remark: string,
@@ -436,6 +503,17 @@ export class Validator extends BaseContract {
   ): Promise<ContractTransaction>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setAdmin(
+    _admin: string,
+    _isAdmin: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setCaseStatusDone(
+    _key: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -449,6 +527,7 @@ export class Validator extends BaseContract {
   callStatic: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -456,8 +535,12 @@ export class Validator extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    adminRole(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+    appeal(_key: string, overrides?: CallOverrides): Promise<void>;
+
     casesInfo(
-      arg0: BigNumberish,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -487,28 +570,33 @@ export class Validator extends BaseContract {
       }
     >;
 
-    claimReward(_key: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    decideByAdmin(
+      _key: string,
+      _result: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    encode(_key: string, overrides?: CallOverrides): Promise<string>;
 
     erc20Interface(overrides?: CallOverrides): Promise<string>;
 
     evaluate(
-      _key: BigNumberish,
-      _randomness: BytesLike,
+      _key: string,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<[string, BigNumber, BigNumber]>;
 
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTotalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserDecision(
-      _key: BigNumberish,
+      _key: string,
       _userReply: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     getUserResultInCase(
-      _key: BigNumberish,
+      _key: string,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<
@@ -522,7 +610,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     play(
-      _key: BigNumberish,
+      _key: string,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -530,6 +618,14 @@ export class Validator extends BaseContract {
     ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setAdmin(
+      _admin: string,
+      _isAdmin: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setCaseStatusDone(_key: string, overrides?: CallOverrides): Promise<void>;
 
     totalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -540,100 +636,152 @@ export class Validator extends BaseContract {
   };
 
   filters: {
-    "AddCase(uint256,address,address,uint256)"(
-      key?: null,
+    "AddCase(string,string,address,address,uint256)"(
+      txKey?: null,
+      txId?: null,
       seller?: null,
       buyer?: null,
       amount?: null
     ): TypedEventFilter<
-      [BigNumber, string, string, BigNumber],
-      { key: BigNumber; seller: string; buyer: string; amount: BigNumber }
+      [string, string, string, string, BigNumber],
+      {
+        txKey: string;
+        txId: string;
+        seller: string;
+        buyer: string;
+        amount: BigNumber;
+      }
     >;
 
     AddCase(
-      key?: null,
+      txKey?: null,
+      txId?: null,
       seller?: null,
       buyer?: null,
       amount?: null
     ): TypedEventFilter<
-      [BigNumber, string, string, BigNumber],
-      { key: BigNumber; seller: string; buyer: string; amount: BigNumber }
+      [string, string, string, string, BigNumber],
+      {
+        txKey: string;
+        txId: string;
+        seller: string;
+        buyer: string;
+        amount: BigNumber;
+      }
     >;
 
-    "CaseGenResult(address,uint256,uint256,bytes32,string)"(
-      _sender?: null,
-      _key?: null,
-      _amount?: null,
-      _answer?: null,
-      _remark?: null
+    "CaseAppeal(string)"(
+      txKey?: null
+    ): TypedEventFilter<[string], { txKey: string }>;
+
+    CaseAppeal(txKey?: null): TypedEventFilter<[string], { txKey: string }>;
+
+    "CaseGenResult(address,string,uint256,bytes32,string)"(
+      sender?: null,
+      txKey?: null,
+      amount?: null,
+      answer?: null,
+      remark?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber, string, string],
+      [string, string, BigNumber, string, string],
       {
-        _sender: string;
-        _key: BigNumber;
-        _amount: BigNumber;
-        _answer: string;
-        _remark: string;
+        sender: string;
+        txKey: string;
+        amount: BigNumber;
+        answer: string;
+        remark: string;
       }
     >;
 
     CaseGenResult(
-      _sender?: null,
-      _key?: null,
-      _amount?: null,
-      _answer?: null,
-      _remark?: null
+      sender?: null,
+      txKey?: null,
+      amount?: null,
+      answer?: null,
+      remark?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber, string, string],
+      [string, string, BigNumber, string, string],
       {
-        _sender: string;
-        _key: BigNumber;
-        _amount: BigNumber;
-        _answer: string;
-        _remark: string;
+        sender: string;
+        txKey: string;
+        amount: BigNumber;
+        answer: string;
+        remark: string;
       }
     >;
 
-    "CaseVoteDone(uint256)"(
-      _key?: null
-    ): TypedEventFilter<[BigNumber], { _key: BigNumber }>;
+    "CaseVoteDone(string)"(
+      txKey?: null
+    ): TypedEventFilter<[string], { txKey: string }>;
 
-    CaseVoteDone(
-      _key?: null
-    ): TypedEventFilter<[BigNumber], { _key: BigNumber }>;
+    CaseVoteDone(txKey?: null): TypedEventFilter<[string], { txKey: string }>;
 
-    "ClaimReward(uint256,address,bool)"(
-      key?: null,
+    "ChangeStatus(string,string)"(
+      txKey?: null,
+      status?: null
+    ): TypedEventFilter<[string, string], { txKey: string; status: string }>;
+
+    ChangeStatus(
+      txKey?: null,
+      status?: null
+    ): TypedEventFilter<[string, string], { txKey: string; status: string }>;
+
+    "ClaimReward(string,address,bool)"(
+      txKey?: null,
       user?: null,
       result?: null
     ): TypedEventFilter<
-      [BigNumber, string, boolean],
-      { key: BigNumber; user: string; result: boolean }
+      [string, string, boolean],
+      { txKey: string; user: string; result: boolean }
     >;
 
     ClaimReward(
-      key?: null,
+      txKey?: null,
       user?: null,
       result?: null
     ): TypedEventFilter<
-      [BigNumber, string, boolean],
-      { key: BigNumber; user: string; result: boolean }
+      [string, string, boolean],
+      { txKey: string; user: string; result: boolean }
     >;
 
-    "EvaluateResult(uint256,bytes32)"(
-      key?: null,
+    "DoneResult(string,string)"(
+      txKey?: null,
       result?: null
+    ): TypedEventFilter<[string, string], { txKey: string; result: string }>;
+
+    DoneResult(
+      txKey?: null,
+      result?: null
+    ): TypedEventFilter<[string, string], { txKey: string; result: string }>;
+
+    "EvaluateResult(string,string,uint256,uint256)"(
+      txKey?: null,
+      result?: null,
+      buyerAmount?: null,
+      sellerAmount?: null
     ): TypedEventFilter<
-      [BigNumber, string],
-      { key: BigNumber; result: string }
+      [string, string, BigNumber, BigNumber],
+      {
+        txKey: string;
+        result: string;
+        buyerAmount: BigNumber;
+        sellerAmount: BigNumber;
+      }
     >;
 
     EvaluateResult(
-      key?: null,
-      result?: null
+      txKey?: null,
+      result?: null,
+      buyerAmount?: null,
+      sellerAmount?: null
     ): TypedEventFilter<
-      [BigNumber, string],
-      { key: BigNumber; result: string }
+      [string, string, BigNumber, BigNumber],
+      {
+        txKey: string;
+        result: string;
+        buyerAmount: BigNumber;
+        sellerAmount: BigNumber;
+      }
     >;
 
     "OwnershipTransferred(address,address)"(
@@ -652,37 +800,37 @@ export class Validator extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "UserDecision(address,uint256,uint256,bytes32,string)"(
-      _sender?: null,
-      _key?: null,
-      _amount?: null,
-      _answer?: null,
-      _remark?: null
+    "UserDecision(address,string,uint256,bytes32,string)"(
+      sender?: null,
+      txKey?: null,
+      amount?: null,
+      answer?: null,
+      remark?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber, string, string],
+      [string, string, BigNumber, string, string],
       {
-        _sender: string;
-        _key: BigNumber;
-        _amount: BigNumber;
-        _answer: string;
-        _remark: string;
+        sender: string;
+        txKey: string;
+        amount: BigNumber;
+        answer: string;
+        remark: string;
       }
     >;
 
     UserDecision(
-      _sender?: null,
-      _key?: null,
-      _amount?: null,
-      _answer?: null,
-      _remark?: null
+      sender?: null,
+      txKey?: null,
+      amount?: null,
+      answer?: null,
+      remark?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber, string, string],
+      [string, string, BigNumber, string, string],
       {
-        _sender: string;
-        _key: BigNumber;
-        _amount: BigNumber;
-        _answer: string;
-        _remark: string;
+        sender: string;
+        txKey: string;
+        amount: BigNumber;
+        answer: string;
+        remark: string;
       }
     >;
   };
@@ -690,6 +838,7 @@ export class Validator extends BaseContract {
   estimateGas: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -697,21 +846,27 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    casesInfo(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    adminRole(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    claimReward(
-      _key: BigNumberish,
+    appeal(
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    casesInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    decideByAdmin(
+      _key: string,
+      _result: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    encode(_key: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     erc20Interface(overrides?: CallOverrides): Promise<BigNumber>;
 
     evaluate(
-      _key: BigNumberish,
-      _randomness: BytesLike,
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -720,13 +875,13 @@ export class Validator extends BaseContract {
     getTotalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     getUserDecision(
-      _key: BigNumberish,
+      _key: string,
       _userReply: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getUserResultInCase(
-      _key: BigNumberish,
+      _key: string,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -738,7 +893,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     play(
-      _key: BigNumberish,
+      _key: string,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -746,6 +901,17 @@ export class Validator extends BaseContract {
     ): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setAdmin(
+      _admin: string,
+      _isAdmin: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setCaseStatusDone(
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -760,6 +926,7 @@ export class Validator extends BaseContract {
   populateTransaction: {
     addCase(
       _token: string,
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -767,21 +934,36 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    casesInfo(
-      arg0: BigNumberish,
+    adminRole(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    claimReward(
-      _key: BigNumberish,
+    appeal(
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    casesInfo(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    decideByAdmin(
+      _key: string,
+      _result: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    encode(
+      _key: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     erc20Interface(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     evaluate(
-      _key: BigNumberish,
-      _randomness: BytesLike,
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -792,13 +974,13 @@ export class Validator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getUserDecision(
-      _key: BigNumberish,
+      _key: string,
       _userReply: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getUserResultInCase(
-      _key: BigNumberish,
+      _key: string,
       _userAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -810,7 +992,7 @@ export class Validator extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     play(
-      _key: BigNumberish,
+      _key: string,
       _amount: BigNumberish,
       _answer: BytesLike,
       _remark: string,
@@ -818,6 +1000,17 @@ export class Validator extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAdmin(
+      _admin: string,
+      _isAdmin: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCaseStatusDone(
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

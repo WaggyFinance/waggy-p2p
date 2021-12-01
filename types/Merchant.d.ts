@@ -21,10 +21,10 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MerchantInterface extends ethers.utils.Interface {
   functions: {
-    "appeal(address,address,uint256)": FunctionFragment;
+    "appeal(string,address,address,uint256)": FunctionFragment;
     "approveTransaction(uint256,address)": FunctionFragment;
     "blackListUser()": FunctionFragment;
-    "cancelTransactionSeller(address,string)": FunctionFragment;
+    "cancelTransactionSeller(string,address,string)": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
     "feeCalculator()": FunctionFragment;
     "feeCollector()": FunctionFragment;
@@ -58,7 +58,7 @@ interface MerchantInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "appeal",
-    values: [string, string, BigNumberish]
+    values: [string, string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "approveTransaction",
@@ -70,7 +70,7 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTransactionSeller",
-    values: [string, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
@@ -431,6 +431,7 @@ export class Merchant extends BaseContract {
 
   functions: {
     appeal(
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -446,6 +447,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<[string]>;
 
     cancelTransactionSeller(
+      _txId: string,
       _buyer: string,
       _remark: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -604,6 +606,7 @@ export class Merchant extends BaseContract {
   };
 
   appeal(
+    _txId: string,
     _seller: string,
     _buyer: string,
     _remark: BigNumberish,
@@ -619,6 +622,7 @@ export class Merchant extends BaseContract {
   blackListUser(overrides?: CallOverrides): Promise<string>;
 
   cancelTransactionSeller(
+    _txId: string,
     _buyer: string,
     _remark: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -771,6 +775,7 @@ export class Merchant extends BaseContract {
 
   callStatic: {
     appeal(
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -786,6 +791,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<string>;
 
     cancelTransactionSeller(
+      _txId: string,
       _buyer: string,
       _remark: string,
       overrides?: CallOverrides
@@ -1125,6 +1131,7 @@ export class Merchant extends BaseContract {
 
   estimateGas: {
     appeal(
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -1140,6 +1147,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<BigNumber>;
 
     cancelTransactionSeller(
+      _txId: string,
       _buyer: string,
       _remark: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1276,6 +1284,7 @@ export class Merchant extends BaseContract {
 
   populateTransaction: {
     appeal(
+      _txId: string,
       _seller: string,
       _buyer: string,
       _remark: BigNumberish,
@@ -1291,6 +1300,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     cancelTransactionSeller(
+      _txId: string,
       _buyer: string,
       _remark: string,
       overrides?: Overrides & { from?: string | Promise<string> }
