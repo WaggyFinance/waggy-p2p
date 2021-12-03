@@ -42,6 +42,7 @@ interface ValidatorInterface extends ethers.utils.Interface {
     "setCaseStatusDone(string)": FunctionFragment;
     "totalCollateral()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "userClaimReward(string)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -107,6 +108,10 @@ interface ValidatorInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "userClaimReward",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "addCase", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "adminRole", data: BytesLike): Result;
@@ -162,16 +167,20 @@ interface ValidatorInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "userClaimReward",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AddCase(string,string,address,address,uint256)": EventFragment;
-    "CaseAppeal(string)": EventFragment;
+    "CaseAppeal(string,address)": EventFragment;
     "CaseGenResult(address,string,uint256,bytes32,string)": EventFragment;
     "CaseVoteDone(string)": EventFragment;
     "ChangeStatus(string,string)": EventFragment;
     "ClaimReward(string,address,bool)": EventFragment;
     "DoneResult(string,string)": EventFragment;
-    "EvaluateResult(string,string,uint256,uint256)": EventFragment;
+    "EvaluateResult(string,string,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "UserDecision(address,string,uint256,bytes32,string)": EventFragment;
   };
@@ -198,7 +207,9 @@ export type AddCaseEvent = TypedEvent<
   }
 >;
 
-export type CaseAppealEvent = TypedEvent<[string] & { txKey: string }>;
+export type CaseAppealEvent = TypedEvent<
+  [string, string] & { txKey: string; appealAddress: string }
+>;
 
 export type CaseGenResultEvent = TypedEvent<
   [string, string, BigNumber, string, string] & {
@@ -225,11 +236,12 @@ export type DoneResultEvent = TypedEvent<
 >;
 
 export type EvaluateResultEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber] & {
+  [string, string, BigNumber, BigNumber, BigNumber] & {
     txKey: string;
     result: string;
     buyerAmount: BigNumber;
     sellerAmount: BigNumber;
+    updateAt: BigNumber;
   }
 >;
 
@@ -407,6 +419,11 @@ export class Validator extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    userClaimReward(
+      _key: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   addCase(
@@ -524,6 +541,11 @@ export class Validator extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  userClaimReward(
+    _key: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     addCase(
       _token: string,
@@ -583,7 +605,7 @@ export class Validator extends BaseContract {
     evaluate(
       _key: string,
       overrides?: CallOverrides
-    ): Promise<[string, BigNumber, BigNumber]>;
+    ): Promise<[string, BigNumber, BigNumber, BigNumber]>;
 
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -633,6 +655,8 @@ export class Validator extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userClaimReward(_key: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -670,11 +694,21 @@ export class Validator extends BaseContract {
       }
     >;
 
-    "CaseAppeal(string)"(
-      txKey?: null
-    ): TypedEventFilter<[string], { txKey: string }>;
+    "CaseAppeal(string,address)"(
+      txKey?: null,
+      appealAddress?: null
+    ): TypedEventFilter<
+      [string, string],
+      { txKey: string; appealAddress: string }
+    >;
 
-    CaseAppeal(txKey?: null): TypedEventFilter<[string], { txKey: string }>;
+    CaseAppeal(
+      txKey?: null,
+      appealAddress?: null
+    ): TypedEventFilter<
+      [string, string],
+      { txKey: string; appealAddress: string }
+    >;
 
     "CaseGenResult(address,string,uint256,bytes32,string)"(
       sender?: null,
@@ -754,18 +788,20 @@ export class Validator extends BaseContract {
       result?: null
     ): TypedEventFilter<[string, string], { txKey: string; result: string }>;
 
-    "EvaluateResult(string,string,uint256,uint256)"(
+    "EvaluateResult(string,string,uint256,uint256,uint256)"(
       txKey?: null,
       result?: null,
       buyerAmount?: null,
-      sellerAmount?: null
+      sellerAmount?: null,
+      updateAt?: null
     ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
+      [string, string, BigNumber, BigNumber, BigNumber],
       {
         txKey: string;
         result: string;
         buyerAmount: BigNumber;
         sellerAmount: BigNumber;
+        updateAt: BigNumber;
       }
     >;
 
@@ -773,14 +809,16 @@ export class Validator extends BaseContract {
       txKey?: null,
       result?: null,
       buyerAmount?: null,
-      sellerAmount?: null
+      sellerAmount?: null,
+      updateAt?: null
     ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
+      [string, string, BigNumber, BigNumber, BigNumber],
       {
         txKey: string;
         result: string;
         buyerAmount: BigNumber;
         sellerAmount: BigNumber;
+        updateAt: BigNumber;
       }
     >;
 
@@ -921,6 +959,11 @@ export class Validator extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    userClaimReward(
+      _key: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1018,6 +1061,11 @@ export class Validator extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userClaimReward(
+      _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

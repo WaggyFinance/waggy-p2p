@@ -38,19 +38,20 @@ contract Validator is Ownable {
     uint256 amount;
     string remark;
     uint256 createdAt;
-    bool claimed;
+    bool receiveReward;
   }
 
   struct CaseInfo {
     mapping(address => UserReplyAnswer) usersReplyAnswer;
     address[] users;
-    address[] winners;
+    mapping(address => bool) winners;
     address seller;
     address buyer;
     address token;
     uint256 currentValue;
     uint256 totalValue;
     uint256 fund;
+    uint256 winnerAmount;
     string result;
     uint256 resultAt;
     bytes32 randomness;
@@ -58,15 +59,15 @@ contract Validator is Ownable {
     CaseStatus status;
   }
 
-  event UserDecision(address sender, string  txKey, uint256 amount, bytes32 answer, string remark);
+  event UserDecision(address sender, string txKey, uint256 amount, bytes32 answer, string remark);
   event CaseVoteDone(string txKey);
-  event CaseAppeal(string txKey);
-  event ChangeStatus(string txKey,string status);
-  event CaseGenResult(address sender, string  txKey, uint256 amount, bytes32 answer, string remark);
-  event AddCase(string txKey,string txId, address seller, address buyer, uint256 amount);
-  event ClaimReward(string  txKey, address user, bool result);
-  event EvaluateResult(string  txKey, string result,uint256 buyerAmount,uint256 sellerAmount);
-  event DoneResult(string  txKey, string result);
+  event CaseAppeal(string txKey, address appealAddress);
+  event ChangeStatus(string txKey, string status);
+  event CaseGenResult(address sender, string txKey, uint256 amount, bytes32 answer, string remark);
+  event AddCase(string txKey, string txId, address seller, address buyer, uint256 amount);
+  event ClaimReward(string txKey, address user, bool result);
+  event EvaluateResult(string txKey, string result, uint256 buyerAmount, uint256 sellerAmount, uint256 updateAt);
+  event DoneResult(string txKey, string result);
 
   ERC20 public erc20Interface;
 
@@ -78,8 +79,15 @@ contract Validator is Ownable {
   uint256 public minPercentValue;
   uint256 public fee; //20%
 
-  modifier onlyAdmin(){
-    require(adminRole[msg.sender],"only admin");
+  modifier onlyAdmin() {
+    require(adminRole[msg.sender], "only admin");
+    _;
+  }
+
+  modifier delay15mins(string memory _key) {
+    CaseInfo storage caseInfo = casesInfo[_key];
+    uint256 timeDiff = caseInfo.resultAt + 15 minutes;
+    require(block.timestamp > timeDiff, "in delay.");
     _;
   }
 
@@ -93,7 +101,7 @@ contract Validator is Ownable {
     fee = _fee;
   }
 
-  function setAdmin(address _admin,bool _isAdmin) public onlyOwner{
+  function setAdmin(address _admin, bool _isAdmin) public onlyOwner {
     adminRole[_admin] = _isAdmin;
   }
 
@@ -104,8 +112,9 @@ contract Validator is Ownable {
     address _buyer,
     uint256 _remark,
     uint256 _amount
-  ) public{
-    string memory txKey = Strings.toString(uint256(keccak256(abi.encodePacked("waggy", block.number, _token, _seller, _buyer, _remark, _amount)))
+  ) public {
+    string memory txKey = Strings.toString(
+      uint256(keccak256(abi.encodePacked("waggy", block.timestamp, _token, _seller, _buyer, _remark, _amount)))
     );
 
     console.log("Generate Key ", txKey);
@@ -116,7 +125,7 @@ contract Validator is Ownable {
     caseInfo.remark = _remark;
     caseInfo.totalValue = _amount;
     caseInfo.status = CaseStatus.INPROGRESS;
-    emit AddCase(txKey,_txId, _seller, _buyer, _amount);
+    emit AddCase(txKey, _txId, _seller, _buyer, _amount);
   }
 
   function getTotalCollateral() external view returns (uint256) {
@@ -134,90 +143,111 @@ contract Validator is Ownable {
     returns (bool _isWin, uint256 _betAmount)
   {
     CaseInfo storage caseInfo = casesInfo[_key];
-
+    require(caseInfo.status == CaseStatus.DONE, "Status is wrong");
     UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[_userAddress];
-    bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result,_key, addressToString(_userAddress)));
+    bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, addressToString(_userAddress)));
 
     _isWin = (userReplyAnswer.answer == correctAnswer);
     _betAmount = userReplyAnswer.amount;
   }
 
+  function userClaimReward(string memory _key) public delay15mins(_key) {
+    CaseInfo storage caseInfo = casesInfo[_key];
+    require(caseInfo.status == CaseStatus.DONE, "Status is wrong");
+    UserReplyAnswer storage user = caseInfo.usersReplyAnswer[msg.sender];
+    require(user.receiveReward, "you lose.");
 
-function addressToString(address _addr) internal pure returns(string memory) {
+    user.receiveReward = false;
+    uint256 reward = caseInfo.fund.div(caseInfo.winnerAmount);
+    ERC20(caseInfo.token).safeTransfer(msg.sender,reward);
+  }
+
+  function addressToString(address _addr) internal pure returns (string memory) {
     bytes32 value = bytes32(uint256(uint160(_addr)));
     bytes memory alphabet = "0123456789abcdef";
 
     bytes memory str = new bytes(42);
     str[0] = "0";
     str[1] = "x";
-    for (uint i = 0; i < 20; i++) {
-        str[2+i*2] = alphabet[uint(uint8(value[i + 12] >> 4))];
-        str[3+i*2] = alphabet[uint(uint8(value[i + 12] & 0x0f))];
+    for (uint256 i = 0; i < 20; i++) {
+      str[2 + i * 2] = alphabet[uint256(uint8(value[i + 12] >> 4))];
+      str[3 + i * 2] = alphabet[uint256(uint8(value[i + 12] & 0x0f))];
     }
     return string(str);
-}
+  }
 
-  function encode(string memory _key)public view returns(bytes32){
+  function encode(string memory _key) public view returns (bytes32) {
     string memory userAddress = addressToString(msg.sender);
-    string memory key = string(abi.encodePacked(BUYER,_key,userAddress));
-    console.log("abi encode ",key);
+    string memory key = string(abi.encodePacked(BUYER, _key, userAddress));
+    console.log("abi encode ", key);
     return keccak256(abi.encodePacked(key));
   }
 
-  function decideByAdmin(string memory _key,string memory _result) public onlyAdmin{
-      CaseInfo storage caseInfo = casesInfo[_key];
-      caseInfo.result = _result;
+  function decideByAdmin(string memory _key, string memory _result) public onlyAdmin {
+    CaseInfo storage caseInfo = casesInfo[_key];
+    caseInfo.result = _result;
 
-      uint256 fund;
-      for (uint256 i = 0; i < caseInfo.users.length; i++) {
-        address userAddress = caseInfo.users[i];
-        UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-        bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key,userAddress));
-        if (userReplyAnswer.answer != correctAnswer) {
-          fund = fund.add(userReplyAnswer.amount);
-        } else {
-          caseInfo.winners.push(userAddress);
-        }
+    uint256 winnerAmount;
+    uint256 fund;
+    for (uint256 i = 0; i < caseInfo.users.length; i++) {
+      address userAddress = caseInfo.users[i];
+      UserReplyAnswer storage userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
+      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, userAddress));
+      if (userReplyAnswer.answer != correctAnswer) {
+        fund = fund.add(userReplyAnswer.amount);
+      } else {
+        userReplyAnswer.receiveReward = true;
+        winnerAmount = winnerAmount.add(1);
       }
-
+    }
+    caseInfo.winnerAmount = winnerAmount;
     caseInfo.status = CaseStatus.DONE;
-    caseInfo.fund = fund;
-    caseInfo.resultAt = block.number;
+    caseInfo.fund = fund.sub(fund.mul(10).div(100));
+    caseInfo.resultAt = block.timestamp;
     totalCollateral = totalCollateral.sub(caseInfo.currentValue);
 
     emit DoneResult(_key, caseInfo.result);
   }
 
   function appeal(string memory _key) external {
-      CaseInfo storage caseInfo = casesInfo[_key];
-      require(caseInfo.status == CaseStatus.SUMMARY,"Status is wrong");
-      caseInfo.status = CaseStatus.APPEAL;
-      emit CaseAppeal(_key);
+    CaseInfo storage caseInfo = casesInfo[_key];
+    require(caseInfo.status == CaseStatus.SUMMARY, "Status is wrong");
+    require(msg.sender == caseInfo.seller || msg.sender == caseInfo.buyer, "Not allow external user.");
+    caseInfo.status = CaseStatus.APPEAL;
+    caseInfo.resultAt = block.timestamp;
+    emit CaseAppeal(_key, msg.sender);
   }
 
-  function setCaseStatusDone(string memory _key) public onlyAdmin{
-     CaseInfo storage caseInfo = casesInfo[_key];
-      require(caseInfo.status == CaseStatus.SUMMARY,"Status is wrong");
-      caseInfo.status = CaseStatus.DONE;
-
-      emit ChangeStatus(_key,"DONE");
+  function setCaseStatusDone(string memory _key) public onlyAdmin delay15mins(_key) {
+    CaseInfo storage caseInfo = casesInfo[_key];
+    require(caseInfo.status == CaseStatus.SUMMARY, "Status is wrong");
+    caseInfo.status = CaseStatus.DONE;
+    caseInfo.resultAt = block.timestamp;
+    emit ChangeStatus(_key, "DONE");
   }
 
   // System order to evaluate
-  function evaluate(string memory _key) public onlyAdmin returns (string memory,uint256,uint256 ) {
-   
+  function evaluate(string memory _key)
+    public
+    onlyAdmin
+    returns (
+      string memory,
+      uint256,
+      uint256,
+      uint256
+    )
+  {
     CaseInfo storage caseInfo = casesInfo[_key];
-    require(caseInfo.currentValue >= caseInfo.totalValue,"User vote not done.");
-    require(caseInfo.users.length>0,"Case not exist");
+    require(caseInfo.currentValue >= caseInfo.totalValue, "User vote not done.");
+    require(caseInfo.users.length > 0, "Case not exist");
     require(caseInfo.resultAt == 0, "This case already had result.");
     uint256 buyyerValueCount;
     uint256 sellerValueCount;
     bytes32 buyerAnswer;
-
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
       UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      buyerAnswer = keccak256(abi.encodePacked(BUYER, _key,addressToString(userAddress)));
+      buyerAnswer = keccak256(abi.encodePacked(BUYER, _key, addressToString(userAddress)));
       if (userReplyAnswer.answer == buyerAnswer) {
         buyyerValueCount = buyyerValueCount.add(userReplyAnswer.amount);
       } else {
@@ -232,25 +262,27 @@ function addressToString(address _addr) internal pure returns(string memory) {
       caseInfo.result = EQUIVALENT;
     }
 
+    uint256 winnerAnount;
     uint256 fund;
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
-      UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key,userAddress));
+      UserReplyAnswer storage userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
+      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, userAddress));
       if (userReplyAnswer.answer != correctAnswer) {
         fund = fund.add(userReplyAnswer.amount);
       } else {
-        caseInfo.winners.push(userAddress);
+        userReplyAnswer.receiveReward = true;
+        winnerAnount = winnerAnount.add(1);
       }
     }
     caseInfo.status = CaseStatus.SUMMARY;
-    caseInfo.fund = fund;
-    caseInfo.resultAt = block.number;
+    caseInfo.fund = fund.sub(fund.mul(10).div(100));
+    caseInfo.resultAt = block.timestamp;
     totalCollateral = totalCollateral.sub(caseInfo.currentValue);
 
-    emit EvaluateResult(_key, caseInfo.result,buyyerValueCount,sellerValueCount);
+    emit EvaluateResult(_key, caseInfo.result, buyyerValueCount, sellerValueCount, caseInfo.resultAt);
 
-    return (caseInfo.result,buyyerValueCount,sellerValueCount);
+    return (caseInfo.result, buyyerValueCount, sellerValueCount, caseInfo.resultAt);
   }
 
   function play(
@@ -260,7 +292,7 @@ function addressToString(address _addr) internal pure returns(string memory) {
     string memory _remark
   ) external {
     CaseInfo storage caseInfo = casesInfo[_key];
-    require(caseInfo.status == CaseStatus.INPROGRESS,"Can't Vote");
+    require(caseInfo.status == CaseStatus.INPROGRESS, "Can't Vote");
     require(caseInfo.totalValue > caseInfo.currentValue, "The case is closed");
     UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[msg.sender];
     require(userReplyAnswer.createdAt == 0, "Not allow user reply again");
@@ -278,7 +310,7 @@ function addressToString(address _addr) internal pure returns(string memory) {
     userReplyAnswer.amount = _amount;
     userReplyAnswer.answer = _answer;
     userReplyAnswer.remark = _remark;
-    userReplyAnswer.createdAt = block.number;
+    userReplyAnswer.createdAt = block.timestamp;
     caseInfo.usersReplyAnswer[msg.sender] = userReplyAnswer;
     caseInfo.users.push(msg.sender);
     // update progress
