@@ -5,8 +5,7 @@ const fs = require("fs");
 async function main() {
   const [deployer, feeCollector] = await hre.ethers.getSigners();
 
-  
-   // verify waggy token
+  // verify waggy token
   //  console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   //  await hre.run("verify:verify", {
   //    address: "0x5953029e5e7c0A9eE5B251F50378742dbe8B7c21",
@@ -16,13 +15,13 @@ async function main() {
   // verify merchant
   // console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   await hre.run("verify:verify", {
-    address: "0x71f9855ae6c613b3eab28be18fd415f1cfc0da97",
+    address: "0xd6d535b4880cd57c45a976c9042a5b692b3d11a9",
     contract: "contracts/p2p/Merchant.sol:Merchant",
     constructorArguments: [],
   });
 
   // await hre.run("verify:verify", {
-  //   address: "0x5953029e5e7c0a9ee5b251f50378742dbe8b7c21",
+  //   address: "0x1de79d16396ec910af7671bc3d9b7e8653e8a686",
   //   contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
   //   constructorArguments: [],
   // });

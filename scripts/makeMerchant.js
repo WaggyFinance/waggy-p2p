@@ -7,22 +7,24 @@ async function main() {
   const [deployer, feeCollector] = await ethers.getSigners();
   // deploy merchant
   const deployMerchant = async (targetToken, merchangeName) => {
+    const Merchant = await ethers.getContractFactory("Merchant");
     //  Upgrade Merchant contract
     // console.log(`Start upgrade merchant ${merchangeName} with address ${ContractJSON[merchangeName]}`);
-    const Merchant = await ethers.getContractFactory("Merchant");
-    const merchant = await upgrades.upgradeProxy(ContractJSON[merchangeName], Merchant);
-    await merchant.deployed();
+    // const merchant = await upgrades.upgradeProxy(ContractJSON[merchangeName], Merchant);
+    // await merchant.deployed();
 
     //  Deploy new merchamt contract
-    // const merchant = await upgrades.deployProxy(Merchant,[
-    //   targetToken,
-    //   ContractJSON.waggyToken,
-    //   ContractJSON.rewardCalculator,
-    //   ContractJSON.feeCalculator,
-    //   feeCollector.address,
-    //   ContractJSON.blackListUser
-    // ])
+    const merchant = await upgrades.deployProxy(Merchant,[
+      targetToken,
+      ContractJSON.waggyToken,
+      ContractJSON.rewardCalculator,
+      ContractJSON.feeCalculator,
+      feeCollector.address,
+      ContractJSON.blackListUser
+    ])
     await merchant.deployed();
+
+    await merchant.setValidator(ContractJSON.validator);
     const merchantsAddress = merchant.address;
     ContractJSON[merchangeName] = merchantsAddress;
     console.log(`Deploy merchant done. at address ${merchantsAddress}`);
@@ -45,6 +47,31 @@ async function main() {
       with error ${JSON.stringify(error, null, 2)}`);
     }
   }
+  const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
+  const waggyToken = WaggyToken.attach(ContractJSON.waggyToken);
+  //
+  console.log("Set merchant minter role");
+
+  await waggyToken.setMinter([
+    ContractJSON.merchantWBNB,
+    ContractJSON.merchantBUSD,
+    ContractJSON.merchantUSDT,
+    ContractJSON.merchantUSDC,
+    ContractJSON.merchantDAI,
+  ]);
+
+  const BlackListUser = await hre.ethers.getContractFactory("BlackListUser");
+  const blackListUser = BlackListUser.attach(ContractJSON.blackListUser);
+
+  await blackListUser.setAdmins([
+    ContractJSON.merchantWBNB,
+    ContractJSON.merchantBUSD,
+    ContractJSON.merchantUSDT,
+    ContractJSON.merchantUSDC,
+    ContractJSON.merchantDAI,
+  ]);
+ 
+
 
   console.log("Creat merchant done.");
   const jsonString = JSON.stringify(ContractJSON, null, 2);

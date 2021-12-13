@@ -45,6 +45,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
+      name: "AccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControl__factory>;
+    getContractFactory(
+      name: "IAccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControl__factory>;
+    getContractFactory(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
@@ -61,9 +69,53 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
+      name: "ERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721__factory>;
+    getContractFactory(
+      name: "ERC721URIStorage",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721URIStorage__factory>;
+    getContractFactory(
+      name: "IERC721Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Metadata__factory>;
+    getContractFactory(
+      name: "IERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721__factory>;
+    getContractFactory(
+      name: "IERC721Receiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Receiver__factory>;
+    getContractFactory(
+      name: "ERC721Holder",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Holder__factory>;
+    getContractFactory(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
       name: "BlackListUser",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BlackListUser__factory>;
+    getContractFactory(
+      name: "AvatarNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AvatarNFT__factory>;
+    getContractFactory(
+      name: "GasStation",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GasStation__factory>;
+    getContractFactory(
+      name: "WNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WNFT__factory>;
     getContractFactory(
       name: "MasterChef",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -80,6 +132,10 @@ declare module "hardhat/types/runtime" {
       name: "FeeCalculator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeCalculator__factory>;
+    getContractFactory(
+      name: "IGOV",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGOV__factory>;
     getContractFactory(
       name: "IValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -146,6 +202,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
+      name: "AccessControl",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControl>;
+    getContractAt(
+      name: "IAccessControl",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControl>;
+    getContractAt(
       name: "Ownable",
       address: string,
       signer?: ethers.Signer
@@ -166,10 +232,65 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
+      name: "ERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721>;
+    getContractAt(
+      name: "ERC721URIStorage",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721URIStorage>;
+    getContractAt(
+      name: "IERC721Metadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Metadata>;
+    getContractAt(
+      name: "IERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721>;
+    getContractAt(
+      name: "IERC721Receiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Receiver>;
+    getContractAt(
+      name: "ERC721Holder",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Holder>;
+    getContractAt(
+      name: "ERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165>;
+    getContractAt(
+      name: "IERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
+    getContractAt(
       name: "BlackListUser",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.BlackListUser>;
+    getContractAt(
+      name: "AvatarNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AvatarNFT>;
+    getContractAt(
+      name: "GasStation",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GasStation>;
+    getContractAt(
+      name: "WNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WNFT>;
     getContractAt(
       name: "MasterChef",
       address: string,
@@ -190,6 +311,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FeeCalculator>;
+    getContractAt(
+      name: "IGOV",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGOV>;
     getContractAt(
       name: "IValidator",
       address: string,

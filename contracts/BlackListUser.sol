@@ -11,10 +11,13 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract BlackListUser is Ownable {
+contract BlackListUser is Ownable,AccessControl{
   using SafeMath for uint256;
+
+  bytes32 public constant ADMIN_ROLE = keccak256("MINTER_ROLE");
 
   enum STATUS {
     NORMAL,
@@ -34,14 +37,35 @@ contract BlackListUser is Ownable {
   }
 
   mapping(address => UserInfo) public userInfo;
+  address[] public admins;
+
+  constructor(){
+     _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+  }
 
   // Status 0 normal, 1 temporary,2 suspend
   function setUserStatus(address _user, uint256 _status) external onlyOwner {
     userInfo[_user].status = STATUS(_status);
   }
 
+  function revokeRoles(address[] memory _admins) public onlyOwner {
+    for (uint256 i = 0; i < _admins.length; ++i) {
+      revokeRole(ADMIN_ROLE, _admins[i]);
+    }
+  }
+
+  function setAdmins(address[] memory _admins) external onlyOwner {
+    revokeRoles(admins);
+    delete admins;
+    for (uint256 i = 0; i < _admins.length; ++i) {
+      admins.push(_admins[i]);
+      _setupRole(ADMIN_ROLE, _admins[i]);
+    }
+  }
+
   // set warning user count.
-  function warningUser(address _user) external onlyOwner {
+  function warningUser(address _user) external  {
+    require(hasRole(ADMIN_ROLE, msg.sender), "DOES_NOT_HAVE_MINTER_ROLE");
     UserInfo storage user = userInfo[_user];
     require(user.status == STATUS.NORMAL, "Can't warning not normal status user.");
 

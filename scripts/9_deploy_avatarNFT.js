@@ -18,22 +18,22 @@ async function main() {
   const accounts = await hre.ethers.getSigners();
   console.log(">> Start Deploy Contract");
   // Waggy token
-  const Validator = await hre.ethers.getContractFactory("Validator");
+  const AvatarNFT = await hre.ethers.getContractFactory("AvatarNFT");
 
-  const validator = await Validator.deploy(300,100,50);
+  const avatarNFT = await AvatarNFT.deploy("AvatarNFT", "ANFT");
 
-  await validator.deployed();
+  await avatarNFT.deployed();
 
-  ContractJSON.validator = validator.address;
-  console.log(`validator address: ${validator.address}`);
+  ContractJSON.avatarNFT = avatarNFT.address;
+  console.log(`avatarNFT address: ${avatarNFT.address}`);
 
   await hre.run("verify:verify", {
-    address: validator.address,
-    contract: "contracts/Validator.sol:Validator",
-    constructorArguments: [
-      300,100,50
-    ],
+    address: avatarNFT.address,
+    contract: "contracts/farm/AvatarNFT.sol:AvatarNFT",
+    constructorArguments: ["AvatarNFT", "ANFT"],
   });
+
+  await avatarNFT.setPrice(ethers.utils.parseEther("0.1"));
 
   console.log("✅ Done Verify Contract");
 

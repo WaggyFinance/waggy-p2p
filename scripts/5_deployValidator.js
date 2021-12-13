@@ -29,7 +29,13 @@ async function main() {
   // await tx.wait(1);
 
   await validator.setAdmin("0x727618192f7E29721cbd2a518DFc0A3B66720829",true);
-  
+
+  ContractJSON.validator = validator.address;
+  console.log("Creat Validator done.");
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync("./contract.json", jsonString);
+  console.log("write file done.");
   // console.log("Validator BUSD Token address : ", validator.address);
 
   console.log("✅ Done deploying a Validator");

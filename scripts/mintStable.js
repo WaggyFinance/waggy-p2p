@@ -11,31 +11,31 @@ async function main() {
     // "0xCB950adCa1d67749486D65311Aba5efdA8351bD3",
     // "0x4A921631F66c066eabc36670E7411da58C2855C3", 
     // "0x070F5CbD8B01eCA3992d09F837BC761fAA1d2E47",
-    "0x2d5a620db37E161AB162Aa36a7D65f547a7B6844",
-    "0x88AC933bD3F3282e2a6e794C513e33D3CDa68E9e"
+    "0x9d5540a8FC339ee934f40F0a0E5ec5d80A0DB9eD",
+    "0x9a195A6a5Ed40337Ac804939A7875D61AFe3f7CB"
   ];
-  let address = "0xAf3F13983E9a95115fD704A82CCEe71eCD8b251A"
+  let address = "0xCB950adCa1d67749486D65311Aba5efdA8351bD3"
   // const mintToken = async (address) => {
      try {
       console.log(`Start mint for address ${address}`);
       const busdToken = await WERC20.attach(ContractJSON.busdToken);
-      await busdToken.mint(address, ethers.utils.parseEther("100000"));
+      await busdToken.mint(address, ethers.utils.parseEther("1000000"));
       console.log(ethers.utils.formatEther(await busdToken.balanceOf(address)));
 
       const usdtToken = await WERC20.attach(ContractJSON.usdtToken);
-      await usdtToken.mint(address, ethers.utils.parseEther("100000000"));
+      await usdtToken.mint(address, ethers.utils.parseEther("1000000"));
       console.log(ethers.utils.formatEther(await usdtToken.balanceOf(address)));
 
       const usdcToken = await WERC20.attach(ContractJSON.usdcToken);
-      await usdcToken.mint(address, ethers.utils.parseEther("100000000"));
+      await usdcToken.mint(address, ethers.utils.parseEther("1000000"));
       console.log(ethers.utils.formatEther(await usdcToken.balanceOf(address)));
 
       const daiToken = await WERC20.attach(ContractJSON.daiToken);
-      await daiToken.mint(address, ethers.utils.parseEther("100000000"));
+      await daiToken.mint(address, ethers.utils.parseEther("1000000"));
       console.log(ethers.utils.formatEther(await daiToken.balanceOf(address)));
 
       const bnbToken = await WERC20.attach(ContractJSON.wbnbToken);
-      await bnbToken.mint(address, ethers.utils.parseEther("100000000"));
+      await bnbToken.mint(address, ethers.utils.parseEther("1000000"));
       console.log(ethers.utils.formatEther(await bnbToken.balanceOf(address)));
     } catch (error) {
       console.log(error)

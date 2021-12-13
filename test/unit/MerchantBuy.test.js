@@ -55,7 +55,7 @@ describe("Merchant Buyer", () => {
     await wbusd.deployed();
 
     console.log(`WBUSD address ${wbusd.address}`);
-
+dcfxtg
   
     const BUSDAddress = wbusd.address;
     const Merchant = await ethers.getContractFactory("Merchant");
@@ -68,6 +68,8 @@ describe("Merchant Buyer", () => {
       blackListUser.address,
     ])
     await merchant.deployed();
+
+    await blackListUser.setAdmins([merchant.address]);
 
     
     // const estimateGas = await p2pfactory.estimateGas.createNewMerchant(
@@ -114,18 +116,30 @@ describe("Merchant Buyer", () => {
     console.log('open shop done.');
     const balanceOf = await  wbusd.connect(merchantSeller).balanceOf(merchantSeller.address)
     let shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
+
+   
+
     // check balance after open shop
     expect(ethers.utils.formatEther(balanceOf)).equal("8000.0")
     expect(ethers.utils.formatEther(shopBalance)).equal("2000.0")
   });
 
-  it("Withdraw" , async()=>{
-    let shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
-    console.log(`Shop balance ${ethers.utils.formatEther(shopBalance)}`)
-    await merchant.connect(merchantSeller).withdraw(ethers.utils.parseEther("200"));
-    shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
-    console.log(`Shop balance ${ethers.utils.formatEther(shopBalance)}`)
-  })
+   it("buy" , async()=>{
+    await merchant.connect(merchantSeller).approveTransaction(ethers.utils.parseEther('1'),buyer.address);
+
+    await merchant.connect(merchantSeller).releaseTokenBySeller(buyer.address);
+
+    const balanceOfBuyer = await  wbusd.connect(buyer).balanceOf(buyer.address);
+    console.log("Buyer amount ",ethers.utils.formatEther(balanceOfBuyer));
+   });
+
+  // it("Withdraw" , async()=>{
+  //   let shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
+  //   console.log(`Shop balance ${ethers.utils.formatEther(shopBalance)}`)
+  //   await merchant.connect(merchantSeller).withdraw(ethers.utils.parseEther("200"));
+  //   shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
+  //   console.log(`Shop balance ${ethers.utils.formatEther(shopBalance)}`)
+  // })
   // it("Buy token happy case", async () => {
   //   // buyer want to buy 1000 BUSD wait merchant approve
   //   await merchant.connect(merchantSeller).approveTransaction(ethers.utils.parseEther("1000.0"), buyer.address);
@@ -149,22 +163,22 @@ describe("Merchant Buyer", () => {
   //   expect(ethers.utils.formatEther(shopBalance)).equal("0.0")
   // });
 
-  // it("Sell token had cancel transaction", async () => {
-  //   // buyer want to buy 1000 BUSD wait merchant approve
-  //   shopBalance = await merchant.connect(merchantSeller).getShopBalance(merchantSeller.address);
-  //   await merchant.connect(merchantSeller).approveTransaction(ethers.utils.parseEther("1000.0"), buyer.address);
-  //   let amountToApprove = await await merchant.connect(deployer).getApproveTransaction(buyer.address,merchantSeller.address,ethers.utils.parseEther("1000.0"))
-  //   shopBalance = await merchant.connect(merchantSeller).getShopBalance(merchantSeller.address);
-  //   expect(ethers.utils.formatEther(shopBalance)).equal("1000.0")
-  //   expect(ethers.utils.formatEther(amountToApprove)).equal("1000.0")
-  //   //after buyer transfer fait success merchant should be release token to buyer
-  //   await merchant.connect(deployer).cancelTransaction(merchantSeller.address,buyer.address,ethers.utils.parseEther("1000.0"),"Timeout")
-  //   const {status,amount,remark,lockAmount,createdAt,updateAt} = await merchant.getBuyerTransaction(merchantSeller.address,buyer.address);
-  //   const buyerTokenBalance = await wbusd.connect(buyer).balanceOf(buyer.address);
-  //   shopBalance = await merchant.connect(merchantSeller).getShopBalance(merchantSeller.address);
-  //   expect(ethers.utils.formatEther(shopBalance)).equal("2000.0")
-  //   expect(remark).equal("Timeout")
-  //   expect(status).equal("3")
-  //   expect(ethers.utils.formatEther(buyerTokenBalance)).equal("0.0")
-  // });
+  it("Sell token had cancel transaction", async () => {
+    // buyer want to buy 1000 BUSD wait merchant approve
+    shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
+    await merchant.connect(merchantSeller).approveTransaction(ethers.utils.parseEther("1000.0"), buyer.address);
+    // let amountToApprove = await await merchant.connect(deployer).getApproveTransaction(buyer.address,merchantSeller.address,ethers.utils.parseEther("1000.0"))
+    shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
+    expect(ethers.utils.formatEther(shopBalance)).equal("1000.0")
+    // expect(ethers.utils.formatEther(amountToApprove)).equal("1000.0")
+    //after buyer transfer fait success merchant should be release token to buyer
+    await merchant.connect(merchantSeller).cancelTransactionSeller('',buyer.address,"Timeout")
+    const {status,amount,remark,lockAmount,createdAt,updateAt} = await merchant.getBuyerTransaction(merchantSeller.address,buyer.address);
+    const buyerTokenBalance = await wbusd.connect(buyer).balanceOf(buyer.address);
+    shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
+    expect(ethers.utils.formatEther(shopBalance)).equal("1000.0")
+    expect(remark).equal("Timeout")
+    expect(status).equal("3")
+    expect(ethers.utils.formatEther(buyerTokenBalance)).equal("0.0")
+  });
 });

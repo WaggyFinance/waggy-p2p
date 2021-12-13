@@ -1,39 +1,28 @@
 [
   {
+    "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
         "internalType": "address",
-        "name": "_token",
+        "name": "seller",
         "type": "address"
       },
       {
+        "indexed": false,
         "internalType": "address",
-        "name": "_gov",
+        "name": "buyer",
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_rewardCalculator",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_feeCalculator",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_merchantStorage",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_feeCollector",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "name": "AppealTransaction",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -41,7 +30,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "owner",
+        "name": "seller",
         "type": "address"
       },
       {
@@ -66,7 +55,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "owner",
+        "name": "seller",
         "type": "address"
       },
       {
@@ -91,7 +80,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "owner",
+        "name": "seller",
         "type": "address"
       },
       {
@@ -108,6 +97,31 @@
       }
     ],
     "name": "DeleteShop",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "seller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Deposit",
     "type": "event"
   },
   {
@@ -135,13 +149,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "seller",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "receipt",
+        "name": "buyer",
         "type": "address"
       },
       {
@@ -172,7 +186,32 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "owner",
+        "name": "seller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "merchant",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SellerDeposit",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "seller",
         "type": "address"
       },
       {
@@ -192,11 +231,69 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "seller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Withdraw",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_txId",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_seller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_remark",
+        "type": "uint256"
+      }
+    ],
+    "name": "appeal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
       }
     ],
     "name": "approveTransaction",
@@ -205,26 +302,50 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "blackListUser",
+    "outputs": [
+      {
+        "internalType": "contract BlackListUser",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_txId",
+        "type": "string"
+      },
+      {
         "internalType": "address",
-        "name": "_address",
+        "name": "_buyer",
         "type": "address"
       },
+      {
+        "internalType": "string",
+        "name": "_remark",
+        "type": "string"
+      }
+    ],
+    "name": "cancelTransactionSeller",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       }
     ],
-    "name": "cancelTransaction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "deleteShop",
+    "name": "deposit",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -256,8 +377,81 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_seller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      }
+    ],
+    "name": "fetchTransactionApproved",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_merchant",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      }
+    ],
+    "name": "getBuyerTransaction",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "status",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "remark",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "createdAt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "updatedAt",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "getMerchantStorage",
+    "name": "getFeeCollector",
     "outputs": [
       {
         "internalType": "address",
@@ -272,11 +466,121 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "owner",
+        "name": "_seller",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTransactionByIndex",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "status",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "remark",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lockAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "createdAt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "updateAt",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gov",
+    "outputs": [
+      {
+        "internalType": "contract IGOV",
+        "name": "",
         "type": "address"
       }
     ],
-    "name": "getShopBalance",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_gov",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_rewardCalculator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeCalculator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeCollector",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_blackListUser",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "lockTokenInfo",
     "outputs": [
       {
         "internalType": "uint256",
@@ -288,13 +592,24 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "merchantStorage",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "contract MerchantStorage",
+        "internalType": "address",
         "name": "",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "lockUserTokenInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -324,16 +639,29 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_receipt",
+        "name": "_seller",
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
       }
     ],
-    "name": "releaseToken",
+    "name": "releaseTokenByAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      }
+    ],
+    "name": "releaseTokenBySeller",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -361,14 +689,121 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_blackList",
+        "type": "address"
+      }
+    ],
+    "name": "setBlackList",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_validator",
+        "type": "address"
+      }
+    ],
+    "name": "setValidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "shopBalance",
+    "outputs": [
+      {
         "internalType": "uint256",
-        "name": "_amount",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "name": "setupShop",
-    "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "shopLockBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "successTransactionCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalSellAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalSellCount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "token",
+    "outputs": [
+      {
+        "internalType": "contract ERC20Upgradeable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "totalLockBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -406,6 +841,32 @@
       }
     ],
     "name": "updateRewardCalculator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "validator",
+    "outputs": [
+      {
+        "internalType": "contract IValidator",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

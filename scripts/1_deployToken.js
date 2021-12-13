@@ -40,6 +40,7 @@ async function main() {
   console.log(`USDT token address ${usdtToken.address}`);
   console.log(`USDC token address ${usdcToken.address}`);
   console.log(`WBNB token address ${wbnbToken.address}`);
+  console.log(`WBNB token address ${waggyToken.address}`);
 
   ContractJSON.busdToken = busdToken.address;
   ContractJSON.daiToken = daiToken.address;
@@ -50,6 +51,11 @@ async function main() {
 
   console.log("✅ Done deploying a WAGGYTOKEN");
   console.log(">> Start Verify Contract");
+
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync("./contract.json", jsonString);
+  console.log("write file done.");
 //  Call merchant verify to verify waggy token.
   await hre.run("verify:verify", {
     address: busdToken.address,
@@ -79,10 +85,7 @@ async function main() {
   
   console.log("✅ Done Verify Contract");
 
-  const jsonString = JSON.stringify(ContractJSON, null, 2);
-  console.log(jsonString);
-  await fs.writeFileSync("./contract.json", jsonString);
-  console.log("write file done.");
+  
 }
 
 // We recommend this pattern to be able to use async/await everywhere

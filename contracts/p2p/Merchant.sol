@@ -37,6 +37,10 @@ interface IValidator {
   ) external ;
 }
 
+interface IGOV {
+  function mint(address _receive,uint256 _amount) external;
+}
+
 // Not support deflationary token โทเคนที่มีการหัก%
 contract Merchant is OwnableUpgradeable {
   using SafeMathUpgradeable for uint256;
@@ -91,7 +95,7 @@ contract Merchant is OwnableUpgradeable {
   IValidator public validator;
 
   ERC20Upgradeable public token;
-  ERC20Upgradeable public gov;
+  IGOV public gov;
 
   // create merchant with token for p2p transaction
   function initialize(
@@ -104,7 +108,7 @@ contract Merchant is OwnableUpgradeable {
   ) public initializer {
     __Ownable_init();
     token = ERC20Upgradeable(_token);
-    gov = ERC20Upgradeable(_gov);
+    gov = IGOV(_gov);
     rewardCalculator = RewardCalculator(_rewardCalculator);
     feeCalculator = FeeCalculator(_feeCalculator);
     feeCollector = _feeCollector;
@@ -187,15 +191,12 @@ contract Merchant is OwnableUpgradeable {
     // get last transaction
     Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
     require(transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT, "Transaction status wrong");
-    require(block.number - transaction.updateAt >= 15, "Requiered 15 block");
+    // require(block.number - transaction.updateAt >= 2, "Requiered 15 block");
     transaction.remark = _remark;
     transaction.status = TransactionStatus.CANCELED;
-    // move to validator to decision
-  
-    validator.addCase(address(token),_txId, msg.sender, _buyer, uint256(ValidatorRemark.SELLER_CANCEL_TRANSACTION), transaction.amount);
-    // web3 filter event
-    // get task filter by block number 
+    // warning user to cancel because only buyer can action cancel.
 
+    blackListUser.warningUser(msg.sender);
     emit CancelTransaction(_buyer, address(token), transaction.amount);
   }
 
@@ -231,7 +232,7 @@ contract Merchant is OwnableUpgradeable {
 
     // pay reward after complete transaction
     uint256 reward = getReward(transaction.amount);
-    gov.safeTransfer(msg.sender, reward);
+    gov.mint(msg.sender, reward);
     emit ReleaseToken(msg.sender, _buyer, address(token), transaction.amount, reward);
   }
 

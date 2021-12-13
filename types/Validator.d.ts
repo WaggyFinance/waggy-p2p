@@ -331,6 +331,7 @@ export class Validator extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         string,
         BigNumber,
         string,
@@ -343,6 +344,7 @@ export class Validator extends BaseContract {
         currentValue: BigNumber;
         totalValue: BigNumber;
         fund: BigNumber;
+        winnerAmount: BigNumber;
         result: string;
         resultAt: BigNumber;
         randomness: string;
@@ -454,6 +456,7 @@ export class Validator extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
       string,
       BigNumber,
       string,
@@ -466,6 +469,7 @@ export class Validator extends BaseContract {
       currentValue: BigNumber;
       totalValue: BigNumber;
       fund: BigNumber;
+      winnerAmount: BigNumber;
       result: string;
       resultAt: BigNumber;
       randomness: string;
@@ -572,6 +576,7 @@ export class Validator extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         string,
         BigNumber,
         string,
@@ -584,6 +589,7 @@ export class Validator extends BaseContract {
         currentValue: BigNumber;
         totalValue: BigNumber;
         fund: BigNumber;
+        winnerAmount: BigNumber;
         result: string;
         resultAt: BigNumber;
         randomness: string;

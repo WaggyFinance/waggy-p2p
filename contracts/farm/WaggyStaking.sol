@@ -26,7 +26,6 @@ contract WaggyStaking is OwnableUpgradeable {
     uint256 rewardDebt; // Reward debt. See explanation below.
     bool inBlackList;
   }
-
   // Info of each pool.
   struct PoolInfo {
     ERC20 lpToken;

@@ -216,12 +216,80 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_poolToken",
+        "type": "address"
+      }
+    ],
+    "name": "getPoolInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lastRewardBlock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address[]",
+        "name": "users",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalDeposit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fund",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getTotalValueLock",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_for",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_poolToken",
+        "type": "address"
+      }
+    ],
+    "name": "getUserStakeInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalStaking",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardDebt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "depositTime",
         "type": "uint256"
       }
     ],

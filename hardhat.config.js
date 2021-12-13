@@ -1,7 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 // require("hardhat-gas-reporter");
-// require('hardhat-abi-exporter');
+require('hardhat-abi-exporter');
 require("hardhat-tracer");
 require("@typechain/hardhat");
 require("@nomiclabs/hardhat-ethers");

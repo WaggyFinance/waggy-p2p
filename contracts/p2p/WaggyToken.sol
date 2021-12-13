@@ -58,6 +58,8 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
     governor = _governor;
     startReleaseBlock = _startReleaseBlock;
     endReleaseBlock = _endReleaseBlock;
+
+    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
   /// @dev Set endReleaseBlock
