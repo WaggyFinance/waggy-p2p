@@ -23,6 +23,8 @@ interface MasterChefInterface extends ethers.utils.Interface {
   functions: {
     "BONUS_MULTIPLIER()": FunctionFragment;
     "add(uint256,address,bool)": FunctionFragment;
+    "claim(uint256)": FunctionFragment;
+    "claimAll()": FunctionFragment;
     "deposit(uint256,uint256)": FunctionFragment;
     "dev(address)": FunctionFragment;
     "devaddr()": FunctionFragment;
@@ -58,6 +60,8 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "add",
     values: [BigNumberish, string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "claimAll", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish, BigNumberish]
@@ -152,6 +156,8 @@ interface MasterChefInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claimAll", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "dev", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "devaddr", data: BytesLike): Result;
@@ -308,6 +314,15 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    claim(
+      _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    claimAll(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     deposit(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -430,6 +445,15 @@ export class MasterChef extends BaseContract {
     _allocPoint: BigNumberish,
     _lpToken: string,
     _withUpdate: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  claim(
+    _pid: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  claimAll(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -557,6 +581,10 @@ export class MasterChef extends BaseContract {
       _withUpdate: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    claim(_pid: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    claimAll(overrides?: CallOverrides): Promise<void>;
 
     deposit(
       _pid: BigNumberish,
@@ -746,6 +774,15 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    claim(
+      _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    claimAll(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     deposit(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -857,6 +894,15 @@ export class MasterChef extends BaseContract {
       _allocPoint: BigNumberish,
       _lpToken: string,
       _withUpdate: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claim(
+      _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimAll(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

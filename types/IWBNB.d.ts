@@ -12,6 +12,7 @@ import {
   BaseContract,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -19,22 +20,34 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IValidatorInterface extends ethers.utils.Interface {
+interface IWBNBInterface extends ethers.utils.Interface {
   functions: {
-    "addCase(address,string,address,address,uint256,uint256)": FunctionFragment;
+    "deposit()": FunctionFragment;
+    "safeTransfer(address,uint256)": FunctionFragment;
+    "withdraw(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "addCase",
-    values: [string, string, string, string, BigNumberish, BigNumberish]
+    functionFragment: "safeTransfer",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "addCase", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "safeTransfer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {};
 }
 
-export class IValidator extends BaseContract {
+export class IWBNB extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -75,64 +88,84 @@ export class IValidator extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IValidatorInterface;
+  interface: IWBNBInterface;
 
   functions: {
-    addCase(
-      _token: string,
-      _txId: string,
-      _seller: string,
-      _buyer: string,
-      _remark: BigNumberish,
-      _amount: BigNumberish,
+    deposit(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    safeTransfer(
+      _receipt: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    withdraw(
+      wad: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  addCase(
-    _token: string,
-    _txId: string,
-    _seller: string,
-    _buyer: string,
-    _remark: BigNumberish,
-    _amount: BigNumberish,
+  deposit(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  safeTransfer(
+    _receipt: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  withdraw(
+    wad: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addCase(
-      _token: string,
-      _txId: string,
-      _seller: string,
-      _buyer: string,
-      _remark: BigNumberish,
-      _amount: BigNumberish,
+    deposit(overrides?: CallOverrides): Promise<void>;
+
+    safeTransfer(
+      _receipt: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
+
+    withdraw(wad: BigNumberish, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    addCase(
-      _token: string,
-      _txId: string,
-      _seller: string,
-      _buyer: string,
-      _remark: BigNumberish,
-      _amount: BigNumberish,
+    deposit(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    safeTransfer(
+      _receipt: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    withdraw(
+      wad: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addCase(
-      _token: string,
-      _txId: string,
-      _seller: string,
-      _buyer: string,
-      _remark: BigNumberish,
-      _amount: BigNumberish,
+    deposit(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    safeTransfer(
+      _receipt: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      wad: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

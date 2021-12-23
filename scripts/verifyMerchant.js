@@ -1,5 +1,4 @@
 const hre = require("hardhat");
-const ContractJSON = require("../contract.json");
 const fs = require("fs");
 
 async function main() {
@@ -8,14 +7,14 @@ async function main() {
   // verify waggy token
   //  console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   //  await hre.run("verify:verify", {
-  //    address: "0x5953029e5e7c0A9eE5B251F50378742dbe8B7c21",
+  //    address: "0x7b6f7bcf56e04a533fa736b4f34d0219575eb518",
   //    contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
   //    constructorArguments: [],
   //  });
   // verify merchant
   // console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   await hre.run("verify:verify", {
-    address: "0xd6d535b4880cd57c45a976c9042a5b692b3d11a9",
+    address: "0x39132f2a9b96c833f4e9a96e5d9eb99638f05862",
     contract: "contracts/p2p/Merchant.sol:Merchant",
     constructorArguments: [],
   });

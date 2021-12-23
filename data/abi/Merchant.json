@@ -317,11 +317,6 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_txId",
-        "type": "string"
-      },
-      {
         "internalType": "address",
         "name": "_buyer",
         "type": "address"
@@ -404,7 +399,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_merchant",
+        "name": "_seller",
         "type": "address"
       },
       {

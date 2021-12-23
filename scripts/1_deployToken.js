@@ -4,8 +4,11 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const ContractJSON = require("../contract.json");
+const networkName = hre.network.name
+const fileName = `${networkName}-contract.json`
+const ContractJSON = require(`../${fileName}`);
 const fs = require("fs");
+const { deploy } = require("@openzeppelin/hardhat-upgrades/dist/utils");
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -16,10 +19,10 @@ async function main() {
 
   await hre.run("compile");
   const [deploer,governor] = await hre.ethers.getSigners();
-  console.log(">> Start Deploy Contract");
+  console.log(">> Start Deploy Contract",deploer.address);
   // Waggy token
   const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
-  const waggyToken = await hre.upgrades.deployProxy(WaggyToken,[governor.address,9544751,9944721]);
+  const waggyToken = await hre.upgrades.deployProxy(WaggyToken,[deploer.address,13533199,93533199]);
 
   await waggyToken.deployed();
   //  mock token
@@ -32,21 +35,21 @@ async function main() {
   await usdtToken.deployed();
   const usdcToken = await WERC20.deploy("USDC", "USDC");
   await usdcToken.deployed();
-  const wbnbToken = await WERC20.deploy("WBNB", "WBNB");
-  await wbnbToken.deployed();
+  // const wbnbToken = await WERC20.deploy("WBNB", "WBNB");
+  // await wbnbToken.deployed();
 
-  console.log(`BUSD token address ${busdToken.address}`);
-  console.log(`DAI token address ${daiToken.address}`);
-  console.log(`USDT token address ${usdtToken.address}`);
-  console.log(`USDC token address ${usdcToken.address}`);
-  console.log(`WBNB token address ${wbnbToken.address}`);
-  console.log(`WBNB token address ${waggyToken.address}`);
+  // console.log(`BUSD token address ${busdToken.address}`);
+  // console.log(`DAI token address ${daiToken.address}`);
+  // console.log(`USDT token address ${usdtToken.address}`);
+  // console.log(`USDC token address ${usdcToken.address}`);
+  // console.log(`WBNB token address ${wbnbToken.address}`);
+  // console.log(`WBNB token address ${waggyToken.address}`);
 
   ContractJSON.busdToken = busdToken.address;
   ContractJSON.daiToken = daiToken.address;
   ContractJSON.usdtToken = usdtToken.address;
   ContractJSON.usdcToken = usdcToken.address;
-  ContractJSON.wbnbToken = wbnbToken.address;
+  ContractJSON.wbnbToken = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";//wbnb testnet
   ContractJSON.waggyToken = waggyToken.address;
 
   console.log("✅ Done deploying a WAGGYTOKEN");
@@ -54,7 +57,7 @@ async function main() {
 
   const jsonString = JSON.stringify(ContractJSON, null, 2);
   console.log(jsonString);
-  await fs.writeFileSync("./contract.json", jsonString);
+  await fs.writeFileSync(`./${fileName}`, jsonString);
   console.log("write file done.");
 //  Call merchant verify to verify waggy token.
   await hre.run("verify:verify", {
@@ -77,13 +80,13 @@ async function main() {
     contract: "contracts/p2p/WERC20.sol:WERC20",
     constructorArguments: ["USDC", "USDC"],
   });
-  await hre.run("verify:verify", {
-    address: wbnbToken.address,
-    contract: "contracts/p2p/WERC20.sol:WERC20",
-    constructorArguments: ["WBNB", "WBNB"],
-  });
+  // await hre.run("verify:verify", {
+  //   address: wbnbToken.address,
+  //   contract: "contracts/p2p/WERC20.sol:WERC20",
+  //   constructorArguments: ["WBNB", "WBNB"],
+  // });
   
-  console.log("✅ Done Verify Contract");
+  // console.log("✅ Done Verify Contract");
 
   
 }

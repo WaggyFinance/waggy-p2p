@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./../p2p/WaggyToken.sol";
+
 // TODO Lock deposit time
 contract WaggyStaking is OwnableUpgradeable {
   using SafeMath for uint256;
@@ -48,6 +49,7 @@ contract WaggyStaking is OwnableUpgradeable {
 
   event Deposit(address indexed user, uint256 amount);
   event Withdraw(address indexed user, uint256 amount);
+  event Claim(address indexed user, uint256 amount);
   event EmergencyWithdraw(address indexed user, uint256 amount);
 
   function initialize(
@@ -57,7 +59,7 @@ contract WaggyStaking is OwnableUpgradeable {
   ) public initializer {
     adminAddress = _adminAddress;
     waggyToken = WaggyToken(_waggyToken);
-
+    __Ownable_init();
     // staking pool
     poolInfo.push(
       PoolInfo({ lpToken: _lp, supply: 0, allocPoint: 1000, lastRewardBlock: block.number, accWagPerShare: 0 })
@@ -85,6 +87,10 @@ contract WaggyStaking is OwnableUpgradeable {
     );
   }
 
+  function removeAllPool() public onlyOwner{
+    delete poolInfo;
+  } 
+
   // Update admin address by the previous dev.
   function setAdmin(address _adminAddress) public onlyOwner {
     adminAddress = _adminAddress;
@@ -103,6 +109,29 @@ contract WaggyStaking is OwnableUpgradeable {
     pool.lpToken.transferFrom(msg.sender, address(this), _amount);
     pool.accWagPerShare = pool.accWagPerShare.add(_amount.mul(1e12).div(pool.supply));
     pool.lastRewardBlock = block.number;
+  }
+
+  function claimAll() public {
+    for (uint256 index = 0; index < poolInfo.length; index++) {
+      claim(index);
+    }
+  }
+
+  function claim(uint256 _pid) public {
+    PoolInfo storage pool = poolInfo[_pid];
+    UserInfo storage user = userInfo[_pid][msg.sender];
+
+    require(!user.inBlackList, "in black list");
+
+    if (user.amount > 0) {
+      uint256 pending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+      if (pending > 0) {
+        user.rewardDebt = user.amount.mul(pool.accWagPerShare).div(1e12);
+        pool.lpToken.transfer(address(msg.sender), pending);
+      }
+
+      emit Claim(msg.sender, pending);
+    }
   }
 
   // Stake tokens to SmartChef

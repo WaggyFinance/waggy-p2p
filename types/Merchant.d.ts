@@ -12,6 +12,7 @@ import {
   BaseContract,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -21,18 +22,25 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MerchantInterface extends ethers.utils.Interface {
   functions: {
+    "ADMIN_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "admins(uint256)": FunctionFragment;
     "appeal(string,address,address,uint256)": FunctionFragment;
     "approveTransaction(uint256,address)": FunctionFragment;
     "blackListUser()": FunctionFragment;
-    "cancelTransactionSeller(string,address,string)": FunctionFragment;
+    "cancelTransactionSeller(address,string)": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
+    "depositNative()": FunctionFragment;
     "feeCalculator()": FunctionFragment;
     "feeCollector()": FunctionFragment;
     "fetchTransactionApproved(address,address)": FunctionFragment;
     "getBuyerTransaction(address,address)": FunctionFragment;
     "getFeeCollector()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
     "getTransactionByIndex(address,address,uint256)": FunctionFragment;
     "gov()": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,address,address,address,address,address)": FunctionFragment;
     "lockTokenInfo(address,address)": FunctionFragment;
     "lockUserTokenInfo(address,address)": FunctionFragment;
@@ -41,21 +49,44 @@ interface MerchantInterface extends ethers.utils.Interface {
     "releaseTokenByAdmin(address,address)": FunctionFragment;
     "releaseTokenBySeller(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "revokeRoles(address[])": FunctionFragment;
     "rewardCalculator()": FunctionFragment;
+    "setAdmins(address[])": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
     "setValidator(address)": FunctionFragment;
+    "setWBNB(address)": FunctionFragment;
+    "setWNativeRelayer(address)": FunctionFragment;
     "shopBalance(address)": FunctionFragment;
     "shopLockBalance(address)": FunctionFragment;
     "successTransactionCount(address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "token()": FunctionFragment;
     "totalLockBalance(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unlockTokenByAdmin(address,address)": FunctionFragment;
     "updateFeeCalculator(address)": FunctionFragment;
     "updateRewardCalculator(address)": FunctionFragment;
     "validator()": FunctionFragment;
+    "wbnb()": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
+    "withdrawNative(uint256)": FunctionFragment;
+    "wnativeRelayer()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "admins",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "appeal",
     values: [string, string, string, BigNumberish]
@@ -70,11 +101,15 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTransactionSeller",
-    values: [string, string, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositNative",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "feeCalculator",
@@ -97,10 +132,22 @@ interface MerchantInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTransactionByIndex",
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "gov", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [string, string, string, string, string, string]
@@ -131,15 +178,33 @@ interface MerchantInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRoles",
+    values: [string[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "rewardCalculator",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "setAdmins", values: [string[]]): string;
   encodeFunctionData(
     functionFragment: "setBlackList",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setValidator",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "setWBNB", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setWNativeRelayer",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "shopBalance", values: [string]): string;
@@ -151,6 +216,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     functionFragment: "successTransactionCount",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalLockBalance",
@@ -161,6 +230,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "unlockTokenByAdmin",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateFeeCalculator",
     values: [string]
   ): string;
@@ -169,11 +242,26 @@ interface MerchantInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "validator", values?: undefined): string;
+  encodeFunctionData(functionFragment: "wbnb", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawNative",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "wnativeRelayer",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "admins", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "appeal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveTransaction",
@@ -188,6 +276,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositNative",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "feeCalculator",
     data: BytesLike
@@ -209,10 +301,16 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getTransactionByIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "gov", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lockTokenInfo",
@@ -240,15 +338,30 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeRoles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "rewardCalculator",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setAdmins", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setBlackList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setValidator",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setWBNB", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setWNativeRelayer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -263,6 +376,10 @@ interface MerchantInterface extends ethers.utils.Interface {
     functionFragment: "successTransactionCount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalLockBalance",
@@ -270,6 +387,10 @@ interface MerchantInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockTokenByAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -281,7 +402,16 @@ interface MerchantInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "validator", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wbnb", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawNative",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "wnativeRelayer",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AppealTransaction(address,address,uint256)": EventFragment;
@@ -291,8 +421,12 @@ interface MerchantInterface extends ethers.utils.Interface {
     "Deposit(address,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ReleaseToken(address,address,address,uint256,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
     "SellerDeposit(address,address,uint256)": EventFragment;
     "SetupShop(address,address,uint256)": EventFragment;
+    "UnlockToken(address,address,uint256)": EventFragment;
     "Withdraw(address,address,uint256)": EventFragment;
   };
 
@@ -303,8 +437,12 @@ interface MerchantInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReleaseToken"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SellerDeposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SetupShop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnlockToken"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
@@ -362,6 +500,22 @@ export type ReleaseTokenEvent = TypedEvent<
   }
 >;
 
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string] & {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
 export type SellerDepositEvent = TypedEvent<
   [string, string, BigNumber] & {
     seller: string;
@@ -374,6 +528,14 @@ export type SetupShopEvent = TypedEvent<
   [string, string, BigNumber] & {
     seller: string;
     token: string;
+    amount: BigNumber;
+  }
+>;
+
+export type UnlockTokenEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    seller: string;
+    buyer: string;
     amount: BigNumber;
   }
 >;
@@ -430,6 +592,12 @@ export class Merchant extends BaseContract {
   interface: MerchantInterface;
 
   functions: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    admins(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
     appeal(
       _txId: string,
       _seller: string,
@@ -447,8 +615,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<[string]>;
 
     cancelTransactionSeller(
-      _txId: string,
-      _buyer: string,
+      _seller: string,
       _remark: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -456,6 +623,10 @@ export class Merchant extends BaseContract {
     deposit(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    depositNative(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     feeCalculator(overrides?: CallOverrides): Promise<[string]>;
@@ -469,7 +640,7 @@ export class Merchant extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getBuyerTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       overrides?: CallOverrides
     ): Promise<
@@ -484,6 +655,8 @@ export class Merchant extends BaseContract {
     >;
 
     getFeeCollector(overrides?: CallOverrides): Promise<[string]>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getTransactionByIndex(
       _seller: string,
@@ -502,6 +675,18 @@ export class Merchant extends BaseContract {
     >;
 
     gov(overrides?: CallOverrides): Promise<[string]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     initialize(
       _token: string,
@@ -546,7 +731,29 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRoles(
+      _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     rewardCalculator(overrides?: CallOverrides): Promise<[string]>;
+
+    setAdmins(
+      _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setBlackList(
       _blackList: string,
@@ -555,6 +762,16 @@ export class Merchant extends BaseContract {
 
     setValidator(
       _validator: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setWBNB(
+      _wbnb: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setWNativeRelayer(
+      _wnativeRelayer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -575,6 +792,11 @@ export class Merchant extends BaseContract {
       }
     >;
 
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     token(overrides?: CallOverrides): Promise<[string]>;
 
     totalLockBalance(
@@ -584,6 +806,12 @@ export class Merchant extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unlockTokenByAdmin(
+      _seller: string,
+      _buyer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -599,11 +827,26 @@ export class Merchant extends BaseContract {
 
     validator(overrides?: CallOverrides): Promise<[string]>;
 
+    wbnb(overrides?: CallOverrides): Promise<[string]>;
+
     withdraw(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawNative(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    wnativeRelayer(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  admins(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   appeal(
     _txId: string,
@@ -622,8 +865,7 @@ export class Merchant extends BaseContract {
   blackListUser(overrides?: CallOverrides): Promise<string>;
 
   cancelTransactionSeller(
-    _txId: string,
-    _buyer: string,
+    _seller: string,
     _remark: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -631,6 +873,10 @@ export class Merchant extends BaseContract {
   deposit(
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  depositNative(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   feeCalculator(overrides?: CallOverrides): Promise<string>;
@@ -644,7 +890,7 @@ export class Merchant extends BaseContract {
   ): Promise<BigNumber>;
 
   getBuyerTransaction(
-    _merchant: string,
+    _seller: string,
     _buyer: string,
     overrides?: CallOverrides
   ): Promise<
@@ -659,6 +905,8 @@ export class Merchant extends BaseContract {
   >;
 
   getFeeCollector(overrides?: CallOverrides): Promise<string>;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getTransactionByIndex(
     _seller: string,
@@ -677,6 +925,18 @@ export class Merchant extends BaseContract {
   >;
 
   gov(overrides?: CallOverrides): Promise<string>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initialize(
     _token: string,
@@ -721,7 +981,29 @@ export class Merchant extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRoles(
+    _admins: string[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   rewardCalculator(overrides?: CallOverrides): Promise<string>;
+
+  setAdmins(
+    _admins: string[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setBlackList(
     _blackList: string,
@@ -730,6 +1012,16 @@ export class Merchant extends BaseContract {
 
   setValidator(
     _validator: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setWBNB(
+    _wbnb: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setWNativeRelayer(
+    _wnativeRelayer: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -747,12 +1039,23 @@ export class Merchant extends BaseContract {
     }
   >;
 
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   token(overrides?: CallOverrides): Promise<string>;
 
   totalLockBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unlockTokenByAdmin(
+    _seller: string,
+    _buyer: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -768,12 +1071,27 @@ export class Merchant extends BaseContract {
 
   validator(overrides?: CallOverrides): Promise<string>;
 
+  wbnb(overrides?: CallOverrides): Promise<string>;
+
   withdraw(
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawNative(
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  wnativeRelayer(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    admins(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
     appeal(
       _txId: string,
       _seller: string,
@@ -791,13 +1109,14 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<string>;
 
     cancelTransactionSeller(
-      _txId: string,
-      _buyer: string,
+      _seller: string,
       _remark: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     deposit(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    depositNative(overrides?: CallOverrides): Promise<void>;
 
     feeCalculator(overrides?: CallOverrides): Promise<string>;
 
@@ -810,7 +1129,7 @@ export class Merchant extends BaseContract {
     ): Promise<BigNumber>;
 
     getBuyerTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       overrides?: CallOverrides
     ): Promise<
@@ -825,6 +1144,8 @@ export class Merchant extends BaseContract {
     >;
 
     getFeeCollector(overrides?: CallOverrides): Promise<string>;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getTransactionByIndex(
       _seller: string,
@@ -843,6 +1164,18 @@ export class Merchant extends BaseContract {
     >;
 
     gov(overrides?: CallOverrides): Promise<string>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     initialize(
       _token: string,
@@ -883,11 +1216,34 @@ export class Merchant extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRoles(_admins: string[], overrides?: CallOverrides): Promise<void>;
+
     rewardCalculator(overrides?: CallOverrides): Promise<string>;
+
+    setAdmins(_admins: string[], overrides?: CallOverrides): Promise<void>;
 
     setBlackList(_blackList: string, overrides?: CallOverrides): Promise<void>;
 
     setValidator(_validator: string, overrides?: CallOverrides): Promise<void>;
+
+    setWBNB(_wbnb: string, overrides?: CallOverrides): Promise<void>;
+
+    setWNativeRelayer(
+      _wnativeRelayer: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     shopBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -906,6 +1262,11 @@ export class Merchant extends BaseContract {
       }
     >;
 
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     token(overrides?: CallOverrides): Promise<string>;
 
     totalLockBalance(
@@ -915,6 +1276,12 @@ export class Merchant extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unlockTokenByAdmin(
+      _seller: string,
+      _buyer: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -930,7 +1297,16 @@ export class Merchant extends BaseContract {
 
     validator(overrides?: CallOverrides): Promise<string>;
 
+    wbnb(overrides?: CallOverrides): Promise<string>;
+
     withdraw(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    withdrawNative(
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    wnativeRelayer(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -1074,6 +1450,60 @@ export class Merchant extends BaseContract {
       }
     >;
 
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
     "SellerDeposit(address,address,uint256)"(
       seller?: null,
       merchant?: null,
@@ -1110,6 +1540,24 @@ export class Merchant extends BaseContract {
       { seller: string; token: string; amount: BigNumber }
     >;
 
+    "UnlockToken(address,address,uint256)"(
+      seller?: null,
+      buyer?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { seller: string; buyer: string; amount: BigNumber }
+    >;
+
+    UnlockToken(
+      seller?: null,
+      buyer?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { seller: string; buyer: string; amount: BigNumber }
+    >;
+
     "Withdraw(address,address,uint256)"(
       seller?: null,
       token?: null,
@@ -1130,6 +1578,12 @@ export class Merchant extends BaseContract {
   };
 
   estimateGas: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    admins(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     appeal(
       _txId: string,
       _seller: string,
@@ -1147,8 +1601,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<BigNumber>;
 
     cancelTransactionSeller(
-      _txId: string,
-      _buyer: string,
+      _seller: string,
       _remark: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1156,6 +1609,10 @@ export class Merchant extends BaseContract {
     deposit(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    depositNative(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     feeCalculator(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1169,12 +1626,17 @@ export class Merchant extends BaseContract {
     ): Promise<BigNumber>;
 
     getBuyerTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getFeeCollector(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTransactionByIndex(
       _seller: string,
@@ -1184,6 +1646,18 @@ export class Merchant extends BaseContract {
     ): Promise<BigNumber>;
 
     gov(overrides?: CallOverrides): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initialize(
       _token: string,
@@ -1228,7 +1702,29 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRoles(
+      _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     rewardCalculator(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setAdmins(
+      _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setBlackList(
       _blackList: string,
@@ -1237,6 +1733,16 @@ export class Merchant extends BaseContract {
 
     setValidator(
       _validator: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setWBNB(
+      _wbnb: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setWNativeRelayer(
+      _wnativeRelayer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1252,6 +1758,11 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalLockBalance(
@@ -1261,6 +1772,12 @@ export class Merchant extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unlockTokenByAdmin(
+      _seller: string,
+      _buyer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1276,13 +1793,33 @@ export class Merchant extends BaseContract {
 
     validator(overrides?: CallOverrides): Promise<BigNumber>;
 
+    wbnb(overrides?: CallOverrides): Promise<BigNumber>;
+
     withdraw(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    withdrawNative(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    wnativeRelayer(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    admins(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     appeal(
       _txId: string,
       _seller: string,
@@ -1300,8 +1837,7 @@ export class Merchant extends BaseContract {
     blackListUser(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     cancelTransactionSeller(
-      _txId: string,
-      _buyer: string,
+      _seller: string,
       _remark: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1309,6 +1845,10 @@ export class Merchant extends BaseContract {
     deposit(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    depositNative(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     feeCalculator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1322,12 +1862,17 @@ export class Merchant extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBuyerTransaction(
-      _merchant: string,
+      _seller: string,
       _buyer: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getFeeCollector(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getTransactionByIndex(
       _seller: string,
@@ -1337,6 +1882,18 @@ export class Merchant extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     gov(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     initialize(
       _token: string,
@@ -1381,7 +1938,29 @@ export class Merchant extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRoles(
+      _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     rewardCalculator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setAdmins(
+      _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setBlackList(
       _blackList: string,
@@ -1390,6 +1969,16 @@ export class Merchant extends BaseContract {
 
     setValidator(
       _validator: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setWBNB(
+      _wbnb: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setWNativeRelayer(
+      _wnativeRelayer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1408,6 +1997,11 @@ export class Merchant extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalLockBalance(
@@ -1417,6 +2011,12 @@ export class Merchant extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlockTokenByAdmin(
+      _seller: string,
+      _buyer: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1432,9 +2032,18 @@ export class Merchant extends BaseContract {
 
     validator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    wbnb(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     withdraw(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    withdrawNative(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    wnativeRelayer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

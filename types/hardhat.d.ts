@@ -129,6 +129,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WaggyStaking__factory>;
     getContractFactory(
+      name: "IWETH",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWETH__factory>;
+    getContractFactory(
       name: "FeeCalculator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeCalculator__factory>;
@@ -140,6 +144,10 @@ declare module "hardhat/types/runtime" {
       name: "IValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IValidator__factory>;
+    getContractFactory(
+      name: "IWBNB",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWBNB__factory>;
     getContractFactory(
       name: "Merchant",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -156,6 +164,14 @@ declare module "hardhat/types/runtime" {
       name: "WERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WERC20__factory>;
+    getContractFactory(
+      name: "IWETH",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWETH__factory>;
+    getContractFactory(
+      name: "WNativeRelayer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WNativeRelayer__factory>;
     getContractFactory(
       name: "Validator",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -307,6 +323,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.WaggyStaking>;
     getContractAt(
+      name: "IWETH",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWETH>;
+    getContractAt(
       name: "FeeCalculator",
       address: string,
       signer?: ethers.Signer
@@ -321,6 +342,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IValidator>;
+    getContractAt(
+      name: "IWBNB",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWBNB>;
     getContractAt(
       name: "Merchant",
       address: string,
@@ -341,6 +367,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WERC20>;
+    getContractAt(
+      name: "IWETH",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWETH>;
+    getContractAt(
+      name: "WNativeRelayer",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WNativeRelayer>;
     getContractAt(
       name: "Validator",
       address: string,

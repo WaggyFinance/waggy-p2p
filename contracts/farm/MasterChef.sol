@@ -204,6 +204,22 @@ contract MasterChef is Ownable {
     emit Deposit(msg.sender, _pid, _amount);
   }
 
+  function claimAll() public {
+    for (uint256 index = 0; index < poolInfo.length; index++) {
+      claim(index);
+    }
+  }
+
+  function claim(uint256 _pid) public {
+    PoolInfo storage pool = poolInfo[_pid];
+    UserInfo storage user = userInfo[_pid][msg.sender];
+    uint256 pending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+    if (pending > 0) {
+      user.rewardDebt = user.amount.mul(pool.accWagPerShare).div(1e12);
+      safeWagTransfer(msg.sender, pending);
+    }
+  }
+
   // Withdraw LP tokens from MasterChef.
   function withdraw(uint256 _pid, uint256 _amount) public {
     require(_pid != 0, "withdraw Wag by unstaking");

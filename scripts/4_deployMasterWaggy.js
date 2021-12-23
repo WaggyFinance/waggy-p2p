@@ -4,7 +4,9 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const ContractJSON = require("../contract.json");
+const networkName = hre.network.name
+const fileName = `${networkName}-contract.json`
+const ContractJSON = require(`../${fileName}`);
 const fs = require("fs");
 
 async function main() {
@@ -35,7 +37,7 @@ async function main() {
 
   const jsonString = JSON.stringify(ContractJSON, null, 2);
   console.log(jsonString);
-  await fs.writeFileSync("./contract.json", jsonString);
+  await fs.writeFileSync(`./${fileName}`, jsonString);
   console.log("Update file done.");
 
 }

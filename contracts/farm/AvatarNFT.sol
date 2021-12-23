@@ -48,6 +48,11 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
     emit Mint(msg.sender, newItemId);
   }
 
+  function claim() external onlyOwner{
+    (bool sent, bytes memory data) = payable(owner()).call{value: address(this).balance}("");
+        require(sent, "Failed to send Ether");
+  }
+
   function getWeight() external pure returns (uint256) {
     return 10;
   }

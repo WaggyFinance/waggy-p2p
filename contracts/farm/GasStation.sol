@@ -113,9 +113,10 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     }
 
     WNFT wnft = WNFT(_nftAddress);
+    uint256 weight = wnft.getWeight();
+    require(weight > 0, "can't stake");
     wnft.safeTransferFrom(msg.sender, address(this), _tokenId);
 
-    uint256 weight = wnft.getWeight();
     if (weight > 0) {
       pool.supply = pool.supply.add(weight);
       user.nftStake[_nftAddress] = user.nftStake[_nftAddress].add(1);

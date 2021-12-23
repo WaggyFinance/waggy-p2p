@@ -40,6 +40,8 @@ interface ValidatorInterface extends ethers.utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "setAdmin(address,bool)": FunctionFragment;
     "setCaseStatusDone(string)": FunctionFragment;
+    "setMaxPercent(uint256)": FunctionFragment;
+    "setMinPercent(uint256)": FunctionFragment;
     "totalCollateral()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "userClaimReward(string)": FunctionFragment;
@@ -101,6 +103,14 @@ interface ValidatorInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxPercent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinPercent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalCollateral",
     values?: undefined
   ): string;
@@ -157,6 +167,14 @@ interface ValidatorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCaseStatusDone",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxPercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinPercent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -415,6 +433,16 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setMaxPercent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinPercent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     totalCollateral(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferOwnership(
@@ -538,6 +566,16 @@ export class Validator extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setMaxPercent(
+    _value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinPercent(
+    _value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   totalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
@@ -559,7 +597,7 @@ export class Validator extends BaseContract {
       _remark: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
     adminRole(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -654,6 +692,16 @@ export class Validator extends BaseContract {
     ): Promise<void>;
 
     setCaseStatusDone(_key: string, overrides?: CallOverrides): Promise<void>;
+
+    setMaxPercent(
+      _value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinPercent(
+      _value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     totalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -959,6 +1007,16 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setMaxPercent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinPercent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     totalCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -1060,6 +1118,16 @@ export class Validator extends BaseContract {
 
     setCaseStatusDone(
       _key: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxPercent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinPercent(
+      _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

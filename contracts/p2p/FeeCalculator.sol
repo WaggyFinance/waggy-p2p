@@ -20,8 +20,18 @@ contract FeeCalculator is Ownable {
 
   uint256 public payRate = 25; //0.25%
 
-  function calculateFee(uint256 _amount) external view returns (uint256) {
-    return _amount.mul(payRate).div(10000);
+  function calculateFee(uint256 _amount) external pure returns (uint256) {
+    if (_amount < 101000000000000000000) {
+      return 0;
+    } else if (_amount < 1001000000000000000000) {
+      return _amount.mul(25).div(10000);
+    } else if (_amount < 10001000000000000000000) {
+      return _amount.mul(50).div(10000);
+    } else if (_amount < 50001000000000000000000) {
+      return _amount.mul(100).div(10000);
+    } else {
+      return _amount.mul(150).div(10000);
+    }
   }
 
   function updateFeeRate(uint256 _rate) public onlyOwner {

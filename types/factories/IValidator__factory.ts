@@ -41,7 +41,13 @@ const _abi = [
       },
     ],
     name: "addCase",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

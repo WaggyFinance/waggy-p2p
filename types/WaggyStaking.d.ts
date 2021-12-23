@@ -23,6 +23,8 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   functions: {
     "add(uint256,address)": FunctionFragment;
     "adminAddress()": FunctionFragment;
+    "claim(uint256)": FunctionFragment;
+    "claimAll()": FunctionFragment;
     "deposit(uint256,uint256)": FunctionFragment;
     "emergencyWithdraw(uint256)": FunctionFragment;
     "initialize(address,address,address)": FunctionFragment;
@@ -30,6 +32,7 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     "pendingReward(uint256,address)": FunctionFragment;
     "poolInfo(uint256)": FunctionFragment;
     "refillPool(uint256,uint256)": FunctionFragment;
+    "removeAllPool()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
     "totalAllocPoint()": FunctionFragment;
@@ -47,6 +50,8 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     functionFragment: "adminAddress",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "claimAll", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish, BigNumberish]
@@ -71,6 +76,10 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "refillPool",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeAllPool",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -103,6 +112,8 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     functionFragment: "adminAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claimAll", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "emergencyWithdraw",
@@ -116,6 +127,10 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "poolInfo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "refillPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeAllPool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -134,17 +149,23 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "Claim(address,uint256)": EventFragment;
     "Deposit(address,uint256)": EventFragment;
     "EmergencyWithdraw(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Withdraw(address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
+
+export type ClaimEvent = TypedEvent<
+  [string, BigNumber] & { user: string; amount: BigNumber }
+>;
 
 export type DepositEvent = TypedEvent<
   [string, BigNumber] & { user: string; amount: BigNumber }
@@ -214,6 +235,15 @@ export class WaggyStaking extends BaseContract {
 
     adminAddress(overrides?: CallOverrides): Promise<[string]>;
 
+    claim(
+      _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    claimAll(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     deposit(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -256,6 +286,10 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    removeAllPool(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -304,6 +338,15 @@ export class WaggyStaking extends BaseContract {
 
   adminAddress(overrides?: CallOverrides): Promise<string>;
 
+  claim(
+    _pid: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  claimAll(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   deposit(
     _pid: BigNumberish,
     _amount: BigNumberish,
@@ -346,6 +389,10 @@ export class WaggyStaking extends BaseContract {
   refillPool(
     _pid: BigNumberish,
     _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  removeAllPool(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -394,6 +441,10 @@ export class WaggyStaking extends BaseContract {
 
     adminAddress(overrides?: CallOverrides): Promise<string>;
 
+    claim(_pid: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    claimAll(overrides?: CallOverrides): Promise<void>;
+
     deposit(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -439,6 +490,8 @@ export class WaggyStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    removeAllPool(overrides?: CallOverrides): Promise<void>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setAdmin(_adminAddress: string, overrides?: CallOverrides): Promise<void>;
@@ -472,6 +525,22 @@ export class WaggyStaking extends BaseContract {
   };
 
   filters: {
+    "Claim(address,uint256)"(
+      user?: string | null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; amount: BigNumber }
+    >;
+
+    Claim(
+      user?: string | null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; amount: BigNumber }
+    >;
+
     "Deposit(address,uint256)"(
       user?: string | null,
       amount?: null
@@ -546,6 +615,15 @@ export class WaggyStaking extends BaseContract {
 
     adminAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
+    claim(
+      _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    claimAll(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     deposit(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -577,6 +655,10 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    removeAllPool(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -620,6 +702,15 @@ export class WaggyStaking extends BaseContract {
 
     adminAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    claim(
+      _pid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimAll(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     deposit(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -654,6 +745,10 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeAllPool(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

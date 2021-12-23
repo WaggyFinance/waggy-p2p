@@ -105,6 +105,14 @@ contract Validator is Ownable {
     adminRole[_admin] = _isAdmin;
   }
 
+  function setMinPercent(uint256 _value)external onlyOwner{
+    minPercentValue = _value;
+  }
+
+  function setMaxPercent(uint256 _value)external onlyOwner{
+    maxPercentValue = _value;
+  }
+
   function addCase(
     address _token,
     string memory _txId,
@@ -112,7 +120,7 @@ contract Validator is Ownable {
     address _buyer,
     uint256 _remark,
     uint256 _amount
-  ) public {
+  ) public returns(string memory){
     string memory txKey = Strings.toString(
       uint256(keccak256(abi.encodePacked("waggy", block.timestamp, _token, _seller, _buyer, _remark, _amount)))
     );
@@ -126,6 +134,8 @@ contract Validator is Ownable {
     caseInfo.totalValue = _amount;
     caseInfo.status = CaseStatus.INPROGRESS;
     emit AddCase(txKey, _txId, _seller, _buyer, _amount);
+
+    return txKey;
   }
 
   function getTotalCollateral() external view returns (uint256) {

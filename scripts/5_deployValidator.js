@@ -4,7 +4,9 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const ContractJSON = require("../contract.json");
+const networkName = hre.network.name
+const fileName = `${networkName}-contract.json`
+const ContractJSON = require(`../${fileName}`);
 const fs = require("fs");
 
 async function main() {
@@ -20,23 +22,24 @@ async function main() {
   // Validator token
   const Validator = await hre.ethers.getContractFactory("Validator");
   const validator = await Validator.deploy(
-      30,
-      10,
+      20,
+      5,
       20
   );
 
-  const tx = await validator.deployed();
-  // await tx.wait(1);
+  // const tx = await validator.deployed();
+  // // await tx.wait(1);
 
-  await validator.setAdmin("0x727618192f7E29721cbd2a518DFc0A3B66720829",true);
+  // await validator.setAdmin("0x727618192f7E29721cbd2a518DFc0A3B66720829",true);
+  await validator.setAdmin("0xE8F81573e8A77cD4ee490999d70cB5BB303861c8",true);
 
   ContractJSON.validator = validator.address;
   console.log("Creat Validator done.");
   const jsonString = JSON.stringify(ContractJSON, null, 2);
   console.log(jsonString);
-  await fs.writeFileSync("./contract.json", jsonString);
+  await fs.writeFileSync(`./${fileName}`, jsonString);
   console.log("write file done.");
-  // console.log("Validator BUSD Token address : ", validator.address);
+  console.log("Validator BUSD Token address : ", validator.address);
 
   console.log("✅ Done deploying a Validator");
   console.log(">> Start Verify Contract");
@@ -44,9 +47,9 @@ async function main() {
     address: validator.address,
     contract: "contracts/Validator.sol:Validator",
     constructorArguments: [
-        30,
-        10,
-        20 
+      20,
+      5,
+      20
     ],
   });
   

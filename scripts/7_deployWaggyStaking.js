@@ -4,7 +4,9 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const ContractJSON = require("../contract.json");
+const networkName = hre.network.name
+const fileName = `${networkName}-contract.json`
+const ContractJSON = require(`../${fileName}`);
 const fs = require("fs");
 const { ethers } = require("ethers");
 
@@ -16,32 +18,37 @@ async function main() {
   // manually to make sure everything is compiled
   await hre.run("compile");
   const accounts = await hre.ethers.getSigners();
-  console.log(">> Start Deploy Contract");
+
   // Waggy token
   const WaggyStaking = await hre.ethers.getContractFactory("WaggyStaking");
+// Deploy
+  // const waggyStaking = await hre.upgrades.deployProxy(WaggyStaking, [
+  //   ContractJSON.busdToken,
+  //   accounts[0].address,
+  //   ContractJSON.waggyToken
+  // ]);
+  // await waggyStaking.deployed();
 
-  const waggyStaking = await hre.upgrades.deployProxy(WaggyStaking, [
-    ContractJSON.busdToken,
-    accounts[0].address,
-    ContractJSON.waggyToken
-  ]);
+  // upgrade 
+  console.log(">> Start Upgrade Contract");
+  // const waggyStaking = await hre.upgrades.upgradeProxy(ContractJSON.waggyStaking,WaggyStaking);
 
-  await waggyStaking.deployed();
+  // await waggyStaking.deployed();
 
-  ContractJSON.waggyStaking = waggyStaking.address;
-  console.log(`waggyStaking address: ${waggyStaking.address}`);
+  // ContractJSON.waggyStaking = waggyStaking.address;
+  // console.log(`waggyStaking address: ${waggyStaking.address}`);
 
-  // await hre.run("verify:verify", {
-  //   address: "0x3b7dde7e9333e9b761f726defa3130139ece07ec",
-  //   contract: "contracts/farm/WaggyStaking.sol:WaggyStaking",
-  //   constructorArguments: [],
-  // });
+  await hre.run("verify:verify", {
+    address: '0xa0c7ad2f5490e0884c5fa4f75c90f8dba4594f5d',
+    contract: "contracts/farm/WaggyStaking.sol:WaggyStaking",
+    constructorArguments: [],
+  });
 
   // console.log("✅ Done Verify Contract");
 
   const jsonString = JSON.stringify(ContractJSON, null, 2);
   console.log(jsonString);
-  await fs.writeFileSync("./contract.json", jsonString);
+  await fs.writeFileSync(`./${fileName}`, jsonString);
   console.log("Update file done.");
 }
 

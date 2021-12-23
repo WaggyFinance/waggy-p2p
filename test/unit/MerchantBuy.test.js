@@ -55,7 +55,6 @@ describe("Merchant Buyer", () => {
     await wbusd.deployed();
 
     console.log(`WBUSD address ${wbusd.address}`);
-dcfxtg
   
     const BUSDAddress = wbusd.address;
     const Merchant = await ethers.getContractFactory("Merchant");
@@ -172,7 +171,7 @@ dcfxtg
     expect(ethers.utils.formatEther(shopBalance)).equal("1000.0")
     // expect(ethers.utils.formatEther(amountToApprove)).equal("1000.0")
     //after buyer transfer fait success merchant should be release token to buyer
-    await merchant.connect(merchantSeller).cancelTransactionSeller('',buyer.address,"Timeout")
+    await merchant.connect(buyer).cancelTransactionSeller(merchantSeller.address,"Timeout")
     const {status,amount,remark,lockAmount,createdAt,updateAt} = await merchant.getBuyerTransaction(merchantSeller.address,buyer.address);
     const buyerTokenBalance = await wbusd.connect(buyer).balanceOf(buyer.address);
     shopBalance = await merchant.connect(merchantSeller).shopBalance(merchantSeller.address);
