@@ -15,6 +15,8 @@ import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./RewardCalculator.sol";
 import "./FeeCalculator.sol";
 import "./../BlackListUser.sol";
@@ -148,7 +150,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     }
   }
 
-  function setWNativeRelayer(WNativeRelayer _wnativeRelayer) public onlyOwner{
+  function setWNativeRelayer(WNativeRelayer _wnativeRelayer) public onlyOwner {
     wnativeRelayer = _wnativeRelayer;
   }
 
@@ -165,10 +167,9 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   // Merchant increase balance.
 
   function depositNative() public payable notSuspendUser {
-    // require(address(msg.sender).balance > msg.value, "Balance not enought");
     // convert bnb to wbnb
     wbnb.deposit{ value: msg.value }();
-
+    // update balance
     setShopBalance(msg.sender, getShopBalance(msg.sender).add(msg.value));
 
     emit Deposit(msg.sender, address(token), msg.value);
@@ -183,7 +184,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   }
 
   // merchant decrease balance
-  function withdrawNative(uint256 _amount) public notSuspendUser {
+  function withdrawNative(uint256 _amount) public notSuspendUser{
     uint256 ownerShopBalance = shopBalance[msg.sender];
     require(ownerShopBalance > 0 && ownerShopBalance >= _amount, "balance not enougth");
     setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
@@ -192,12 +193,12 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     // order withdraw
     wnativeRelayer.withdraw(_amount);
     // trasfer bnb to user
-    (bool success, ) = msg.sender.call{value: _amount}("");
+    (bool success, ) = msg.sender.call{ value: _amount }("");
     require(success, "WNativeRelayer::onlyWhitelistedCaller:: can't withdraw");
     emit Withdraw(msg.sender, address(token), _amount);
   }
 
-  function withdraw(uint256 _amount) public notSuspendUser {
+  function withdraw(uint256 _amount) public notSuspendUser{
     uint256 ownerShopBalance = shopBalance[msg.sender];
     require(ownerShopBalance > 0 && ownerShopBalance >= _amount, "balance not enougth");
     setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
@@ -287,7 +288,12 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     uint256 fee = feeCalculator.calculateFee(transaction.amount);
     uint256 receiverAmount = transaction.amount.sub(fee);
     token.safeTransfer(feeCollector, fee);
-    token.safeTransfer(_buyer, receiverAmount);
+    if (address(token) == address(wbnb)) {
+      token.safeTransfer(address(wnativeRelayer), receiverAmount);
+      wnativeRelayer.withdraw(receiverAmount);
+    } else {
+      token.safeTransfer(_buyer, receiverAmount);
+    }
 
     SuccessTransactionInfo storage successTransactionInfo = successTransactionCount[msg.sender];
     successTransactionInfo.totalSellAmount = successTransactionInfo.totalSellAmount.add(transaction.amount);
@@ -307,7 +313,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     _address is a receipt waller address
     _amount is value of token to transfer
     */
-  function releaseTokenByAdmin(address _seller, address _buyer) external {
+  function releaseTokenByAdmin(address _seller, address _buyer) external  {
     require(hasRole(ADMIN_ROLE, msg.sender), "DOES_NOT_HAVE_ADMIN_ROLE");
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
@@ -323,7 +329,12 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     uint256 receiverAmount = transaction.amount.sub(fee);
 
     token.safeTransfer(feeCollector, fee);
-    token.safeTransfer(_buyer, receiverAmount);
+    if (address(token) == address(wbnb)) {
+      token.safeTransfer(address(wnativeRelayer), receiverAmount);
+      wnativeRelayer.withdraw(receiverAmount);
+    } else {
+      token.safeTransfer(_buyer, receiverAmount);
+    }
 
     setTotalLockBalance(_seller, getTotalLockBalance(_seller).sub(transaction.amount));
 
@@ -516,7 +527,6 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   function getReward(uint256 _amount) internal view returns (uint256) {
     return rewardCalculator.calculateReward(_amount);
   }
-
 
   receive() external payable {}
 
