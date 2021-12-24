@@ -172,6 +172,12 @@ contract Validator is Ownable {
     ERC20(caseInfo.token).safeTransfer(msg.sender,reward);
   }
 
+  function userCanClaimReward(string memory _key) public view returns(bool){
+     CaseInfo storage caseInfo = casesInfo[_key];
+     UserReplyAnswer storage user = caseInfo.usersReplyAnswer[msg.sender];
+     return user.receiveReward;
+  }
+
   function addressToString(address _addr) internal pure returns (string memory) {
     bytes32 value = bytes32(uint256(uint160(_addr)));
     bytes memory alphabet = "0123456789abcdef";
@@ -202,7 +208,7 @@ contract Validator is Ownable {
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
       UserReplyAnswer storage userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, userAddress));
+      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, addressToString(userAddress)));
       if (userReplyAnswer.answer != correctAnswer) {
         fund = fund.add(userReplyAnswer.amount);
       } else {
@@ -277,7 +283,7 @@ contract Validator is Ownable {
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
       UserReplyAnswer storage userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, userAddress));
+      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, addressToString(userAddress)));
       if (userReplyAnswer.answer != correctAnswer) {
         fund = fund.add(userReplyAnswer.amount);
       } else {

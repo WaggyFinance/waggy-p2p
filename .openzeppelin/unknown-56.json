@@ -79,6 +79,31 @@
       "address": "0x8C07C13bf80190B0A571adFd7FBdbDb98763751E",
       "txHash": "0xff9889a8c64da1e09b39c750f373441715a017765093290d74a8065781306ac5",
       "kind": "transparent"
+    },
+    {
+      "address": "0xf55cCa3674AF249d87369c1b3CF99B99855848a6",
+      "txHash": "0xa48c74b48da1545b6694f95702b5085112debd332a8a4c6e6726057ddaae2b23",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x695FCe7d5F89Fe70Ab9C0fa17229bcF352a7430d",
+      "txHash": "0x8c044a26639c1c1618191337d25792fd3745d834947b010fb99e134a54286646",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd8379b95d177DD7Beb200705aFA58b8ae34A17B1",
+      "txHash": "0x13d9c35864a9d4492015966b2ae854336ed4bfaae212dcfcae787bca6b36153f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6936565Dbb6157442c828e17C1241D8FbAdd1068",
+      "txHash": "0x0af110bd56f75395f908f21a4274ec2d99118d9de173ed76fa8ad85ac6f6f0c9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x90d85C18411E396D9ACC392eaCf98608ac39270c",
+      "txHash": "0xff8e05522a8f32a4c8c23af18153b2572bfb2ca4f186f06cedec46820df07599",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -972,6 +997,316 @@
           },
           "t_contract(WaggyToken)14055": {
             "label": "contract WaggyToken"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "4ca5fe01e92bf4524bfe8b929432b2d8582720908cf9a0cbb18ace89e910cd2e": {
+      "address": "0x53716DC7a1Ed31Ed06DAf79DcDCe0894102e0523",
+      "txHash": "0xfb1c087af8bc49caa82c774d3bc3ccb1a00b6a32907d15413f0698ebdc7e1de6",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:35"
+          },
+          {
+            "contract": "AccessControlUpgradeable",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)43_storage)",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:63"
+          },
+          {
+            "contract": "AccessControlUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:219"
+          },
+          {
+            "contract": "Merchant",
+            "label": "shopBalance",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/p2p/Merchant.sol:98"
+          },
+          {
+            "contract": "Merchant",
+            "label": "shopLockBalance",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/p2p/Merchant.sol:99"
+          },
+          {
+            "contract": "Merchant",
+            "label": "successTransactionCount",
+            "type": "t_mapping(t_address,t_struct(SuccessTransactionInfo)11968_storage)",
+            "src": "contracts/p2p/Merchant.sol:100"
+          },
+          {
+            "contract": "Merchant",
+            "label": "lockTokenInfo",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "src": "contracts/p2p/Merchant.sol:102"
+          },
+          {
+            "contract": "Merchant",
+            "label": "lockUserTokenInfo",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "src": "contracts/p2p/Merchant.sol:103"
+          },
+          {
+            "contract": "Merchant",
+            "label": "totalLockBalance",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/p2p/Merchant.sol:104"
+          },
+          {
+            "contract": "Merchant",
+            "label": "buyerInfo",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_struct(UserInfo)11963_storage))",
+            "src": "contracts/p2p/Merchant.sol:105"
+          },
+          {
+            "contract": "Merchant",
+            "label": "rewardCalculator",
+            "type": "t_contract(RewardCalculator)13725",
+            "src": "contracts/p2p/Merchant.sol:107"
+          },
+          {
+            "contract": "Merchant",
+            "label": "feeCalculator",
+            "type": "t_contract(FeeCalculator)11774",
+            "src": "contracts/p2p/Merchant.sol:108"
+          },
+          {
+            "contract": "Merchant",
+            "label": "feeCollector",
+            "type": "t_address",
+            "src": "contracts/p2p/Merchant.sol:110"
+          },
+          {
+            "contract": "Merchant",
+            "label": "blackListUser",
+            "type": "t_contract(BlackListUser)6622",
+            "src": "contracts/p2p/Merchant.sol:110"
+          },
+          {
+            "contract": "Merchant",
+            "label": "validator",
+            "type": "t_contract(IValidator)11812",
+            "src": "contracts/p2p/Merchant.sol:113"
+          },
+          {
+            "contract": "Merchant",
+            "label": "token",
+            "type": "t_contract(ERC20Upgradeable)1151",
+            "src": "contracts/p2p/Merchant.sol:115"
+          },
+          {
+            "contract": "Merchant",
+            "label": "admins",
+            "type": "t_array(t_address)dyn_storage",
+            "src": "contracts/p2p/Merchant.sol:116"
+          },
+          {
+            "contract": "Merchant",
+            "label": "gov",
+            "type": "t_contract(IGOV)11836",
+            "src": "contracts/p2p/Merchant.sol:117"
+          },
+          {
+            "contract": "Merchant",
+            "label": "wbnb",
+            "type": "t_contract(IWBNB)11828",
+            "src": "contracts/p2p/Merchant.sol:118"
+          },
+          {
+            "contract": "Merchant",
+            "label": "wnativeRelayer",
+            "type": "t_contract(WNativeRelayer)13891",
+            "src": "contracts/p2p/Merchant.sol:118"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_struct(SuccessTransactionInfo)11968_storage)": {
+            "label": "mapping(address => struct Merchant.SuccessTransactionInfo)"
+          },
+          "t_struct(SuccessTransactionInfo)11968_storage": {
+            "label": "struct Merchant.SuccessTransactionInfo",
+            "members": [
+              {
+                "label": "totalSellAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "totalSellCount",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_struct(UserInfo)11963_storage))": {
+            "label": "mapping(address => mapping(address => struct Merchant.UserInfo))"
+          },
+          "t_mapping(t_address,t_struct(UserInfo)11963_storage)": {
+            "label": "mapping(address => struct Merchant.UserInfo)"
+          },
+          "t_struct(UserInfo)11963_storage": {
+            "label": "struct Merchant.UserInfo",
+            "members": [
+              {
+                "label": "transactions",
+                "type": "t_array(t_struct(Transaction)11958_storage)dyn_storage"
+              }
+            ]
+          },
+          "t_array(t_struct(Transaction)11958_storage)dyn_storage": {
+            "label": "struct Merchant.Transaction[]"
+          },
+          "t_struct(Transaction)11958_storage": {
+            "label": "struct Merchant.Transaction",
+            "members": [
+              {
+                "label": "status",
+                "type": "t_enum(TransactionStatus)11942"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "remark",
+                "type": "t_string_storage"
+              },
+              {
+                "label": "lockAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "createdAt",
+                "type": "t_uint256"
+              },
+              {
+                "label": "updateAt",
+                "type": "t_uint256"
+              },
+              {
+                "label": "appealTxId",
+                "type": "t_string_storage"
+              }
+            ]
+          },
+          "t_enum(TransactionStatus)11942": {
+            "label": "enum Merchant.TransactionStatus",
+            "members": [
+              "INIT",
+              "PENDING_TRANSFER_FAIT",
+              "APPEAL",
+              "CANCELED",
+              "FINISH"
+            ]
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_contract(RewardCalculator)13725": {
+            "label": "contract RewardCalculator"
+          },
+          "t_contract(FeeCalculator)11774": {
+            "label": "contract FeeCalculator"
+          },
+          "t_contract(BlackListUser)6622": {
+            "label": "contract BlackListUser"
+          },
+          "t_contract(IValidator)11812": {
+            "label": "contract IValidator"
+          },
+          "t_contract(ERC20Upgradeable)1151": {
+            "label": "contract ERC20Upgradeable"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_contract(IGOV)11836": {
+            "label": "contract IGOV"
+          },
+          "t_contract(IWBNB)11828": {
+            "label": "contract IWBNB"
+          },
+          "t_contract(WNativeRelayer)13891": {
+            "label": "contract WNativeRelayer"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)43_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)43_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_bool": {
+            "label": "bool"
           },
           "t_array(t_uint256)49_storage": {
             "label": "uint256[49]"

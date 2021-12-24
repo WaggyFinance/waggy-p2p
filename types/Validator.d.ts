@@ -44,6 +44,7 @@ interface ValidatorInterface extends ethers.utils.Interface {
     "setMinPercent(uint256)": FunctionFragment;
     "totalCollateral()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "userCanClaimReward(string)": FunctionFragment;
     "userClaimReward(string)": FunctionFragment;
   };
 
@@ -119,6 +120,10 @@ interface ValidatorInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "userCanClaimReward",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "userClaimReward",
     values: [string]
   ): string;
@@ -183,6 +188,10 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userCanClaimReward",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -450,6 +459,11 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    userCanClaimReward(
+      _key: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     userClaimReward(
       _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -583,6 +597,8 @@ export class Validator extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  userCanClaimReward(_key: string, overrides?: CallOverrides): Promise<boolean>;
+
   userClaimReward(
     _key: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -709,6 +725,11 @@ export class Validator extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userCanClaimReward(
+      _key: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     userClaimReward(_key: string, overrides?: CallOverrides): Promise<void>;
   };
@@ -1024,6 +1045,11 @@ export class Validator extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    userCanClaimReward(
+      _key: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     userClaimReward(
       _key: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1136,6 +1162,11 @@ export class Validator extends BaseContract {
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userCanClaimReward(
+      _key: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     userClaimReward(
