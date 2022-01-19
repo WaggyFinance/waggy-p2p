@@ -16,32 +16,30 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
-  await hre.run("compile");
+ 
+  // await hre.run("compile");
+  // const accounts = await hre.ethers.getSigners();
+  // console.log(">> Start Deploy Contract");
+  // // Waggy token
+  // const WaggyNFT = await hre.ethers.getContractFactory("WaggyNFT");
+  // const waggyNFT = await WaggyNFT.deploy("WaggyNFT", "WNFT");
+  // await waggyNFT.deployed();
 
-  const accounts = await hre.ethers.getSigners();
-  console.log(`>> Start Deploy Contract ${networkName}`);
-  const GasStation = await hre.ethers.getContractFactory("GasStation");
+  // ContractJSON.waggyNFT = waggyNFT.address;
+  // console.log(`WaggyNFT address: ${waggyNFT.address}`);
+  // await waggyNFT.setOldAvatar('0x27561a5F68485b084ae42198E881a66C287a777C');
+  // const jsonString = JSON.stringify(ContractJSON, null, 2);
+  // console.log(jsonString);
+  // await fs.writeFileSync(`./${fileName}`, jsonString);
+  // console.log("Update file done.");
 
-  const gasStation = await hre.upgrades.deployProxy(GasStation,[ContractJSON.wbnbToken]);
-  // const gasStation = await hre.upgrades.upgradeProxy("0x79BEe600ad712738570f48E1ac28d604c9edb15F",GasStation);
+  await hre.run("verify:verify", {
+    address: '0xDba5B7408f8aB5eA7De5A5f8411161106163E8f1',
+    contract: "contracts/farm/WaggyNFT.sol:WaggyNFT",
+    constructorArguments: ["WaggyNFT", "WNFT"],
+  });
 
-  await gasStation.deployed();
-
-  ContractJSON.gasStation = gasStation.address;
-  console.log(`gasStation address: ${gasStation.address}`);
-
-  // await hre.run("verify:verify", {
-  //   address: "0xa9649938f1bbd72fab8a5a6b4c4cf6e4c86e1e5a",
-  //   contract: "contracts/farm/GasStation.sol:GasStation",
-  //   constructorArguments: [],
-  // });
-
-  // console.log("✅ Done Verify Contract");
-
-  const jsonString = JSON.stringify(ContractJSON, null, 2);
-  console.log(jsonString);
-  await fs.writeFileSync(`./${fileName}`, jsonString);
-  console.log("Update file done.");
+  console.log("✅ Done Verify Contract");
 }
 
 // We recommend this pattern to be able to use async/await everywhere

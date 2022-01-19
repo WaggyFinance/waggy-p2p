@@ -125,6 +125,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MasterWaggy__factory>;
     getContractFactory(
+      name: "AvatarNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AvatarNFT__factory>;
+    getContractFactory(
+      name: "WaggyNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WaggyNFT__factory>;
+    getContractFactory(
       name: "WaggyStaking",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WaggyStaking__factory>;
@@ -153,6 +161,22 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Merchant__factory>;
     getContractFactory(
+      name: "IGOV",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGOV__factory>;
+    getContractFactory(
+      name: "IValidator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IValidator__factory>;
+    getContractFactory(
+      name: "IWBNB",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWBNB__factory>;
+    getContractFactory(
+      name: "QuickSwap",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.QuickSwap__factory>;
+    getContractFactory(
       name: "RewardCalculator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RewardCalculator__factory>;
@@ -172,6 +196,10 @@ declare module "hardhat/types/runtime" {
       name: "WNativeRelayer",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WNativeRelayer__factory>;
+    getContractFactory(
+      name: "IGOV",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGOV__factory>;
     getContractFactory(
       name: "Validator",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -318,6 +346,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MasterWaggy>;
     getContractAt(
+      name: "AvatarNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AvatarNFT>;
+    getContractAt(
+      name: "WaggyNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WaggyNFT>;
+    getContractAt(
       name: "WaggyStaking",
       address: string,
       signer?: ethers.Signer
@@ -353,6 +391,26 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Merchant>;
     getContractAt(
+      name: "IGOV",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGOV>;
+    getContractAt(
+      name: "IValidator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IValidator>;
+    getContractAt(
+      name: "IWBNB",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWBNB>;
+    getContractAt(
+      name: "QuickSwap",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.QuickSwap>;
+    getContractAt(
       name: "RewardCalculator",
       address: string,
       signer?: ethers.Signer
@@ -377,6 +435,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WNativeRelayer>;
+    getContractAt(
+      name: "IGOV",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGOV>;
     getContractAt(
       name: "Validator",
       address: string,

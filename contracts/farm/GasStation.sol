@@ -32,6 +32,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   // Info of each user.
   struct UserInfo {
     mapping(address => uint256) nftStake;
+    uint256[] tokenIds;
     uint256 weights;
     uint256 rewardDebt; // Reward debt. See explanation below.
   }
@@ -104,6 +105,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   function stake(address _nftAddress, uint256 _tokenId) external {
     PoolInfo storage pool = poolInfo;
     UserInfo storage user = userInfo[msg.sender];
+
     // claim reward before new staking
     if (user.weights > 0) {
       uint256 pending = user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
@@ -121,6 +123,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
       pool.supply = pool.supply.add(weight);
       user.nftStake[_nftAddress] = user.nftStake[_nftAddress].add(1);
       user.weights = user.weights.add(weight);
+      user.tokenIds.push(_tokenId);
     }
     user.rewardDebt = user.weights.mul(pool.accWagPerShare).div(1e12);
 
@@ -141,10 +144,26 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     uint256 weight = wnft.getWeight();
     user.nftStake[_nftAddress] = user.nftStake[_nftAddress].sub(1);
     user.weights = user.weights.sub(weight);
+
+    uint256[] storage tokenIds = user.tokenIds;
+    uint256 tokenIndex;
+    for (uint256 index = 0; index < tokenIds.length; index++) {
+      if (tokenIds[index] == _tokenId) {
+        tokenIndex = index;
+        break;
+      }
+    }
+    tokenIds[tokenIndex] = tokenIds[tokenIds.length - 1];
+    tokenIds.pop();
+
     wnft.safeTransferFrom(address(this), msg.sender, _tokenId);
 
     user.rewardDebt = user.weights.mul(pool.accWagPerShare).div(1e12);
 
     emit UnStake(msg.sender, _nftAddress, _tokenId, weight);
+  }
+
+  function getUserOwnedNFT(address _user) public view returns (uint256[] memory tokenIds) {
+    tokenIds = userInfo[_user].tokenIds;
   }
 }

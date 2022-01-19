@@ -16,6 +16,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+interface IGOV {
+  function mint(address _receive, uint256 _amount) external;
+}
+
 contract Validator is Ownable {
   using SafeMath for uint256;
   using SafeERC20 for ERC20;
@@ -70,6 +74,7 @@ contract Validator is Ownable {
   event DoneResult(string txKey, string result);
 
   ERC20 public erc20Interface;
+  IGOV gov;
 
   mapping(string => CaseInfo) public casesInfo;
   mapping(address => bool) public adminRole;
@@ -92,10 +97,12 @@ contract Validator is Ownable {
   }
 
   constructor(
+    address _gov,
     uint256 _maxPercentValue,
     uint256 _minPercentValue,
     uint256 _fee
   ) {
+    gov = IGOV(_gov);
     minPercentValue = _minPercentValue;
     maxPercentValue = _maxPercentValue;
     fee = _fee;
@@ -105,11 +112,11 @@ contract Validator is Ownable {
     adminRole[_admin] = _isAdmin;
   }
 
-  function setMinPercent(uint256 _value)external onlyOwner{
+  function setMinPercent(uint256 _value) external onlyOwner {
     minPercentValue = _value;
   }
 
-  function setMaxPercent(uint256 _value)external onlyOwner{
+  function setMaxPercent(uint256 _value) external onlyOwner {
     maxPercentValue = _value;
   }
 
@@ -120,7 +127,7 @@ contract Validator is Ownable {
     address _buyer,
     uint256 _remark,
     uint256 _amount
-  ) public returns(string memory){
+  ) public returns (string memory) {
     string memory txKey = Strings.toString(
       uint256(keccak256(abi.encodePacked("waggy", block.timestamp, _token, _seller, _buyer, _remark, _amount)))
     );
@@ -168,14 +175,22 @@ contract Validator is Ownable {
     require(user.receiveReward, "you lose.");
 
     user.receiveReward = false;
-    uint256 reward = caseInfo.fund.div(caseInfo.winnerAmount);
-    ERC20(caseInfo.token).safeTransfer(msg.sender,reward);
+
+    uint256 reward = user.amount;
+    if (caseInfo.fund > 0) {
+      reward = reward.add(caseInfo.fund.div(caseInfo.winnerAmount));
+    }
+    // distribute gov reward.
+    uint256 govReward = reward.mul(25).div(10000);
+    gov.mint(msg.sender, govReward);
+    ERC20(caseInfo.token).safeTransfer(msg.sender, reward);
+
   }
 
-  function userCanClaimReward(string memory _key) public view returns(bool){
-     CaseInfo storage caseInfo = casesInfo[_key];
-     UserReplyAnswer storage user = caseInfo.usersReplyAnswer[msg.sender];
-     return user.receiveReward;
+  function userCanClaimReward(string memory _key,address _user) public view returns (bool) {
+    CaseInfo storage caseInfo = casesInfo[_key];
+    UserReplyAnswer storage user = caseInfo.usersReplyAnswer[_user];
+    return user.receiveReward;
   }
 
   function addressToString(address _addr) internal pure returns (string memory) {
@@ -234,11 +249,10 @@ contract Validator is Ownable {
     emit CaseAppeal(_key, msg.sender);
   }
 
-  function setCaseStatusDone(string memory _key) public onlyAdmin delay15mins(_key) {
+  function setCaseStatusDone(string memory _key) public onlyAdmin {
     CaseInfo storage caseInfo = casesInfo[_key];
     require(caseInfo.status == CaseStatus.SUMMARY, "Status is wrong");
     caseInfo.status = CaseStatus.DONE;
-    caseInfo.resultAt = block.timestamp;
     emit ChangeStatus(_key, "DONE");
   }
 
@@ -278,7 +292,7 @@ contract Validator is Ownable {
       caseInfo.result = EQUIVALENT;
     }
 
-    uint256 winnerAnount;
+    uint256 winnerAmount;
     uint256 fund;
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
@@ -288,9 +302,10 @@ contract Validator is Ownable {
         fund = fund.add(userReplyAnswer.amount);
       } else {
         userReplyAnswer.receiveReward = true;
-        winnerAnount = winnerAnount.add(1);
+        winnerAmount = winnerAmount.add(1);
       }
     }
+    caseInfo.winnerAmount = winnerAmount;
     caseInfo.status = CaseStatus.SUMMARY;
     caseInfo.fund = fund.sub(fund.mul(10).div(100));
     caseInfo.resultAt = block.timestamp;

@@ -14,7 +14,7 @@ async function main() {
   // verify merchant
   // console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   await hre.run("verify:verify", {
-    address: "0x3a7ead888adc6807be2bf329b57a06307992eb33",
+    address: "0xecc9325d3cd3a1badb69d680ed4a66c7f7e69004",
     contract: "contracts/p2p/Merchant.sol:Merchant",
     constructorArguments: [],
   });
@@ -28,7 +28,7 @@ async function main() {
   // });
 
   // await hre.run("verify:verify", {
-  //   address: "0x1de79d16396ec910af7671bc3d9b7e8653e8a686",
+  //   address: "0x3b53a1ab77104c846d64e32f47cee60a61f32a61",
   //   contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
   //   constructorArguments: [],
   // });

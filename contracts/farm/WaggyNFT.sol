@@ -17,17 +17,34 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract AvatarNFT is Ownable, ERC721URIStorage {
+interface AvatarNFT {
+  function balanceOf(address _address) external returns (uint256);
+
+  function safeTransferFrom(
+    address from,
+    address to,
+    uint256 tokenId
+  ) external;
+}
+
+contract WaggyNFT is Ownable, ERC721URIStorage {
   using SafeMath for uint256;
   using Counters for Counters.Counter;
   using Strings for uint256;
 
-  event Mint(address, uint256);
+  event Mint(address receiver, uint256 tokenId);
+  event BuyAvatar(address buyer, uint256 tokenId);
+  event SwapOldAvatar(address owner, uint256 newTokenId, uint256 oldTokenId);
 
   Counters.Counter private _tokenIds;
+  Counters.Counter private _sellIndex;
   string public baseURI;
+  mapping(uint256 => string) private uri;
   uint256 private nftPrice;
-  mapping(address => uint256) public userOwnerTokenId;
+  uint256[] public mintTokenIds;
+
+  mapping(uint256 => address) public nftOwner;
+  AvatarNFT private oldAvatarNFT;
 
   constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
 
@@ -35,31 +52,63 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
     nftPrice = _price;
   }
 
-  // Mint all NFT on deploy and keep data for treading
-  function mint(address _receiver) public payable {
+  function setOldAvatar(address _oldAvatar) external onlyOwner {
+    oldAvatarNFT = AvatarNFT(_oldAvatar);
+  }
+
+  function mintAvatar() external payable {
     require(msg.value == nftPrice, "Price missmatch");
-    require(userOwnerTokenId[msg.sender] == 0, "Maximun to mint");
+    uint256 index = _sellIndex.current();
+    require(index < mintTokenIds.length - 1, "Avatar not enought.");
+    uint256 tokenId = mintTokenIds[index];
+    safeTransferFrom(address(this), msg.sender, tokenId);
+
+    nftOwner[tokenId] = msg.sender;
+
+    _sellIndex.increment();
+
+    emit BuyAvatar(msg.sender, tokenId);
+  }
+
+  // Mint all NFT on deploy and keep data for treading
+  function mint(string memory _uri) external onlyOwner {
     uint256 newItemId = _tokenIds.current();
-    _mint(_receiver, newItemId);
+    _mint(address(this), newItemId);
+    uri[newItemId] = _uri;
+    mintTokenIds.push(newItemId);
     _tokenIds.increment();
 
-    userOwnerTokenId[msg.sender] = newItemId;
-
-    emit Mint(msg.sender, newItemId);
+    emit Mint(address(this), newItemId);
   }
 
-  function claim() external onlyOwner{
-    (bool sent,) = payable(owner()).call{value: address(this).balance}("");
-        require(sent, "Failed to send Ether");
+  function claim() external onlyOwner {
+    (bool sent, ) = payable(owner()).call{ value: address(this).balance }("");
+    require(sent, "Failed to send Ether");
   }
 
-  function getWeight() external pure returns (uint256) {
-    return 10;
+  function swapOldAvatar(uint256 _oldTokenId) external {
+    require(oldAvatarNFT.balanceOf(msg.sender) > 0, "Only owner old avatar.");
+    oldAvatarNFT.safeTransferFrom(msg.sender, address(0), _oldTokenId);
+
+    uint256 index = _sellIndex.current();
+    require(index < mintTokenIds.length - 1, "Avatar not enought.");
+    uint256 tokenId = mintTokenIds[index];
+    safeTransferFrom(address(this), msg.sender, tokenId);
+
+    nftOwner[tokenId] = msg.sender;
+
+    _sellIndex.increment();
+
+    emit SwapOldAvatar(msg.sender, tokenId, _oldTokenId);
+  }
+
+  function getLastTokenId() external view returns (uint256) {
+    return _tokenIds.current();
   }
 
   function tokenURI(uint256 _tokenId) public view override returns (string memory) {
     require(_exists(_tokenId), "URI query for nonexistent token");
-    return string(abi.encodePacked(baseURI, _tokenId.toString(), ".json"));
+    return string(abi.encodePacked(baseURI, uri[_tokenId]));
   }
 
   function setBaseURI(string memory _uri) external onlyOwner {

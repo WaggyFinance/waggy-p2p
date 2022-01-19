@@ -54,7 +54,7 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
     __Ownable_init();
     __AccessControl_init();
     require(_endReleaseBlock > _startReleaseBlock, "WAG::constructor::endReleaseBlock < startReleaseBlock");
-    cap = 100000000 * 10**18;
+    cap = 240000000000000000000000000;
     governor = _governor;
     startReleaseBlock = _startReleaseBlock;
     endReleaseBlock = _endReleaseBlock;
@@ -71,7 +71,6 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   /// @dev Set cap. Cap must lower than previous cap. Only Governor can adjust
   /// @param _cap The new cap
   function setCap(uint256 _cap) external onlyGovernor {
-    require(_cap < cap, "WAG::setCap::_cap must < cap");
     uint256 prevCap = cap;
     cap = _cap;
     emit CapChanged(prevCap, cap);

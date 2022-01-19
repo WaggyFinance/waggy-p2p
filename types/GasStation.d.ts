@@ -23,6 +23,7 @@ interface GasStationInterface extends ethers.utils.Interface {
   functions: {
     "adminAddress()": FunctionFragment;
     "claim()": FunctionFragment;
+    "getUserOwnedNFT(address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -43,6 +44,10 @@ interface GasStationInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "claim", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getUserOwnedNFT",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
@@ -86,6 +91,10 @@ interface GasStationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserOwnedNFT",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC721Received",
@@ -198,6 +207,11 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    getUserOwnedNFT(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { tokenIds: BigNumber[] }>;
+
     initialize(
       _bnb: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -277,6 +291,11 @@ export class GasStation extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  getUserOwnedNFT(
+    _user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   initialize(
     _bnb: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -350,6 +369,11 @@ export class GasStation extends BaseContract {
     adminAddress(overrides?: CallOverrides): Promise<string>;
 
     claim(overrides?: CallOverrides): Promise<void>;
+
+    getUserOwnedNFT(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     initialize(_bnb: string, overrides?: CallOverrides): Promise<void>;
 
@@ -495,6 +519,11 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getUserOwnedNFT(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialize(
       _bnb: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -555,6 +584,11 @@ export class GasStation extends BaseContract {
 
     claim(
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getUserOwnedNFT(
+      _user: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(

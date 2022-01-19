@@ -5,3 +5,7 @@ node_modules
 #Hardhat files
 cache
 artifacts
+hardhat.config.js
+bsc-contract.json
+rinkeby-contract.json
+testnet-contract.json

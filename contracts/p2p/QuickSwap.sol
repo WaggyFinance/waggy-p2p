@@ -54,7 +54,7 @@ interface IGOV {
 }
 
 // Not support deflationary token โทเคนที่มีการหัก%
-contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
+contract QuickSwap is OwnableUpgradeable, AccessControlUpgradeable {
   using SafeMathUpgradeable for uint256;
   using SafeERC20Upgradeable for ERC20Upgradeable;
 
@@ -65,8 +65,8 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   event Withdraw(address seller, address token, uint256 amount);
   event DeleteShop(address seller, address token, uint256 balance);
   event AppealTransaction(address seller, address buyer, uint256 balance);
-  event ApproveTransaction(address seller, address token, uint256 amount);
-  event CancelTransaction(address seller, address token, uint256 amount);
+  event PlaceOrder(address seller, address token, uint256 amount);
+  event CancelOrder(address seller, address token, uint256 amount);
   event ReleaseToken(address seller, address buyer, address token, uint256 amount, uint256 reward);
   event SellerDeposit(address seller, address merchant, uint256 amount);
   event UnlockToken(address seller, address buyer, uint256 amount);
@@ -79,6 +79,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     FINISH
   }
   struct Transaction {
+    ERC20Upgradeable token;
     TransactionStatus status;
     uint256 amount;
     string remark;
@@ -90,18 +91,9 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   struct UserInfo {
     Transaction[] transactions;
   }
-  struct SuccessTransactionInfo {
-    uint256 totalSellAmount;
-    uint256 totalSellCount;
-  }
 
-  mapping(address => uint256) public shopBalance;
-  mapping(address => uint256) public shopLockBalance;
-  mapping(address => SuccessTransactionInfo) public successTransactionCount;
+
   // merchant-> buyer-> lock amount
-  mapping(address => mapping(address => uint256)) public lockTokenInfo;
-  mapping(address => mapping(address => uint256)) public lockUserTokenInfo;
-  mapping(address => uint256) public totalLockBalance;
   mapping(address => mapping(address => UserInfo)) internal buyerInfo;
 
   RewardCalculator public rewardCalculator;
@@ -110,16 +102,11 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   BlackListUser public blackListUser;
   IValidator public validator;
 
-  ERC20Upgradeable public token;
-
   address[] public admins;
   IGOV public gov;
-  IWBNB public wbnb;
-  WNativeRelayer public wnativeRelayer;
 
   // create merchant with token for p2p transaction
   function initialize(
-    address _token,
     address _gov,
     address _rewardCalculator,
     address _feeCalculator,
@@ -127,7 +114,6 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     address _blackListUser
   ) public initializer {
     __Ownable_init();
-    token = ERC20Upgradeable(_token);
     gov = IGOV(_gov);
     rewardCalculator = RewardCalculator(_rewardCalculator);
     feeCalculator = FeeCalculator(_feeCalculator);
@@ -150,61 +136,10 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     }
   }
 
-  function setWNativeRelayer(WNativeRelayer _wnativeRelayer) public onlyOwner {
-    wnativeRelayer = _wnativeRelayer;
-  }
-
-  function setWBNB(address _wbnb) external onlyOwner {
-    wbnb = IWBNB(_wbnb);
-  }
-
   function revokeRoles(address[] memory _admins) public onlyOwner {
     for (uint256 i = 0; i < _admins.length; ++i) {
       revokeRole(ADMIN_ROLE, _admins[i]);
     }
-  }
-
-  // Merchant increase balance.
-
-  function depositNative() public payable notSuspendUser {
-    // convert bnb to wbnb
-    wbnb.deposit{ value: msg.value }();
-    // update balance
-    setShopBalance(msg.sender, getShopBalance(msg.sender).add(msg.value));
-
-    emit Deposit(msg.sender, address(token), msg.value);
-  }
-
-  function deposit(uint256 _amount) public notSuspendUser {
-    require(token.allowance(msg.sender, address(this)) >= _amount, "credit not enougth");
-    token.safeTransferFrom(msg.sender, address(this), _amount);
-    setShopBalance(msg.sender, getShopBalance(msg.sender).add(_amount));
-
-    emit Deposit(msg.sender, address(token), _amount);
-  }
-
-  // merchant decrease balance
-  function withdrawNative(uint256 _amount) public notSuspendUser {
-    uint256 ownerShopBalance = shopBalance[msg.sender];
-    require(ownerShopBalance > 0 && ownerShopBalance >= _amount, "balance not enougth");
-    setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
-    // transfer wbnb to wnativeRelayer
-    token.safeTransfer(address(wnativeRelayer), _amount);
-    // order withdraw
-    wnativeRelayer.withdraw(_amount);
-    // trasfer bnb to user
-    (bool success, ) = msg.sender.call{ value: _amount }("");
-    require(success, "WNativeRelayer::onlyWhitelistedCaller:: can't withdraw");
-    emit Withdraw(msg.sender, address(token), _amount);
-  }
-
-  function withdraw(uint256 _amount) public notSuspendUser {
-    uint256 ownerShopBalance = shopBalance[msg.sender];
-    require(ownerShopBalance > 0 && ownerShopBalance >= _amount, "balance not enougth");
-    setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
-    token.safeTransfer(msg.sender, _amount);
-
-    emit Withdraw(msg.sender, address(token), _amount);
   }
 
   /*
@@ -213,12 +148,10 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     The seller to call function approveTransaction for lock balance, it ready for wait to fait transfer.
     _amount is value of buyer want it.
     */
-  function approveTransaction(uint256 _amount, address _buyer) public {
-    require(getShopBalance(msg.sender) >= _amount, "Balance not enougth");
-    // sub avalible shop balance
-    setShopBalance(msg.sender, getShopBalance(msg.sender).sub(_amount));
+  function placeOrder(ERC20Upgradeable _token, uint256 _amount) public {
+    _token.safeTransferFrom(msg.sender, address(this), _amount);
 
-    UserInfo storage buyerInfoData = buyerInfo[msg.sender][_buyer];
+    UserInfo storage buyerInfoData = buyerInfo[msg.sender][address(_token)];
     uint256 transactionLength = buyerInfoData.transactions.length;
     Transaction storage transaction;
     // check last transaction is finish
@@ -231,42 +164,29 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     }
     // create new transaction pending add push in transaction list
     buyerInfoData.transactions.push(
-      Transaction(TransactionStatus.PENDING_TRANSFER_FAIT, _amount, "", _amount, block.number, block.number, "")
+      Transaction(_token, TransactionStatus.PENDING_TRANSFER_FAIT, _amount, "", _amount, block.number, block.number, "")
     );
-    // update total lock balance
-    setTotalLockBalance(msg.sender, getTotalLockBalance(msg.sender).add(_amount));
-    emit ApproveTransaction(msg.sender, address(token), _amount);
+    emit PlaceOrder(msg.sender, address(_token), _amount);
   }
 
-  // for dev recheck balance is realy lock .
-  function fetchTransactionApproved(address _seller, address _buyer) public view returns (uint256) {
-    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
-    uint256 transactionLength = buyerInfoData.transactions.length;
-    require(transactionLength > 0, "Transaction not exist");
-    Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
-    require(transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT, "Transaction status missmatch.");
-    return transaction.lockAmount;
-  }
+  function cancelOrder(ERC20Upgradeable _token) public {
+    UserInfo storage buyerInfoData = buyerInfo[msg.sender][address(_token)];
 
-  /*
-    For admin or owner when the transaction had problem, it can cancel the transaction.
-    _address is address of seller 
-    _amount is value of transaction 
-    */
-  function cancelTransactionSeller(address _seller, string memory _remark) public {
-    UserInfo storage buyerInfoData = buyerInfo[_seller][msg.sender];
     uint256 transactionLength = buyerInfoData.transactions.length;
-    require(transactionLength != 0, "Not found transaction");
-    // get last transaction
-    Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
-    require(transaction.status == TransactionStatus.PENDING_TRANSFER_FAIT, "Transaction status wrong");
-    require(block.number - transaction.updateAt >= 2, "Requiered 15 block");
-    transaction.remark = _remark;
-    transaction.status = TransactionStatus.CANCELED;
-    // warning user to cancel because only buyer can action cancel.
+    Transaction storage transaction;
+    // check last transaction is finish
+    if (transactionLength != 0) {
+      transaction = buyerInfoData.transactions[transactionLength.sub(1)];
+      require(
+        transaction.status != TransactionStatus.FINISH || transaction.status != TransactionStatus.CANCELED,
+        "Transaction already finish"
+      );
 
-    blackListUser.warningUser(msg.sender);
-    emit CancelTransaction(msg.sender, address(token), transaction.amount);
+      transaction.status = TransactionStatus.CANCELED;
+      _token.safeTransfer(msg.sender, transaction.amount);
+
+      emit CancelOrder(msg.sender, address(_token), transaction.amount);
+    }
   }
 
   /* 
@@ -275,8 +195,8 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     _address is a receipt waller address
     _amount is value of token to transfer
     */
-  function releaseTokenBySeller(address _buyer) public {
-    UserInfo storage buyerInfoData = buyerInfo[msg.sender][_buyer];
+  function releaseTokenBySeller(ERC20Upgradeable _token, address _buyer) public {
+    UserInfo storage buyerInfoData = buyerInfo[msg.sender][address(_token)];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
     Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
@@ -285,31 +205,15 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     transaction.status = TransactionStatus.FINISH;
     transaction.updateAt = block.number;
 
-    setTotalLockBalance(msg.sender, getTotalLockBalance(msg.sender).sub(transaction.amount));
-
     uint256 fee = feeCalculator.calculateFee(transaction.amount);
     uint256 receiverAmount = transaction.amount.sub(fee);
-    token.safeTransfer(feeCollector, fee);
-    if (address(token) == address(wbnb)) {
-      token.safeTransfer(address(wnativeRelayer), receiverAmount);
-      wnativeRelayer.withdraw(receiverAmount);
-      (bool success, ) = _buyer.call{ value: receiverAmount }("");
-      require(success, "WNativeRelayer::onlyWhitelistedCaller:: can't withdraw");
-    } else {
-      token.safeTransfer(_buyer, receiverAmount);
-    }
-
-    SuccessTransactionInfo storage successTransactionInfo = successTransactionCount[msg.sender];
-    successTransactionInfo.totalSellAmount = successTransactionInfo.totalSellAmount.add(transaction.amount);
-    successTransactionInfo.totalSellCount = successTransactionInfo.totalSellCount.add(1);
+    _token.safeTransfer(feeCollector, fee);
+    _token.safeTransfer(_buyer, receiverAmount);
 
     // pay reward after complete transaction
-    uint256 reward = transaction.amount.mul(700).div(10000);
+    uint256 reward = getReward(transaction.amount);
     gov.mint(msg.sender, reward);
-    reward = transaction.amount.mul(300).div(10000);
-    gov.mint(_buyer, reward);
-
-    emit ReleaseToken(msg.sender, _buyer, address(token), transaction.amount, reward);
+    emit ReleaseToken(msg.sender, _buyer, address(_token), transaction.amount, reward);
   }
 
   /* 
@@ -318,7 +222,11 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     _address is a receipt waller address
     _amount is value of token to transfer
     */
-  function releaseTokenByAdmin(address _seller, address _buyer) external {
+  function releaseTokenByAdmin(
+    ERC20Upgradeable _token,
+    address _seller,
+    address _buyer
+  ) external {
     require(hasRole(ADMIN_ROLE, msg.sender), "DOES_NOT_HAVE_ADMIN_ROLE");
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
@@ -333,36 +241,10 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     uint256 fee = feeCalculator.calculateFee(transaction.amount);
     uint256 receiverAmount = transaction.amount.sub(fee);
 
-    token.safeTransfer(feeCollector, fee);
-    if (address(token) == address(wbnb)) {
-      token.safeTransfer(address(wnativeRelayer), receiverAmount);
-      wnativeRelayer.withdraw(receiverAmount);
-      (bool success, ) = _buyer.call{ value: receiverAmount }("");
-      require(success, "WNativeRelayer::onlyWhitelistedCaller:: can't withdraw");
-    } else {
-      token.safeTransfer(_buyer, receiverAmount);
-    }
+    _token.safeTransfer(feeCollector, fee);
+    _token.safeTransfer(_buyer, receiverAmount);
 
-    setTotalLockBalance(_seller, getTotalLockBalance(_seller).sub(transaction.amount));
-
-    emit ReleaseToken(_seller, _buyer, address(token), transaction.amount, 0);
-  }
-
-  function unlockTokenByAdmin(address _seller, address _buyer) external {
-    require(hasRole(ADMIN_ROLE, msg.sender), "DOES_NOT_HAVE_ADMIN_ROLE");
-    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
-    uint256 transactionLength = buyerInfoData.transactions.length;
-    require(transactionLength != 0, "Not found transaction");
-    Transaction storage transaction = buyerInfoData.transactions[transactionLength.sub(1)];
-
-    transaction.status = TransactionStatus.FINISH;
-    transaction.updateAt = block.number;
-    transaction.remark = "unlockToken by admin";
-
-    setTotalLockBalance(_seller, getTotalLockBalance(_seller).sub(transaction.amount));
-    setShopBalance(_seller, getShopBalance(_seller).add(transaction.amount));
-
-    emit UnlockToken(_seller, _buyer, transaction.amount);
+    emit ReleaseToken(_seller, _buyer, address(_token), transaction.amount, 0);
   }
 
   /* 
@@ -386,38 +268,21 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     require(transaction.status != TransactionStatus.CANCELED, "Transaction is Cancelled.");
     transaction.status = TransactionStatus.APPEAL;
     transaction.updateAt = block.number;
-    transaction.appealTxId = validator.addCase(address(token), _txId, _seller, _buyer, _remark, transaction.amount);
+    transaction.appealTxId = validator.addCase(
+      address(transaction.token),
+      _txId,
+      _seller,
+      _buyer,
+      _remark,
+      transaction.amount
+    );
 
     emit AppealTransaction(_seller, _buyer, transaction.amount);
   }
 
-  function setTotalLockBalance(address _owner, uint256 _amount) internal {
-    totalLockBalance[_owner] = _amount;
-  }
-
-  function getTotalLockBalance(address _owner) internal view returns (uint256) {
-    return totalLockBalance[_owner];
-  }
-
-  function getShopBalance(address _owner) internal view returns (uint256) {
-    return shopBalance[_owner];
-  }
-
-  function setShopBalance(address _owner, uint256 _balance) internal {
-    shopBalance[_owner] = _balance;
-  }
-
-  function getShopLockBalance(address _owner, address _buyer) internal view returns (uint256) {
-    return lockTokenInfo[_owner][_buyer];
-  }
-
-  function getUserLockBalance(address _owner, address _buyer) internal view returns (uint256) {
-    return lockUserTokenInfo[_owner][_buyer];
-  }
-
   function getTransactionByIndex(
     address _seller,
-    address _buyer,
+    address _token,
     uint256 _index
   )
     public
@@ -431,7 +296,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
       uint256 updateAt
     )
   {
-    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
+    UserInfo storage buyerInfoData = buyerInfo[_seller][_token];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
     Transaction memory transaction = buyerInfoData.transactions[_index];
@@ -444,7 +309,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     updateAt = transaction.updateAt;
   }
 
-  function getTransaction(address _seller, address _buyer)
+  function getTransaction(address _seller, address _token)
     internal
     view
     returns (
@@ -456,32 +321,10 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
       uint256 updateAt
     )
   {
-    UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
+    UserInfo storage buyerInfoData = buyerInfo[_seller][_token];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
-    return getTransactionByIndex(_seller, _buyer, transactionLength.sub(1));
-  }
-
-  function setShopLockBalance(
-    address _seller,
-    address _buyer,
-    uint256 _balance
-  ) internal {
-    lockTokenInfo[_seller][_buyer] = _balance;
-  }
-
-  function getTransactionSuccessCount(address _seller)
-    internal
-    view
-    returns (uint256 totalSellAmount, uint256 totalSellCount)
-  {
-    totalSellAmount = successTransactionCount[_seller].totalSellAmount;
-    totalSellCount = successTransactionCount[_seller].totalSellCount;
-  }
-
-  modifier isCanDeleteShop() {
-    require(getTotalLockBalance(msg.sender) == 0, "Shop had lock balance.");
-    _;
+    return getTransactionByIndex(_seller, _token, transactionLength.sub(1));
   }
 
   modifier notSuspendUser() {
@@ -498,8 +341,8 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
   }
 
   // owner claimToken for emergency event.
-  function ownerClaimToken() public onlyOwner {
-    token.transfer(owner(), token.balanceOf(address(this)));
+  function ownerClaimToken(ERC20Upgradeable _token) public onlyOwner {
+    _token.transfer(owner(), _token.balanceOf(address(this)));
   }
 
   // update RewardCalculator
@@ -512,7 +355,7 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
     feeCalculator = FeeCalculator(_feeCalculator);
   }
 
-  function getBuyerTransaction(address _seller, address _buyer)
+  function getBuyerTransaction(address _seller, address _token)
     public
     view
     returns (
@@ -524,7 +367,15 @@ contract Merchant is OwnableUpgradeable, AccessControlUpgradeable {
       uint256 updatedAt
     )
   {
-    (status, amount, remark, lockAmount, createdAt, updatedAt) = getTransaction(_seller, _buyer);
+    (status, amount, remark, lockAmount, createdAt, updatedAt) = getTransaction(_seller, _token);
+  }
+
+  /*
+    Internal calculate reward for send to seller.
+    _amount is value of transaction.
+    */
+  function getReward(uint256 _amount) internal view returns (uint256) {
+    return rewardCalculator.calculateReward(_amount);
   }
 
   receive() external payable {}

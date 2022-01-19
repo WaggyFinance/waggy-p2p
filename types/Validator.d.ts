@@ -44,7 +44,7 @@ interface ValidatorInterface extends ethers.utils.Interface {
     "setMinPercent(uint256)": FunctionFragment;
     "totalCollateral()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "userCanClaimReward(string)": FunctionFragment;
+    "userCanClaimReward(string,address)": FunctionFragment;
     "userClaimReward(string)": FunctionFragment;
   };
 
@@ -121,7 +121,7 @@ interface ValidatorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "userCanClaimReward",
-    values: [string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "userClaimReward",
@@ -461,6 +461,7 @@ export class Validator extends BaseContract {
 
     userCanClaimReward(
       _key: string,
+      _user: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -597,7 +598,11 @@ export class Validator extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  userCanClaimReward(_key: string, overrides?: CallOverrides): Promise<boolean>;
+  userCanClaimReward(
+    _key: string,
+    _user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   userClaimReward(
     _key: string,
@@ -728,6 +733,7 @@ export class Validator extends BaseContract {
 
     userCanClaimReward(
       _key: string,
+      _user: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1047,6 +1053,7 @@ export class Validator extends BaseContract {
 
     userCanClaimReward(
       _key: string,
+      _user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1166,6 +1173,7 @@ export class Validator extends BaseContract {
 
     userCanClaimReward(
       _key: string,
+      _user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
