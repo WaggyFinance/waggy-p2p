@@ -121,10 +121,10 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
 
     if (weight > 0) {
       pool.supply = pool.supply.add(weight);
-      user.nftStake[_nftAddress] = user.nftStake[_nftAddress].add(1);
       user.weights = user.weights.add(weight);
-      user.tokenIds.push(_tokenId);
     }
+    user.nftStake[_nftAddress] = user.nftStake[_nftAddress].add(1);
+    user.tokenIds.push(_tokenId);
     user.rewardDebt = user.weights.mul(pool.accWagPerShare).div(1e12);
 
     emit Stake(msg.sender, _nftAddress, _tokenId, weight);
