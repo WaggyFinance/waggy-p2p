@@ -17,24 +17,27 @@ async function main() {
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
  
-  // await hre.run("compile");
-  // const accounts = await hre.ethers.getSigners();
-  // console.log(">> Start Deploy Contract");
-  // // Waggy token
-  // const WaggyNFT = await hre.ethers.getContractFactory("WaggyNFT");
-  // const waggyNFT = await WaggyNFT.deploy("WaggyNFT", "WNFT");
-  // await waggyNFT.deployed();
+  await hre.run("compile");
+  const accounts = await hre.ethers.getSigners();
+  console.log(">> Start Deploy Contract");
+  // Waggy token
+  const WaggyNFT = await hre.ethers.getContractFactory("WaggyNFT");
+  const waggyNFT = await WaggyNFT.deploy("WaggyNFT", "WNFT");
+  await waggyNFT.deployed();
 
-  // ContractJSON.waggyNFT = waggyNFT.address;
-  // console.log(`WaggyNFT address: ${waggyNFT.address}`);
-  // await waggyNFT.setOldAvatar('0x27561a5F68485b084ae42198E881a66C287a777C');
-  // const jsonString = JSON.stringify(ContractJSON, null, 2);
-  // console.log(jsonString);
-  // await fs.writeFileSync(`./${fileName}`, jsonString);
-  // console.log("Update file done.");
+  ContractJSON.waggyNFT = waggyNFT.address;
+  console.log(`WaggyNFT address: ${waggyNFT.address}`);
+  await waggyNFT.setOldAvatar('0x27561a5F68485b084ae42198E881a66C287a777C');
+  await waggyNFT.setPrice(ethers.utils.parseEther('0.1'));
+  await waggyNFT.setApprovalForAll(waggyNFT.address,true);
+
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync(`./${fileName}`, jsonString);
+  console.log("Update file done.");
 
   await hre.run("verify:verify", {
-    address: '0xDba5B7408f8aB5eA7De5A5f8411161106163E8f1',
+    address: waggyNFT.address,
     contract: "contracts/farm/WaggyNFT.sol:WaggyNFT",
     constructorArguments: ["WaggyNFT", "WNFT"],
   });

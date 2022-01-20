@@ -34,6 +34,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     "mintTokenIds(uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nftOwner(uint256)": FunctionFragment;
+    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -82,6 +83,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "nftOwner",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC721Received",
+    values: [string, string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -155,6 +160,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nftOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC721Received",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -342,6 +351,14 @@ export class WaggyNFT extends BaseContract {
 
     nftOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     ownerOf(
@@ -464,6 +481,14 @@ export class WaggyNFT extends BaseContract {
 
   nftOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  onERC721Received(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -572,6 +597,14 @@ export class WaggyNFT extends BaseContract {
     name(overrides?: CallOverrides): Promise<string>;
 
     nftOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -804,6 +837,14 @@ export class WaggyNFT extends BaseContract {
 
     nftOwner(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(
@@ -931,6 +972,14 @@ export class WaggyNFT extends BaseContract {
     nftOwner(
       arg0: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC721Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;

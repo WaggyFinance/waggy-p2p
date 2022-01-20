@@ -16,9 +16,12 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
 interface AvatarNFT {
   function balanceOf(address _address) external returns (uint256);
+
+  function getApproved(uint256 tokenId) external returns (address);
 
   function safeTransferFrom(
     address from,
@@ -27,7 +30,7 @@ interface AvatarNFT {
   ) external;
 }
 
-contract WaggyNFT is Ownable, ERC721URIStorage {
+contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
   using SafeMath for uint256;
   using Counters for Counters.Counter;
   using Strings for uint256;
@@ -57,12 +60,13 @@ contract WaggyNFT is Ownable, ERC721URIStorage {
   }
 
   function mintAvatar() external payable {
+    require(oldAvatarNFT.balanceOf(msg.sender) == 0, "User swapOldAvatar instead.");
+    require(balanceOf(msg.sender) == 0, "Maximun to mint.");
     require(msg.value == nftPrice, "Price missmatch");
     uint256 index = _sellIndex.current();
-    require(index < mintTokenIds.length - 1, "Avatar not enought.");
+    require(index < mintTokenIds.length, "Avatar not enought.");
     uint256 tokenId = mintTokenIds[index];
-    safeTransferFrom(address(this), msg.sender, tokenId);
-
+    _mint(msg.sender, tokenId);
     nftOwner[tokenId] = msg.sender;
 
     _sellIndex.increment();
@@ -73,7 +77,6 @@ contract WaggyNFT is Ownable, ERC721URIStorage {
   // Mint all NFT on deploy and keep data for treading
   function mint(string memory _uri) external onlyOwner {
     uint256 newItemId = _tokenIds.current();
-    _mint(address(this), newItemId);
     uri[newItemId] = _uri;
     mintTokenIds.push(newItemId);
     _tokenIds.increment();
@@ -87,13 +90,15 @@ contract WaggyNFT is Ownable, ERC721URIStorage {
   }
 
   function swapOldAvatar(uint256 _oldTokenId) external {
+    require(balanceOf(msg.sender) == 0, "Maximun to mint.");
     require(oldAvatarNFT.balanceOf(msg.sender) > 0, "Only owner old avatar.");
-    oldAvatarNFT.safeTransferFrom(msg.sender, address(0), _oldTokenId);
+    oldAvatarNFT.safeTransferFrom(msg.sender, address(this), _oldTokenId);
 
     uint256 index = _sellIndex.current();
-    require(index < mintTokenIds.length - 1, "Avatar not enought.");
+    require(index < mintTokenIds.length, "Avatar not enought.");
     uint256 tokenId = mintTokenIds[index];
-    safeTransferFrom(address(this), msg.sender, tokenId);
+
+    _mint(msg.sender, tokenId);
 
     nftOwner[tokenId] = msg.sender;
 
@@ -125,6 +130,8 @@ contract WaggyNFT is Ownable, ERC721URIStorage {
   ) public virtual override {
     //solhint-disable-next-line max-line-length
     require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+    require(balanceOf(to) == 0, "Target already had.");
+    nftOwner[tokenId] = to;
     _transfer(from, to, tokenId);
   }
 
@@ -149,6 +156,8 @@ contract WaggyNFT is Ownable, ERC721URIStorage {
     bytes memory _data
   ) public virtual override {
     require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
+    require(balanceOf(to) == 0, "Target already had.");
+     nftOwner[tokenId] = to;
     _safeTransfer(from, to, tokenId, _data);
   }
 
