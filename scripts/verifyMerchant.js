@@ -13,9 +13,14 @@ async function main() {
   //  });
   // verify merchant
   // console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
+  // await hre.run("verify:verify", {
+  //   address: "0xecc9325d3cd3a1badb69d680ed4a66c7f7e69004",
+  //   contract: "contracts/p2p/Merchant.sol:Merchant",
+  //   constructorArguments: [],
+  // });
   await hre.run("verify:verify", {
-    address: "0xecc9325d3cd3a1badb69d680ed4a66c7f7e69004",
-    contract: "contracts/p2p/Merchant.sol:Merchant",
+    address: "0x490a346a1366b5f102b402cd6e3152ce06b91a68",
+    contract: "contracts/p2p/MerchantMultiToken.sol:MerchantMultiToken",
     constructorArguments: [],
   });
 
@@ -33,7 +38,11 @@ async function main() {
   //   constructorArguments: [],
   // });
 
-  
+  //   await hre.run("verify:verify", {
+  //   address: "0x810e84ad66fbf8fbbe1073653800e4d8092f9e04",
+  //   contract: "contracts/p2p/QuickSwap.sol:QuickSwap",
+  //   constructorArguments: [],
+  // });
 
   console.log("verify merchant done.");
 }
