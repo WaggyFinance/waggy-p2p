@@ -17,27 +17,28 @@ async function main() {
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
  
-  await hre.run("compile");
-  const accounts = await hre.ethers.getSigners();
-  console.log(">> Start Deploy Contract");
-  // Waggy token
-  const WaggyNFT = await hre.ethers.getContractFactory("WaggyNFT");
-  const waggyNFT = await WaggyNFT.deploy("WaggyNFT", "WNFT");
-  await waggyNFT.deployed();
+  // await hre.run("compile");
+  // const accounts = await hre.ethers.getSigners();
+  // console.log(">> Start Deploy Contract");
+  // // Waggy token
+  // const WaggyNFT = await hre.ethers.getContractFactory("WaggyNFT");
+  // const waggyNFT = await WaggyNFT.deploy("WaggyNFT", "WNFT",{gasPrice:ethers.utils.parseUnits('6','gwei')});
+  // await waggyNFT.deployed();
 
-  ContractJSON.waggyNFT = waggyNFT.address;
-  console.log(`WaggyNFT address: ${waggyNFT.address}`);
-  await waggyNFT.setOldAvatar('0x27561a5F68485b084ae42198E881a66C287a777C');
-  await waggyNFT.setPrice(ethers.utils.parseEther('0.1'));
-  await waggyNFT.setApprovalForAll(waggyNFT.address,true);
+  // ContractJSON.waggyNFT = waggyNFT.address;
+  // console.log(`WaggyNFT address: ${waggyNFT.address}`);
+  // await waggyNFT.setOldAvatar('0x27561a5F68485b084ae42198E881a66C287a777C',{gasPrice:ethers.utils.parseUnits('6','gwei')});
+  // console.log('Set Old avatar success');
+  // await waggyNFT.setPrice(ethers.utils.parseEther('0.1'),{gasPrice:ethers.utils.parseUnits('6','gwei')});
+  // await waggyNFT.setApprovalForAll(waggyNFT.address,true,{gasPrice:ethers.utils.parseUnits('6','gwei')});
 
-  const jsonString = JSON.stringify(ContractJSON, null, 2);
-  console.log(jsonString);
-  await fs.writeFileSync(`./${fileName}`, jsonString);
-  console.log("Update file done.");
+  // const jsonString = JSON.stringify(ContractJSON, null, 2);
+  // console.log(jsonString);
+  // await fs.writeFileSync(`./${fileName}`, jsonString);
+  // console.log("Update file done.");
 
   await hre.run("verify:verify", {
-    address: waggyNFT.address,
+    address: '0x532514f1A26cBb1B72Ab136C17750508E793Ebc5',
     contract: "contracts/farm/WaggyNFT.sol:WaggyNFT",
     constructorArguments: ["WaggyNFT", "WNFT"],
   });

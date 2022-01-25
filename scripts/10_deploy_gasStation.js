@@ -19,29 +19,29 @@ async function main() {
   await hre.run("compile");
 
   const accounts = await hre.ethers.getSigners();
-  console.log(`>> Start Deploy Contract ${networkName}`);
-  const GasStation = await hre.ethers.getContractFactory("GasStation");
+  // console.log(`>> Start Deploy Contract ${networkName}`);
+  // const GasStation = await hre.ethers.getContractFactory("GasStation");
 
-  const gasStation = await hre.upgrades.deployProxy(GasStation,[ContractJSON.wbnbToken]);
-  // const gasStation = await hre.upgrades.upgradeProxy("0x79BEe600ad712738570f48E1ac28d604c9edb15F",GasStation);
+  // const gasStation = await hre.upgrades.deployProxy(GasStation,[ContractJSON.wbnbToken]);
+  // // const gasStation = await hre.upgrades.upgradeProxy("0x9CaEb77C56C371fb946488De56e790b5af129d9C",GasStation);
 
-  await gasStation.deployed();
+  // await gasStation.deployed();
 
-  ContractJSON.gasStation = gasStation.address;
-  console.log(`gasStation address: ${gasStation.address}`);
+  // ContractJSON.gasStation = gasStation.address;
+  // console.log(`gasStation address: ${gasStation.address}`);
 
-  // await hre.run("verify:verify", {
-  //   address: "0xa9649938f1bbd72fab8a5a6b4c4cf6e4c86e1e5a",
-  //   contract: "contracts/farm/GasStation.sol:GasStation",
-  //   constructorArguments: [],
-  // });
+  await hre.run("verify:verify", {
+    address: "0x5188b894f754f64c476bb240f9d436dde44b8b10",
+    contract: "contracts/farm/GasStation.sol:GasStation",
+    constructorArguments: [],
+  });
 
   // console.log("✅ Done Verify Contract");
 
-  const jsonString = JSON.stringify(ContractJSON, null, 2);
-  console.log(jsonString);
-  await fs.writeFileSync(`./${fileName}`, jsonString);
-  console.log("Update file done.");
+  // const jsonString = JSON.stringify(ContractJSON, null, 2);
+  // console.log(jsonString);
+  // await fs.writeFileSync(`./${fileName}`, jsonString);
+  // console.log("Update file done.");
 }
 
 // We recommend this pattern to be able to use async/await everywhere

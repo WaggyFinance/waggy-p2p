@@ -297,6 +297,11 @@
       "address": "0x76989B9a6d6C0643136b31b03f3F9950bF57e635",
       "txHash": "0xc221833f0a884e1a1b069d637e223d354b872815e9bb4adae131232b81c318af",
       "kind": "transparent"
+    },
+    {
+      "address": "0x63c3a26E4306a8F33A0c9E9473da0dea5Ce8FFeF",
+      "txHash": "0xb47608412b4b3220fc68cae97f52b2426cce76c624179740c7196c49e61a3360",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -4209,6 +4214,143 @@
           },
           "t_array(t_uint256)50_storage": {
             "label": "uint256[50]"
+          }
+        }
+      }
+    },
+    "6d86a2fb4a83ecf9b44b8b4e743a1a3a8bd2ac908beaf191d8854fd88079689d": {
+      "address": "0x5188B894F754F64c476bb240F9d436dde44B8b10",
+      "txHash": "0x2d2e7b62ff3173e1e963342d4b4d0cff66f738d7b9b36b2b2f36228612d040df",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts/proxy/utils/Initializable.sol:26"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:30"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:21"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:77"
+          },
+          {
+            "contract": "GasStation",
+            "label": "adminAddress",
+            "type": "t_address",
+            "src": "contracts/farm/GasStation.sol:50"
+          },
+          {
+            "contract": "GasStation",
+            "label": "poolInfo",
+            "type": "t_struct(PoolInfo)8450_storage",
+            "src": "contracts/farm/GasStation.sol:52"
+          },
+          {
+            "contract": "GasStation",
+            "label": "userInfo",
+            "type": "t_mapping(t_address,t_struct(UserInfo)8438_storage)",
+            "src": "contracts/farm/GasStation.sol:54"
+          },
+          {
+            "contract": "GasStation",
+            "label": "totalAllocPoint",
+            "type": "t_uint256",
+            "src": "contracts/farm/GasStation.sol:56"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address"
+          },
+          "t_struct(PoolInfo)8450_storage": {
+            "label": "struct GasStation.PoolInfo",
+            "members": [
+              {
+                "label": "lpToken",
+                "type": "t_contract(ERC20)3456"
+              },
+              {
+                "label": "supply",
+                "type": "t_uint256"
+              },
+              {
+                "label": "allocPoint",
+                "type": "t_uint256"
+              },
+              {
+                "label": "lastRewardBlock",
+                "type": "t_uint256"
+              },
+              {
+                "label": "accWagPerShare",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_contract(ERC20)3456": {
+            "label": "contract ERC20"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_struct(UserInfo)8438_storage)": {
+            "label": "mapping(address => struct GasStation.UserInfo)"
+          },
+          "t_struct(UserInfo)8438_storage": {
+            "label": "struct GasStation.UserInfo",
+            "members": [
+              {
+                "label": "nftStake",
+                "type": "t_mapping(t_address,t_uint256)"
+              },
+              {
+                "label": "tokenIds",
+                "type": "t_array(t_uint256)dyn_storage"
+              },
+              {
+                "label": "weights",
+                "type": "t_uint256"
+              },
+              {
+                "label": "rewardDebt",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
           }
         }
       }

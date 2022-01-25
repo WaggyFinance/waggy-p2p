@@ -59,6 +59,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   event UnStake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
 
   function initialize(ERC20 _bnb) public initializer {
+    __Ownable_init();
     poolInfo = PoolInfo({
       lpToken: _bnb,
       supply: 0,

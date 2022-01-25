@@ -28,6 +28,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     "claim()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getLastTokenId()": FunctionFragment;
+    "getWeight()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(string)": FunctionFragment;
     "mintAvatar()": FunctionFragment;
@@ -66,6 +67,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     functionFragment: "getLastTokenId",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getWeight", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
@@ -148,6 +150,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     functionFragment: "getLastTokenId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getWeight", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -327,6 +330,8 @@ export class WaggyNFT extends BaseContract {
 
     getLastTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getWeight(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -457,6 +462,8 @@ export class WaggyNFT extends BaseContract {
 
   getLastTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getWeight(overrides?: CallOverrides): Promise<BigNumber>;
+
   isApprovedForAll(
     owner: string,
     operator: string,
@@ -578,6 +585,8 @@ export class WaggyNFT extends BaseContract {
     ): Promise<string>;
 
     getLastTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getWeight(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
       owner: string,
@@ -813,6 +822,8 @@ export class WaggyNFT extends BaseContract {
 
     getLastTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getWeight(overrides?: CallOverrides): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -946,6 +957,8 @@ export class WaggyNFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getLastTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getWeight(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       owner: string,
