@@ -22,12 +22,12 @@ async function main() {
   // Waggy token
   const WaggyStaking = await hre.ethers.getContractFactory("WaggyStaking");
 // Deploy
-  // const waggyStaking = await hre.upgrades.deployProxy(WaggyStaking, [
-  //   ContractJSON.busdToken,
-  //   accounts[0].address,
-  //   ContractJSON.waggyToken
-  // ]);
-  // await waggyStaking.deployed();
+  const waggyStaking = await hre.upgrades.deployProxy(WaggyStaking, [
+    ContractJSON.busdToken,
+    accounts[0].address,
+    ContractJSON.waggyToken
+  ]);
+  await waggyStaking.deployed();
 
   // upgrade 
   console.log(">> Start Upgrade Contract");
@@ -35,14 +35,14 @@ async function main() {
 
   // await waggyStaking.deployed();
 
-  // ContractJSON.waggyStaking = waggyStaking.address;
-  // console.log(`waggyStaking address: ${waggyStaking.address}`);
+  ContractJSON.waggyStaking = waggyStaking.address;
+  console.log(`waggyStaking address: ${waggyStaking.address}`);
 
-  await hre.run("verify:verify", {
-    address: '0xa0c7ad2f5490e0884c5fa4f75c90f8dba4594f5d',
-    contract: "contracts/farm/WaggyStaking.sol:WaggyStaking",
-    constructorArguments: [],
-  });
+  // await hre.run("verify:verify", {
+  //   address: '0xa0c7ad2f5490e0884c5fa4f75c90f8dba4594f5d',
+  //   contract: "contracts/farm/WaggyStaking.sol:WaggyStaking",
+  //   constructorArguments: [],
+  // });
 
   // console.log("✅ Done Verify Contract");
 

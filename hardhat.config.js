@@ -54,7 +54,7 @@ module.exports = {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 20000000000,
-      accounts: ['0x31bbeafd5585da160f64b30fd1d4dcdf2fa0aceb58fb9a3f69b9b6fac96db15d'],
+      accounts: [process.env.bsc_deployer],
     },
     ropsten: {
       url: "https://ropsten.infura.io/v3/d6e674a0c8044708ad1ec2d87cc2b47c",
@@ -68,8 +68,7 @@ module.exports = {
     },
     rinkeby: {
       url: "https://rinkeby.infura.io/v3/c606085219ca47d2acabfe5cc00395b6",
-      accounts: ['0x94a8e8541eb8d78662add2e02915024f88ddfbe96e2f41717343f03e3e125157'],
-      // accounts: { mnemonic: process.env.mnemonic },
+      accounts: [process.env.rinkeby_private_key],
       mining: {
         auto: true,
         interval: 1000,

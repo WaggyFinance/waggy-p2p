@@ -10,7 +10,7 @@ interface IWETH {
 }
 
 contract WNativeRelayer is Ownable, ReentrancyGuard {
-  address wnative;
+  address public wnative;
   mapping(address => bool) okCallers;
 
   constructor(address _wnative) {

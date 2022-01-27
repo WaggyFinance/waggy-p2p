@@ -16,14 +16,14 @@ async function main() {
   //
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
-  await hre.run("compile");
+  // await hre.run("compile");
 
-  const accounts = await hre.ethers.getSigners();
-  // console.log(`>> Start Deploy Contract ${networkName}`);
+  // const accounts = await hre.ethers.getSigners();
+  // // console.log(`>> Start Deploy Contract ${networkName}`);
   // const GasStation = await hre.ethers.getContractFactory("GasStation");
 
   // const gasStation = await hre.upgrades.deployProxy(GasStation,[ContractJSON.wbnbToken]);
-  // // const gasStation = await hre.upgrades.upgradeProxy("0x9CaEb77C56C371fb946488De56e790b5af129d9C",GasStation);
+  // // // const gasStation = await hre.upgrades.upgradeProxy("0x9CaEb77C56C371fb946488De56e790b5af129d9C",GasStation);
 
   // await gasStation.deployed();
 
@@ -31,7 +31,7 @@ async function main() {
   // console.log(`gasStation address: ${gasStation.address}`);
 
   await hre.run("verify:verify", {
-    address: "0x5188b894f754f64c476bb240f9d436dde44b8b10",
+    address: "0xe4afffc76170eb3e6beffa948f601c4aaddab77e",
     contract: "contracts/farm/GasStation.sol:GasStation",
     constructorArguments: [],
   });

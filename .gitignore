@@ -9,3 +9,4 @@ hardhat.config.js
 bsc-contract.json
 rinkeby-contract.json
 testnet-contract.json
+hardhat.config.js

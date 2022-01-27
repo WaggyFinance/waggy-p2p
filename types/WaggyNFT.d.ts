@@ -22,6 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface WaggyNFTInterface extends ethers.utils.Interface {
   functions: {
+    "allowToTransfer(address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
@@ -40,6 +41,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     "ownerOf(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
+    "setAllowTransfer(address,bool)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setBaseURI(string)": FunctionFragment;
     "setOldAvatar(address)": FunctionFragment;
@@ -52,6 +54,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "allowToTransfer",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "approve",
     values: [string, BigNumberish]
@@ -104,6 +110,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setAllowTransfer",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
@@ -138,6 +148,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "allowToTransfer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
@@ -175,6 +189,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAllowTransfer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -309,6 +327,11 @@ export class WaggyNFT extends BaseContract {
   interface: WaggyNFTInterface;
 
   functions: {
+    allowToTransfer(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -390,6 +413,12 @@ export class WaggyNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setAllowTransfer(
+      _address: string,
+      _allow: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setApprovalForAll(
       operator: string,
       approved: boolean,
@@ -440,6 +469,8 @@ export class WaggyNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  allowToTransfer(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   approve(
     to: string,
@@ -519,6 +550,12 @@ export class WaggyNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setAllowTransfer(
+    _address: string,
+    _allow: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setApprovalForAll(
     operator: string,
     approved: boolean,
@@ -567,6 +604,8 @@ export class WaggyNFT extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    allowToTransfer(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -633,6 +672,12 @@ export class WaggyNFT extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAllowTransfer(
+      _address: string,
+      _allow: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -801,6 +846,11 @@ export class WaggyNFT extends BaseContract {
   };
 
   estimateGas: {
+    allowToTransfer(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -882,6 +932,12 @@ export class WaggyNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setAllowTransfer(
+      _address: string,
+      _allow: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setApprovalForAll(
       operator: string,
       approved: boolean,
@@ -934,6 +990,11 @@ export class WaggyNFT extends BaseContract {
   };
 
   populateTransaction: {
+    allowToTransfer(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     approve(
       to: string,
       tokenId: BigNumberish,
@@ -1018,6 +1079,12 @@ export class WaggyNFT extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       _data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAllowTransfer(
+      _address: string,
+      _allow: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

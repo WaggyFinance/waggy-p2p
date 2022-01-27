@@ -7,7 +7,7 @@ async function main() {
   // verify waggy token
   //  console.log(`Start verify ${merchantAddress} with address ${targetToken}`);
   //  await hre.run("verify:verify", {
-  //    address: "0x7b6f7bcf56e04a533fa736b4f34d0219575eb518",
+  //    address: "0x7492a84a5cc192af72b2686329bf82a2c5d7618a",
   //    contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
   //    constructorArguments: [],
   //  });
@@ -19,13 +19,13 @@ async function main() {
   //   constructorArguments: [],
   // });
   await hre.run("verify:verify", {
-    address: "0x490a346a1366b5f102b402cd6e3152ce06b91a68",
+    address: "0xae7d83baf44055cd29df5199a58371fb32fde9c9",
     contract: "contracts/p2p/MerchantMultiToken.sol:MerchantMultiToken",
     constructorArguments: [],
   });
 
   // await hre.run("verify:verify", {
-  //   address: "0x6C8258eEb2caCB45D4873C0691fBf58c75F30813",
+  //   address: "0x6b6e983a10b2c814db720C8ee837ECED1B648bdB",
   //   contract: "contracts/p2p/WNativeRelayer.sol:WNativeRelayer",
   //   constructorArguments: [
   //     "0xdf032bc4b9dc2782bb09352007d4c57b75160b15"

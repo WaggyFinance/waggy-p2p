@@ -26,6 +26,7 @@ interface WNativeRelayerInterface extends ethers.utils.Interface {
     "setCallerOk(address[],bool)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
+    "wnative()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -45,6 +46,7 @@ interface WNativeRelayerInterface extends ethers.utils.Interface {
     functionFragment: "withdraw",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "wnative", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -60,6 +62,7 @@ interface WNativeRelayerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wnative", data: BytesLike): Result;
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
@@ -137,6 +140,8 @@ export class WNativeRelayer extends BaseContract {
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    wnative(overrides?: CallOverrides): Promise<[string]>;
   };
 
   owner(overrides?: CallOverrides): Promise<string>;
@@ -161,6 +166,8 @@ export class WNativeRelayer extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  wnative(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -178,6 +185,8 @@ export class WNativeRelayer extends BaseContract {
     ): Promise<void>;
 
     withdraw(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    wnative(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -220,6 +229,8 @@ export class WNativeRelayer extends BaseContract {
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    wnative(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -244,5 +255,7 @@ export class WNativeRelayer extends BaseContract {
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    wnative(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

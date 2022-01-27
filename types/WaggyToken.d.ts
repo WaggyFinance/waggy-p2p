@@ -22,6 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface WaggyTokenInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "MASTER_CHEFT_ROLE_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -40,6 +41,7 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     "lastUnlockBlock(address)": FunctionFragment;
     "lock(address,uint256)": FunctionFragment;
     "lockOf(address)": FunctionFragment;
+    "masterCheftRole()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "minters(uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -51,6 +53,7 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     "setCap(uint256)": FunctionFragment;
     "setEndReleaseBlock(uint256)": FunctionFragment;
     "setGovernor(address)": FunctionFragment;
+    "setMasterCheft(address)": FunctionFragment;
     "setMinter(address[])": FunctionFragment;
     "startReleaseBlock()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -67,6 +70,10 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MASTER_CHEFT_ROLE_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -127,6 +134,10 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "lockOf", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "masterCheftRole",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish]
   ): string;
@@ -161,6 +172,10 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setGovernor", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setMasterCheft",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "setMinter", values: [string[]]): string;
   encodeFunctionData(
     functionFragment: "startReleaseBlock",
@@ -203,6 +218,10 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "MASTER_CHEFT_ROLE_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "MINTER_ROLE",
     data: BytesLike
   ): Result;
@@ -241,6 +260,10 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "lock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lockOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "masterCheftRole",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "minters", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -265,6 +288,10 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setGovernor",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMasterCheft",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setMinter", data: BytesLike): Result;
@@ -414,6 +441,8 @@ export class WaggyToken extends BaseContract {
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    MASTER_CHEFT_ROLE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
@@ -489,6 +518,8 @@ export class WaggyToken extends BaseContract {
 
     lockOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    masterCheftRole(overrides?: CallOverrides): Promise<[string]>;
+
     mint(
       _receiver: string,
       _amount: BigNumberish,
@@ -534,6 +565,11 @@ export class WaggyToken extends BaseContract {
 
     setGovernor(
       _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMasterCheft(
+      _masterCheft: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -586,6 +622,8 @@ export class WaggyToken extends BaseContract {
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  MASTER_CHEFT_ROLE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -662,6 +700,8 @@ export class WaggyToken extends BaseContract {
 
   lockOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  masterCheftRole(overrides?: CallOverrides): Promise<string>;
+
   mint(
     _receiver: string,
     _amount: BigNumberish,
@@ -707,6 +747,11 @@ export class WaggyToken extends BaseContract {
 
   setGovernor(
     _governor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMasterCheft(
+    _masterCheft: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -759,6 +804,8 @@ export class WaggyToken extends BaseContract {
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    MASTER_CHEFT_ROLE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -835,6 +882,8 @@ export class WaggyToken extends BaseContract {
 
     lockOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    masterCheftRole(overrides?: CallOverrides): Promise<string>;
+
     mint(
       _receiver: string,
       _amount: BigNumberish,
@@ -871,6 +920,11 @@ export class WaggyToken extends BaseContract {
     ): Promise<void>;
 
     setGovernor(_governor: string, overrides?: CallOverrides): Promise<void>;
+
+    setMasterCheft(
+      _masterCheft: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setMinter(_minters: string[], overrides?: CallOverrides): Promise<void>;
 
@@ -1068,6 +1122,8 @@ export class WaggyToken extends BaseContract {
   estimateGas: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MASTER_CHEFT_ROLE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
@@ -1146,6 +1202,8 @@ export class WaggyToken extends BaseContract {
 
     lockOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    masterCheftRole(overrides?: CallOverrides): Promise<BigNumber>;
+
     mint(
       _receiver: string,
       _amount: BigNumberish,
@@ -1191,6 +1249,11 @@ export class WaggyToken extends BaseContract {
 
     setGovernor(
       _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMasterCheft(
+      _masterCheft: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1244,6 +1307,10 @@ export class WaggyToken extends BaseContract {
 
   populateTransaction: {
     DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MASTER_CHEFT_ROLE_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1331,6 +1398,8 @@ export class WaggyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    masterCheftRole(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     mint(
       _receiver: string,
       _amount: BigNumberish,
@@ -1379,6 +1448,11 @@ export class WaggyToken extends BaseContract {
 
     setGovernor(
       _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMasterCheft(
+      _masterCheft: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

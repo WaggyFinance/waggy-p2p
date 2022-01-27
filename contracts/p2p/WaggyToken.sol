@@ -20,6 +20,7 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   using SafeMath for uint256;
 
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+  bytes32 public constant MASTER_CHEFT_ROLE_ROLE = keccak256("MASTER_CHEFT_ROLE_ROLE");
 
   modifier onlyGovernor() {
     require(_msgSender() == governor, "WAG::onlyGovernor::not governor");
@@ -44,6 +45,7 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   uint256 public endReleaseBlock;
 
   address[] public minters;
+  address public masterCheftRole;
 
   function initialize(
     address _governor,
@@ -94,6 +96,12 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
     }
   }
 
+  function setMasterCheft(address _masterCheft) external onlyOwner {
+    revokeRole(MASTER_CHEFT_ROLE_ROLE, masterCheftRole);
+    masterCheftRole = _masterCheft;
+    _setupRole(MASTER_CHEFT_ROLE_ROLE, _masterCheft);
+  }
+
   function revokeRoles(address[] memory _minters) public onlyOwner {
     for (uint256 i = 0; i < _minters.length; ++i) {
       revokeRole(MINTER_ROLE, _minters[i]);
@@ -102,7 +110,10 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
 
   function mint(address _receiver, uint256 _amount) external {
     // Only minters can mint
-    require(hasRole(MINTER_ROLE, msg.sender), "DOES_NOT_HAVE_MINTER_ROLE");
+    require(
+      hasRole(MINTER_ROLE, msg.sender) || hasRole(MASTER_CHEFT_ROLE_ROLE, msg.sender),
+      "DOES_NOT_HAVE_MINTER_ROLE"
+    );
     require(totalSupply().add(_amount) < cap, "WAG::mint::cap exceeded");
     _mint(_receiver, _amount);
   }
@@ -166,7 +177,8 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   /// @dev Lock WAG based-on the command from MasterChef
   /// @param _account The address that will own this locked amount
   /// @param _amount The locked amount
-  function lock(address _account, uint256 _amount) external onlyOwner {
+  function lock(address _account, uint256 _amount) external {
+    require(hasRole(MASTER_CHEFT_ROLE_ROLE, msg.sender), "DOES_NOT_HAVE_MASTER_CHEFT_ROLE");
     require(_account != address(this), "WAG::lock::no lock to token address");
     require(_account != address(0), "WAG::lock::no lock to address(0)");
     require(_amount <= balanceOf(_account), "WAG::lock::no lock over balance");

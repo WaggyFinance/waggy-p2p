@@ -21,28 +21,28 @@ async function main() {
   // console.log(">> Start Deploy Contract");
   // // Validator token
   const Validator = await hre.ethers.getContractFactory("Validator");
-  // const validator = await Validator.deploy(
-  //     ContractJSON.waggyToken,
-  //     20,
-  //     5,
-  //     20
-  // );
+  const validator = await Validator.deploy(
+      ContractJSON.waggyToken,
+      20,
+      5,
+      20
+  );
 
-  // await validator.setAdmin("0xE8F81573e8A77cD4ee490999d70cB5BB303861c8",true);
+  await validator.setAdmin("0x8E5D815c295881e7f4964CD46214f7E7F2aE9C99",true);
   // await validator.setAdmin("0x727618192f7E29721cbd2a518DFc0A3B66720829",true);
 
-  // ContractJSON.validator = validator.address;
-  // console.log("Creat Validator done.");
-  // const jsonString = JSON.stringify(ContractJSON, null, 2);
-  // console.log(jsonString);
-  // await fs.writeFileSync(`./${fileName}`, jsonString);
-  // console.log("write file done.");
-  // console.log("Validator Validator address : ", validator.address);
+  ContractJSON.validator = validator.address;
+  console.log("Creat Validator done.");
+  const jsonString = JSON.stringify(ContractJSON, null, 2);
+  console.log(jsonString);
+  await fs.writeFileSync(`./${fileName}`, jsonString);
+  console.log("write file done.");
+  console.log("Validator Validator address : ", validator.address);
 
   console.log("✅ Done deploying a Validator");
   console.log(">> Start Verify Contract");
   await hre.run("verify:verify", {
-    address: "0x8E5D815c295881e7f4964CD46214f7E7F2aE9C99",
+    address: validator.address,
     contract: "contracts/Validator.sol:Validator",
     constructorArguments: [
       ContractJSON.waggyToken,

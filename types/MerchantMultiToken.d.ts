@@ -54,6 +54,7 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     "revokeRoles(address[])": FunctionFragment;
     "rewardCalculator()": FunctionFragment;
     "setAdmins(address[])": FunctionFragment;
+    "setAllowTokens(address[],bool)": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
     "setValidator(address)": FunctionFragment;
     "setWBNB(address)": FunctionFragment;
@@ -193,6 +194,10 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "setAdmins", values: [string[]]): string;
+  encodeFunctionData(
+    functionFragment: "setAllowTokens",
+    values: [string[], boolean]
+  ): string;
   encodeFunctionData(
     functionFragment: "setBlackList",
     values: [string]
@@ -352,6 +357,10 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setAdmins", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAllowTokens",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setBlackList",
     data: BytesLike
@@ -760,6 +769,12 @@ export class MerchantMultiToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setAllowTokens(
+      _token: string[],
+      _allow: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setBlackList(
       _blackList: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1020,6 +1035,12 @@ export class MerchantMultiToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setAllowTokens(
+    _token: string[],
+    _allow: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setBlackList(
     _blackList: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1266,6 +1287,12 @@ export class MerchantMultiToken extends BaseContract {
     rewardCalculator(overrides?: CallOverrides): Promise<string>;
 
     setAdmins(_admins: string[], overrides?: CallOverrides): Promise<void>;
+
+    setAllowTokens(
+      _token: string[],
+      _allow: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setBlackList(_blackList: string, overrides?: CallOverrides): Promise<void>;
 
@@ -1772,6 +1799,12 @@ export class MerchantMultiToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setAllowTokens(
+      _token: string[],
+      _allow: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setBlackList(
       _blackList: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2015,6 +2048,12 @@ export class MerchantMultiToken extends BaseContract {
 
     setAdmins(
       _admins: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAllowTokens(
+      _token: string[],
+      _allow: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
