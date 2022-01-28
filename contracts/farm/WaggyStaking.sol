@@ -179,9 +179,11 @@ contract WaggyStaking is OwnableUpgradeable {
 
   // Withdraw without caring about rewards. EMERGENCY ONLY.
   function emergencyWithdraw(uint256 _pid) public {
+    PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
     waggyToken.transfer(msg.sender, user.amount);
     emit EmergencyWithdraw(msg.sender, user.amount);
+    pool.supply = pool.supply.sub(user.amount);
     user.amount = 0;
     user.rewardDebt = 0;
   }
