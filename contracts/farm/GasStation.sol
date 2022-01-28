@@ -58,6 +58,8 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   event Stake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
   event UnStake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
 
+  mapping(address => bool) public isWhitelisted;
+
   function initialize(ERC20 _bnb) public initializer {
     __Ownable_init();
     poolInfo = PoolInfo({
@@ -105,6 +107,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   }
 
   function stake(address _nftAddress, uint256 _tokenId) external {
+    require(isWhitelisted[_nftAddress], "_nftAddress isn't whitelisted.");
     PoolInfo storage pool = poolInfo;
     UserInfo storage user = userInfo[msg.sender];
 
@@ -133,6 +136,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   }
 
   function unStake(address _nftAddress, uint256 _tokenId) external {
+    require(isWhitelisted[_nftAddress], "_nftAddress isn't whitelisted.");
     PoolInfo storage pool = poolInfo;
     UserInfo storage user = userInfo[msg.sender];
     require(user.nftStake[_nftAddress] > 0, "No NFT Stake");
@@ -167,5 +171,10 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
 
   function getUserOwnedNFT(address _user) public view returns (uint256[] memory tokenIds) {
     tokenIds = userInfo[_user].tokenIds;
+  }
+
+  function setWhitelistedNFT(address _nftAddress, bool status) public onlyAdmin {
+    require(isWhitelisted[_nftAddress] != status, "The whitelisted address is already set.");
+    isWhitelisted[_nftAddress] = status;
   }
 }
