@@ -84,6 +84,7 @@ contract BlackListUser is Ownable,AccessControl{
       }
     } else {
       user.amount = 1;
+      user.lastWarning = block.timestamp;
     }
   }
 
