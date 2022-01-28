@@ -51,10 +51,20 @@ contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
   mapping(uint256 => address) public nftOwner;
   AvatarNFT private oldAvatarNFT;
 
-  constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
+  constructor(
+    string memory _name,
+    string memory _symbol,
+    uint256 _price
+  ) ERC721(_name, _symbol) {
+    _setPrice(_price);
+  }
+
+  function _setPrice(uint256 _price) internal {
+    nftPrice = _price;
+  }
 
   function setPrice(uint256 _price) external onlyOwner {
-    nftPrice = _price;
+    _setPrice(_price);
   }
 
   function getWeight() external pure returns (uint256) {
