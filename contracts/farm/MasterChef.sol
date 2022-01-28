@@ -77,6 +77,9 @@ contract MasterChef is Ownable {
   }
 
   function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
+    massUpdatePools();
+    updateStakingPool();
+    
     BONUS_MULTIPLIER = multiplierNumber;
   }
 
@@ -86,14 +89,10 @@ contract MasterChef is Ownable {
 
   // Add a new lp to the pool. Can only be called by the owner.
   // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-  function add(
-    uint256 _allocPoint,
-    ERC20 _lpToken,
-    bool _withUpdate
-  ) public onlyOwner {
-    if (_withUpdate) {
-      massUpdatePools();
-    }
+  function add(uint256 _allocPoint, ERC20 _lpToken) public onlyOwner {
+    massUpdatePools();
+    updateStakingPool();
+
     uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
     totalAllocPoint = totalAllocPoint.add(_allocPoint);
     poolInfo.push(
@@ -103,14 +102,10 @@ contract MasterChef is Ownable {
   }
 
   // Update the given pool's CAKE allocation point. Can only be called by the owner.
-  function set(
-    uint256 _pid,
-    uint256 _allocPoint,
-    bool _withUpdate
-  ) public onlyOwner {
-    if (_withUpdate) {
-      massUpdatePools();
-    }
+  function set(uint256 _pid, uint256 _allocPoint) public onlyOwner {
+    massUpdatePools();
+    updateStakingPool();
+
     uint256 prevAllocPoint = poolInfo[_pid].allocPoint;
     poolInfo[_pid].allocPoint = _allocPoint;
     if (prevAllocPoint != _allocPoint) {
