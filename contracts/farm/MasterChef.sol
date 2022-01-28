@@ -47,6 +47,8 @@ contract MasterChef is Ownable {
   PoolInfo[] public poolInfo;
   // Info of each user that stakes LP tokens.
   mapping(uint256 => mapping(address => UserInfo)) public userInfo;
+  // pools exist in contract
+  mapping(address => bool) public existLp;
   // Total allocation points. Must be the sum of all allocation points in all pools.
   uint256 public totalAllocPoint;
   // The block number when CAKE mining starts.
@@ -79,7 +81,7 @@ contract MasterChef is Ownable {
   function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
     massUpdatePools();
     updateStakingPool();
-    
+
     BONUS_MULTIPLIER = multiplierNumber;
   }
 
@@ -90,6 +92,7 @@ contract MasterChef is Ownable {
   // Add a new lp to the pool. Can only be called by the owner.
   // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
   function add(uint256 _allocPoint, ERC20 _lpToken) public onlyOwner {
+    require(!existLp[address(_lpToken)]);
     massUpdatePools();
     updateStakingPool();
 
@@ -98,6 +101,7 @@ contract MasterChef is Ownable {
     poolInfo.push(
       PoolInfo({ lpToken: _lpToken, allocPoint: _allocPoint, lastRewardBlock: lastRewardBlock, accWagPerShare: 0 })
     );
+    existLp[address(_lpToken)] = true;
     updateStakingPool();
   }
 
