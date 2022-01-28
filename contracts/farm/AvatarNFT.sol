@@ -7,7 +7,7 @@
 #    \__/\  /  \____|__  / \______  / \______  / / ______|
 #         \/           \/         \/         \/  \/       
 */
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -46,7 +46,7 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
   }
 
   // Mint all NFT on deploy and keep data for treading
-  function mint(address _receiver) public payable {
+  function mint(address _receiver) external payable {
     require(msg.value == nftPrice, "Price missmatch");
     require(userOwnerTokenId[msg.sender] == 0, "Maximun to mint");
     uint256 newItemId = _tokenIds.current();

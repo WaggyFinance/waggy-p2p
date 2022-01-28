@@ -17,24 +17,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_receipt",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "safeTransfer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256",
         name: "wad",
         type: "uint256",

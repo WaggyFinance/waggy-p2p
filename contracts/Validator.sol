@@ -108,7 +108,7 @@ contract Validator is Ownable {
     fee = _fee;
   }
 
-  function setAdmin(address _admin, bool _isAdmin) public onlyOwner {
+  function setAdmin(address _admin, bool _isAdmin) external onlyOwner {
     adminRole[_admin] = _isAdmin;
   }
 
@@ -127,7 +127,7 @@ contract Validator is Ownable {
     address _buyer,
     uint256 _remark,
     uint256 _amount
-  ) public returns (string memory) {
+  ) external returns (string memory) {
     string memory txKey = Strings.toString(
       uint256(keccak256(abi.encodePacked("waggy", block.timestamp, _token, _seller, _buyer, _remark, _amount)))
     );
@@ -155,7 +155,7 @@ contract Validator is Ownable {
   }
 
   function getUserResultInCase(string memory _key, address _userAddress)
-    public
+    external
     view
     returns (bool _isWin, uint256 _betAmount)
   {
@@ -168,7 +168,7 @@ contract Validator is Ownable {
     _betAmount = userReplyAnswer.amount;
   }
 
-  function userClaimReward(string memory _key) public delay15mins(_key) {
+  function userClaimReward(string memory _key) external delay15mins(_key) {
     CaseInfo storage caseInfo = casesInfo[_key];
     require(caseInfo.status == CaseStatus.DONE, "Status is wrong");
     UserReplyAnswer storage user = caseInfo.usersReplyAnswer[msg.sender];
@@ -187,7 +187,7 @@ contract Validator is Ownable {
 
   }
 
-  function userCanClaimReward(string memory _key,address _user) public view returns (bool) {
+  function userCanClaimReward(string memory _key,address _user) external view returns (bool) {
     CaseInfo storage caseInfo = casesInfo[_key];
     UserReplyAnswer storage user = caseInfo.usersReplyAnswer[_user];
     return user.receiveReward;
@@ -207,14 +207,14 @@ contract Validator is Ownable {
     return string(str);
   }
 
-  function encode(string memory _key) public view returns (bytes32) {
+  function encode(string memory _key) external view returns (bytes32) {
     string memory userAddress = addressToString(msg.sender);
     string memory key = string(abi.encodePacked(BUYER, _key, userAddress));
     console.log("abi encode ", key);
     return keccak256(abi.encodePacked(key));
   }
 
-  function decideByAdmin(string memory _key, string memory _result) public onlyAdmin {
+  function decideByAdmin(string memory _key, string memory _result) external onlyAdmin {
     CaseInfo storage caseInfo = casesInfo[_key];
     caseInfo.result = _result;
 
@@ -249,7 +249,7 @@ contract Validator is Ownable {
     emit CaseAppeal(_key, msg.sender);
   }
 
-  function setCaseStatusDone(string memory _key) public onlyAdmin {
+  function setCaseStatusDone(string memory _key) external onlyAdmin {
     CaseInfo storage caseInfo = casesInfo[_key];
     require(caseInfo.status == CaseStatus.SUMMARY, "Status is wrong");
     caseInfo.status = CaseStatus.DONE;
@@ -258,7 +258,7 @@ contract Validator is Ownable {
 
   // System order to evaluate
   function evaluate(string memory _key)
-    public
+    external
     onlyAdmin
     returns (
       string memory,

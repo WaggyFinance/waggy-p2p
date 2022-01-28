@@ -34,7 +34,7 @@ contract FeeCalculator is Ownable {
     }
   }
 
-  function updateFeeRate(uint256 _rate) public onlyOwner {
+  function updateFeeRate(uint256 _rate) external onlyOwner {
     payRate = _rate;
   }
 }

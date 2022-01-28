@@ -74,7 +74,7 @@ contract WaggyStaking is OwnableUpgradeable {
 
   // Add a new lp to the pool. Can only be called by the owner.
   // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-  function add(uint256 _allocPoint, ERC20 _lpToken) public onlyOwner {
+  function add(uint256 _allocPoint, ERC20 _lpToken) external onlyOwner {
     totalAllocPoint = totalAllocPoint.add(_allocPoint);
     poolInfo.push(
       PoolInfo({
@@ -87,12 +87,12 @@ contract WaggyStaking is OwnableUpgradeable {
     );
   }
 
-  function removeAllPool() public onlyOwner{
+  function removeAllPool() external onlyOwner{
     delete poolInfo;
   } 
 
   // Update admin address by the previous dev.
-  function setAdmin(address _adminAddress) public onlyOwner {
+  function setAdmin(address _adminAddress) external onlyOwner {
     adminAddress = _adminAddress;
   }
 
@@ -104,7 +104,7 @@ contract WaggyStaking is OwnableUpgradeable {
   }
 
   // Refill reward in pool
-  function refillPool(uint256 _pid, uint256 _amount) public {
+  function refillPool(uint256 _pid, uint256 _amount) external {
     PoolInfo storage pool = poolInfo[_pid];
     pool.lpToken.transferFrom(msg.sender, address(this), _amount);
     pool.accWagPerShare = pool.accWagPerShare.add(_amount.mul(1e12).div(pool.supply));
@@ -135,7 +135,7 @@ contract WaggyStaking is OwnableUpgradeable {
   }
 
   // Stake tokens to SmartChef
-  function deposit(uint256 _pid, uint256 _amount) public {
+  function deposit(uint256 _pid, uint256 _amount) external {
     PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
 
@@ -158,7 +158,7 @@ contract WaggyStaking is OwnableUpgradeable {
   }
 
   // Withdraw tokens from STAKING.
-  function withdraw(uint256 _pid, uint256 _amount) public {
+  function withdraw(uint256 _pid, uint256 _amount) external {
     PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
     require(user.amount >= _amount, "withdraw: not good");
@@ -178,7 +178,7 @@ contract WaggyStaking is OwnableUpgradeable {
   }
 
   // Withdraw without caring about rewards. EMERGENCY ONLY.
-  function emergencyWithdraw(uint256 _pid) public {
+  function emergencyWithdraw(uint256 _pid) external {
     PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
     waggyToken.transfer(msg.sender, user.amount);

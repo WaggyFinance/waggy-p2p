@@ -22,7 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface MasterChefInterface extends ethers.utils.Interface {
   functions: {
     "BONUS_MULTIPLIER()": FunctionFragment;
-    "add(uint256,address,bool)": FunctionFragment;
+    "add(uint256,address)": FunctionFragment;
     "claim(uint256)": FunctionFragment;
     "claimAll()": FunctionFragment;
     "deposit(uint256,uint256)": FunctionFragment;
@@ -30,16 +30,19 @@ interface MasterChefInterface extends ethers.utils.Interface {
     "devaddr()": FunctionFragment;
     "emergencyWithdraw(uint256)": FunctionFragment;
     "enterStaking(uint256)": FunctionFragment;
+    "existLp(address)": FunctionFragment;
     "getMultiplier(uint256,uint256)": FunctionFragment;
     "leaveStaking(uint256)": FunctionFragment;
     "lockRewardPercent()": FunctionFragment;
     "massUpdatePools()": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingWag(uint256,address)": FunctionFragment;
+    "poolIndex(address)": FunctionFragment;
     "poolInfo(uint256)": FunctionFragment;
     "poolLength()": FunctionFragment;
+    "removePoolFromLpToken(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "set(uint256,uint256,bool)": FunctionFragment;
+    "set(uint256,uint256)": FunctionFragment;
     "setLockRewardPercent(uint256)": FunctionFragment;
     "startBlock()": FunctionFragment;
     "totalAllocPoint()": FunctionFragment;
@@ -58,7 +61,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "add",
-    values: [BigNumberish, string, boolean]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "claimAll", values?: undefined): string;
@@ -76,6 +79,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "enterStaking",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "existLp", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getMultiplier",
     values: [BigNumberish, BigNumberish]
@@ -97,6 +101,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "pendingWag",
     values: [BigNumberish, string]
   ): string;
+  encodeFunctionData(functionFragment: "poolIndex", values: [string]): string;
   encodeFunctionData(
     functionFragment: "poolInfo",
     values: [BigNumberish]
@@ -106,12 +111,16 @@ interface MasterChefInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "removePoolFromLpToken",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "set",
-    values: [BigNumberish, BigNumberish, boolean]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setLockRewardPercent",
@@ -169,6 +178,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "enterStaking",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "existLp", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMultiplier",
     data: BytesLike
@@ -187,8 +197,13 @@ interface MasterChefInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pendingWag", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "poolIndex", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "poolInfo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "poolLength", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removePoolFromLpToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -310,7 +325,6 @@ export class MasterChef extends BaseContract {
     add(
       _allocPoint: BigNumberish,
       _lpToken: string,
-      _withUpdate: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -346,6 +360,8 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    existLp(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     getMultiplier(
       _from: BigNumberish,
       _to: BigNumberish,
@@ -371,6 +387,8 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    poolIndex(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
     poolInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -385,6 +403,11 @@ export class MasterChef extends BaseContract {
 
     poolLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    removePoolFromLpToken(
+      _lpToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -392,7 +415,6 @@ export class MasterChef extends BaseContract {
     set(
       _pid: BigNumberish,
       _allocPoint: BigNumberish,
-      _withUpdate: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -444,7 +466,6 @@ export class MasterChef extends BaseContract {
   add(
     _allocPoint: BigNumberish,
     _lpToken: string,
-    _withUpdate: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -480,6 +501,8 @@ export class MasterChef extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  existLp(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
   getMultiplier(
     _from: BigNumberish,
     _to: BigNumberish,
@@ -505,6 +528,8 @@ export class MasterChef extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  poolIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
   poolInfo(
     arg0: BigNumberish,
     overrides?: CallOverrides
@@ -519,6 +544,11 @@ export class MasterChef extends BaseContract {
 
   poolLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+  removePoolFromLpToken(
+    _lpToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -526,7 +556,6 @@ export class MasterChef extends BaseContract {
   set(
     _pid: BigNumberish,
     _allocPoint: BigNumberish,
-    _withUpdate: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -578,7 +607,6 @@ export class MasterChef extends BaseContract {
     add(
       _allocPoint: BigNumberish,
       _lpToken: string,
-      _withUpdate: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -606,6 +634,8 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    existLp(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
     getMultiplier(
       _from: BigNumberish,
       _to: BigNumberish,
@@ -629,6 +659,8 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    poolIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     poolInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -643,12 +675,16 @@ export class MasterChef extends BaseContract {
 
     poolLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+    removePoolFromLpToken(
+      _lpToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     set(
       _pid: BigNumberish,
       _allocPoint: BigNumberish,
-      _withUpdate: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -770,7 +806,6 @@ export class MasterChef extends BaseContract {
     add(
       _allocPoint: BigNumberish,
       _lpToken: string,
-      _withUpdate: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -806,6 +841,8 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    existLp(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     getMultiplier(
       _from: BigNumberish,
       _to: BigNumberish,
@@ -831,9 +868,16 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    poolIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     poolInfo(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     poolLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removePoolFromLpToken(
+      _lpToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -842,7 +886,6 @@ export class MasterChef extends BaseContract {
     set(
       _pid: BigNumberish,
       _allocPoint: BigNumberish,
-      _withUpdate: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -893,7 +936,6 @@ export class MasterChef extends BaseContract {
     add(
       _allocPoint: BigNumberish,
       _lpToken: string,
-      _withUpdate: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -929,6 +971,11 @@ export class MasterChef extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    existLp(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getMultiplier(
       _from: BigNumberish,
       _to: BigNumberish,
@@ -954,12 +1001,22 @@ export class MasterChef extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    poolIndex(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     poolInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     poolLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    removePoolFromLpToken(
+      _lpToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -968,7 +1025,6 @@ export class MasterChef extends BaseContract {
     set(
       _pid: BigNumberish,
       _allocPoint: BigNumberish,
-      _withUpdate: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

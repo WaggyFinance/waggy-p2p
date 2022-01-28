@@ -24,7 +24,7 @@ contract RewardCalculator is Ownable {
         return _amount.mul(payRate).div(10000);
     }
 
-    function updateRewardRate(uint256 _rate) public onlyOwner{
+    function updateRewardRate(uint256 _rate) external onlyOwner{
         payRate = _rate;
     }
 }

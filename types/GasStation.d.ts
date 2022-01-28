@@ -25,6 +25,7 @@ interface GasStationInterface extends ethers.utils.Interface {
     "claim()": FunctionFragment;
     "getUserOwnedNFT(address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
+    "isWhitelisted(address)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingReward(address)": FunctionFragment;
@@ -32,6 +33,7 @@ interface GasStationInterface extends ethers.utils.Interface {
     "refillPool(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
+    "setWhitelistedNFT(address,bool)": FunctionFragment;
     "stake(address,uint256)": FunctionFragment;
     "totalAllocPoint()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -49,6 +51,10 @@ interface GasStationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "isWhitelisted",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
     values: [string, string, BigNumberish, BytesLike]
@@ -68,6 +74,10 @@ interface GasStationInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "setAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setWhitelistedNFT",
+    values: [string, boolean]
+  ): string;
   encodeFunctionData(
     functionFragment: "stake",
     values: [string, BigNumberish]
@@ -97,6 +107,10 @@ interface GasStationInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "isWhitelisted",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
@@ -112,6 +126,10 @@ interface GasStationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setWhitelistedNFT",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalAllocPoint",
@@ -217,6 +235,8 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     onERC721Received(
       arg0: string,
       arg1: string,
@@ -255,6 +275,12 @@ export class GasStation extends BaseContract {
 
     setAdmin(
       _adminAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setWhitelistedNFT(
+      _nftAddress: string,
+      status: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -301,6 +327,8 @@ export class GasStation extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
   onERC721Received(
     arg0: string,
     arg1: string,
@@ -336,6 +364,12 @@ export class GasStation extends BaseContract {
 
   setAdmin(
     _adminAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setWhitelistedNFT(
+    _nftAddress: string,
+    status: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -377,6 +411,8 @@ export class GasStation extends BaseContract {
 
     initialize(_bnb: string, overrides?: CallOverrides): Promise<void>;
 
+    isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
     onERC721Received(
       arg0: string,
       arg1: string,
@@ -406,6 +442,12 @@ export class GasStation extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setAdmin(_adminAddress: string, overrides?: CallOverrides): Promise<void>;
+
+    setWhitelistedNFT(
+      _nftAddress: string,
+      status: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     stake(
       _nftAddress: string,
@@ -529,6 +571,8 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     onERC721Received(
       arg0: string,
       arg1: string,
@@ -554,6 +598,12 @@ export class GasStation extends BaseContract {
 
     setAdmin(
       _adminAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setWhitelistedNFT(
+      _nftAddress: string,
+      status: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -596,6 +646,11 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    isWhitelisted(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     onERC721Received(
       arg0: string,
       arg1: string,
@@ -624,6 +679,12 @@ export class GasStation extends BaseContract {
 
     setAdmin(
       _adminAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setWhitelistedNFT(
+      _nftAddress: string,
+      status: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

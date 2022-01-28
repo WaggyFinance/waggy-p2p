@@ -79,7 +79,7 @@ contract MasterChef is Ownable {
     totalAllocPoint = 1000;
   }
 
-  function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
+  function updateMultiplier(uint256 multiplierNumber) external onlyOwner {
     massUpdatePools();
     updateStakingPool();
 
@@ -92,7 +92,7 @@ contract MasterChef is Ownable {
 
   // Add a new lp to the pool. Can only be called by the owner.
   // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-  function add(uint256 _allocPoint, ERC20 _lpToken) public onlyOwner {
+  function add(uint256 _allocPoint, ERC20 _lpToken) external onlyOwner {
     require(!existLp[address(_lpToken)]);
     massUpdatePools();
     updateStakingPool();
@@ -107,7 +107,7 @@ contract MasterChef is Ownable {
     updateStakingPool();
   }
 
-  function removePoolFromLpToken(ERC20 _lpToken) public onlyOwner {
+  function removePoolFromLpToken(ERC20 _lpToken) external onlyOwner {
     require(existLp[address(_lpToken)]);
     massUpdatePools();
     updateStakingPool();
@@ -119,7 +119,7 @@ contract MasterChef is Ownable {
   }
 
   // Update the given pool's CAKE allocation point. Can only be called by the owner.
-  function set(uint256 _pid, uint256 _allocPoint) public onlyOwner {
+  function set(uint256 _pid, uint256 _allocPoint) external onlyOwner {
     massUpdatePools();
     updateStakingPool();
 
@@ -196,7 +196,7 @@ contract MasterChef is Ownable {
   }
 
   // Deposit LP tokens to MasterChef for CAKE allocation.
-  function deposit(uint256 _pid, uint256 _amount) public {
+  function deposit(uint256 _pid, uint256 _amount) external {
     require(_pid != 0, "deposit Wag by staking");
     PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
@@ -233,7 +233,7 @@ contract MasterChef is Ownable {
   }
 
   // Withdraw LP tokens from MasterChef.
-  function withdraw(uint256 _pid, uint256 _amount) public {
+  function withdraw(uint256 _pid, uint256 _amount) external {
     require(_pid != 0, "withdraw Wag by unstaking");
     PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
@@ -253,7 +253,7 @@ contract MasterChef is Ownable {
   }
 
   // Stake Wag tokens to MasterChef
-  function enterStaking(uint256 _amount) public {
+  function enterStaking(uint256 _amount) external {
     PoolInfo storage pool = poolInfo[0];
     UserInfo storage user = userInfo[0][msg.sender];
     updatePool(0);
@@ -272,7 +272,7 @@ contract MasterChef is Ownable {
   }
 
   // Withdraw Wag tokens from STAKING.
-  function leaveStaking(uint256 _amount) public {
+  function leaveStaking(uint256 _amount) external {
     PoolInfo storage pool = poolInfo[0];
     UserInfo storage user = userInfo[0][msg.sender];
     require(user.amount >= _amount, "withdraw: not good");
@@ -291,7 +291,7 @@ contract MasterChef is Ownable {
   }
 
   // Withdraw without caring about rewards. EMERGENCY ONLY.
-  function emergencyWithdraw(uint256 _pid) public {
+  function emergencyWithdraw(uint256 _pid) external {
     PoolInfo storage pool = poolInfo[_pid];
     UserInfo storage user = userInfo[_pid][msg.sender];
     pool.lpToken.transfer(address(msg.sender), user.amount);
@@ -309,7 +309,7 @@ contract MasterChef is Ownable {
   }
 
   // Update dev address by the previous dev.
-  function dev(address _devaddr) public {
+  function dev(address _devaddr) external {
     require(msg.sender == devaddr, "dev: wut?");
     devaddr = _devaddr;
   }

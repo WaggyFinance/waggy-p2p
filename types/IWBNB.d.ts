@@ -23,25 +23,16 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IWBNBInterface extends ethers.utils.Interface {
   functions: {
     "deposit()": FunctionFragment;
-    "safeTransfer(address,uint256)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "safeTransfer",
-    values: [string, BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransfer",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {};
@@ -95,12 +86,6 @@ export class IWBNB extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    safeTransfer(
-      _receipt: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     withdraw(
       wad: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -111,12 +96,6 @@ export class IWBNB extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  safeTransfer(
-    _receipt: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   withdraw(
     wad: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -124,12 +103,6 @@ export class IWBNB extends BaseContract {
 
   callStatic: {
     deposit(overrides?: CallOverrides): Promise<void>;
-
-    safeTransfer(
-      _receipt: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     withdraw(wad: BigNumberish, overrides?: CallOverrides): Promise<void>;
   };
@@ -141,12 +114,6 @@ export class IWBNB extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    safeTransfer(
-      _receipt: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     withdraw(
       wad: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -156,12 +123,6 @@ export class IWBNB extends BaseContract {
   populateTransaction: {
     deposit(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    safeTransfer(
-      _receipt: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     withdraw(

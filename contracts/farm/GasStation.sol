@@ -90,7 +90,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   }
 
   // Update admin address by the previous dev.
-  function setAdmin(address _adminAddress) public onlyOwner {
+  function setAdmin(address _adminAddress) external onlyOwner {
     adminAddress = _adminAddress;
   }
 
@@ -101,7 +101,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   }
 
   // Refill reward in pool
-  function refillPool(uint256 _amount) public {
+  function refillPool(uint256 _amount) external {
     PoolInfo storage pool = poolInfo;
     pool.lpToken.transferFrom(msg.sender, address(this), _amount);
     pool.accWagPerShare = pool.accWagPerShare.add(_amount.mul(1e12).div(pool.supply));
