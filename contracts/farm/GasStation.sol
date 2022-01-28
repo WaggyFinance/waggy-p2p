@@ -84,6 +84,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     // Claim reward before unstake
     uint256 pending = user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
     require(pending > 0, "No reward");
+    user.rewardDebt = user.rewardDebt.add(pending);
     pool.lpToken.transfer(address(msg.sender), pending);
   }
 
