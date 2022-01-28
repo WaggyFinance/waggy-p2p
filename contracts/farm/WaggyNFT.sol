@@ -7,7 +7,7 @@
 #    \__/\  /  \____|__  / \______  / \______  / / ______|
 #         \/           \/         \/         \/  \/       
 */
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
