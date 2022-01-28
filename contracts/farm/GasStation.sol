@@ -33,6 +33,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   // Info of each user.
   struct UserInfo {
     mapping(address => uint256) nftStake;
+    mapping(address => mapping(uint256 => bool)) stakedNFT; // user.stakedNFT[_nftAddress][_tokenId] = true;
     uint256[] tokenIds;
     uint256 weights;
     uint256 rewardDebt; // Reward debt. See explanation below.
@@ -124,6 +125,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     uint256 weight = wnft.getWeight();
     require(weight > 0, "can't stake");
     wnft.safeTransferFrom(msg.sender, address(this), _tokenId);
+    user.stakedNFT[_nftAddress][_tokenId] = true;
 
     if (weight > 0) {
       pool.supply = pool.supply.add(weight);
@@ -140,6 +142,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     require(isWhitelisted[_nftAddress], "_nftAddress isn't whitelisted.");
     PoolInfo storage pool = poolInfo;
     UserInfo storage user = userInfo[msg.sender];
+    require(user.stakedNFT[_nftAddress][_tokenId], "Invalid _tokenId!");
     require(user.nftStake[_nftAddress] > 0, "No NFT Stake");
     // Claim reward before unstake
     uint256 pending = user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
@@ -150,6 +153,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     WNFT wnft = WNFT(_nftAddress);
     uint256 weight = wnft.getWeight();
     user.nftStake[_nftAddress] = user.nftStake[_nftAddress].sub(1);
+    user.stakedNFT[_nftAddress][_tokenId] = false;
     user.weights = user.weights.sub(weight);
 
     uint256[] storage tokenIds = user.tokenIds;
