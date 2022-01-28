@@ -49,6 +49,7 @@ contract MasterChef is Ownable {
   mapping(uint256 => mapping(address => UserInfo)) public userInfo;
   // pools exist in contract
   mapping(address => bool) public existLp;
+  mapping(address => uint256) public poolIndex;
   // Total allocation points. Must be the sum of all allocation points in all pools.
   uint256 public totalAllocPoint;
   // The block number when CAKE mining starts.
@@ -98,11 +99,23 @@ contract MasterChef is Ownable {
 
     uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
     totalAllocPoint = totalAllocPoint.add(_allocPoint);
+    poolIndex[address(_lpToken)] = poolInfo.length;
     poolInfo.push(
       PoolInfo({ lpToken: _lpToken, allocPoint: _allocPoint, lastRewardBlock: lastRewardBlock, accWagPerShare: 0 })
     );
     existLp[address(_lpToken)] = true;
     updateStakingPool();
+  }
+
+  function removePoolFromLpToken(ERC20 _lpToken) public onlyOwner {
+    require(existLp[address(_lpToken)]);
+    massUpdatePools();
+    updateStakingPool();
+    // swap index
+    poolInfo[poolIndex[address(_lpToken)]] = poolInfo[poolInfo.length.sub(1)];
+    // update index
+    poolIndex[address(poolInfo[poolIndex[address(_lpToken)]].lpToken)] = poolIndex[address(_lpToken)];
+    poolInfo.pop();
   }
 
   // Update the given pool's CAKE allocation point. Can only be called by the owner.
