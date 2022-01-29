@@ -58,6 +58,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
 
   event Stake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
   event UnStake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
+  event SetAdmin(address user,address adminAddress);
 
   mapping(address => bool) public isWhitelisted;
 
@@ -92,6 +93,8 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
   // Update admin address by the previous dev.
   function setAdmin(address _adminAddress) external onlyOwner {
     adminAddress = _adminAddress;
+
+    emit SetAdmin(msg.sender, _adminAddress);
   }
 
   function pendingReward(address _user) external view returns (uint256) {

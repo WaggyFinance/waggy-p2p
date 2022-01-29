@@ -39,6 +39,9 @@ contract BlackListUser is Ownable,AccessControl{
   mapping(address => UserInfo) public userInfo;
   address[] public admins;
 
+  event SetAdmins(address user,address[] admins);
+  event SetUserStatus(address user,address target,uint256 status);
+
   constructor(){
      _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
@@ -46,6 +49,8 @@ contract BlackListUser is Ownable,AccessControl{
   // Status 0 normal, 1 temporary,2 suspend
   function setUserStatus(address _user, uint256 _status) external onlyOwner {
     userInfo[_user].status = STATUS(_status);
+
+    emit SetUserStatus(msg.sender, _user, _status);
   }
 
   function revokeRoles(address[] memory _admins) public onlyOwner {
@@ -61,6 +66,8 @@ contract BlackListUser is Ownable,AccessControl{
       admins.push(_admins[i]);
       _setupRole(ADMIN_ROLE, _admins[i]);
     }
+
+    emit SetAdmins(msg.sender, _admins);
   }
 
   // set warning user count.

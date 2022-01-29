@@ -60,6 +60,11 @@ contract MasterChef is Ownable {
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
   event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
+  event UpdateMultiplier(address user, uint256 multiplier);
+  event AddPool(address user, address lpToken, uint256 allocPoint);
+  event UpdateAllocPoint(address user, uint256 poolId, uint256 allocPoint);
+  event ChangeDevAddress(address user , address newDevAddress);
+  event SetLockRewardPercent(address user ,uint256 percent);
 
   constructor(
     address _wag,
@@ -84,6 +89,8 @@ contract MasterChef is Ownable {
     updateStakingPool();
 
     BONUS_MULTIPLIER = multiplierNumber;
+
+    emit UpdateMultiplier(msg.sender, multiplierNumber);
   }
 
   function poolLength() external view returns (uint256) {
@@ -105,6 +112,8 @@ contract MasterChef is Ownable {
     );
     existLp[address(_lpToken)] = true;
     updateStakingPool();
+
+    emit AddPool(msg.sender, address(_lpToken), _allocPoint);
   }
 
   function removePoolFromLpToken(ERC20 _lpToken) external onlyOwner {
@@ -129,6 +138,8 @@ contract MasterChef is Ownable {
       totalAllocPoint = totalAllocPoint.sub(prevAllocPoint).add(_allocPoint);
       updateStakingPool();
     }
+
+    emit UpdateAllocPoint(msg.sender, _pid, _allocPoint);
   }
 
   function updateStakingPool() internal {
@@ -147,6 +158,8 @@ contract MasterChef is Ownable {
   function setLockRewardPercent(uint256 _amount) external onlyOwner {
     require(_amount <= 1000, "not allow over 100%");
     lockRewardPercent = _amount;
+
+    emit SetLockRewardPercent(msg.sender, _amount);
   }
 
   // Return reward multiplier over the given _from to _to block.
@@ -312,5 +325,7 @@ contract MasterChef is Ownable {
   function dev(address _devaddr) external {
     require(msg.sender == devaddr, "dev: wut?");
     devaddr = _devaddr;
+
+    emit ChangeDevAddress(msg.sender, _devaddr);
   }
 }

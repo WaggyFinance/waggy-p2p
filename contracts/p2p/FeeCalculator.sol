@@ -20,6 +20,8 @@ contract FeeCalculator is Ownable {
 
   uint256 public payRate = 25; //0.25%
 
+  event UpdateFeeRate(address user,uint256 rate);
+
   function calculateFee(uint256 _amount) external pure returns (uint256) {
     if (_amount < 101000000000000000000) {
       return 0;
@@ -36,5 +38,7 @@ contract FeeCalculator is Ownable {
 
   function updateFeeRate(uint256 _rate) external onlyOwner {
     payRate = _rate;
+
+    emit UpdateFeeRate(msg.sender, _rate);
   }
 }

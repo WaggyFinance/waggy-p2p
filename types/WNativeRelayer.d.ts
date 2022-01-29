@@ -21,6 +21,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface WNativeRelayerInterface extends ethers.utils.Interface {
   functions: {
+    "okCallers(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setCallerOk(address[],bool)": FunctionFragment;
@@ -29,6 +30,7 @@ interface WNativeRelayerInterface extends ethers.utils.Interface {
     "wnative()": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "okCallers", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -48,6 +50,7 @@ interface WNativeRelayerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "wnative", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "okCallers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -66,13 +69,23 @@ interface WNativeRelayerInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SetCallerOk(address,address[],bool)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetCallerOk"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type SetCallerOkEvent = TypedEvent<
+  [string, string[], boolean] & {
+    user: string;
+    whitelistedCallers: string[];
+    isOk: boolean;
+  }
 >;
 
 export class WNativeRelayer extends BaseContract {
@@ -119,6 +132,8 @@ export class WNativeRelayer extends BaseContract {
   interface: WNativeRelayerInterface;
 
   functions: {
+    okCallers(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -143,6 +158,8 @@ export class WNativeRelayer extends BaseContract {
 
     wnative(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  okCallers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -169,6 +186,8 @@ export class WNativeRelayer extends BaseContract {
   wnative(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    okCallers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
@@ -205,9 +224,29 @@ export class WNativeRelayer extends BaseContract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    "SetCallerOk(address,address[],bool)"(
+      user?: null,
+      whitelistedCallers?: null,
+      isOk?: null
+    ): TypedEventFilter<
+      [string, string[], boolean],
+      { user: string; whitelistedCallers: string[]; isOk: boolean }
+    >;
+
+    SetCallerOk(
+      user?: null,
+      whitelistedCallers?: null,
+      isOk?: null
+    ): TypedEventFilter<
+      [string, string[], boolean],
+      { user: string; whitelistedCallers: string[]; isOk: boolean }
+    >;
   };
 
   estimateGas: {
+    okCallers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
@@ -234,6 +273,11 @@ export class WNativeRelayer extends BaseContract {
   };
 
   populateTransaction: {
+    okCallers(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(

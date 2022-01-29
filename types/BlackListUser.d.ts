@@ -165,12 +165,16 @@ interface BlackListUserInterface extends ethers.utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "SetAdmins(address,address[])": EventFragment;
+    "SetUserStatus(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetAdmins"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetUserStatus"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -191,6 +195,18 @@ export type RoleGrantedEvent = TypedEvent<
 
 export type RoleRevokedEvent = TypedEvent<
   [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type SetAdminsEvent = TypedEvent<
+  [string, string[]] & { user: string; admins: string[] }
+>;
+
+export type SetUserStatusEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    user: string;
+    target: string;
+    status: BigNumber;
+  }
 >;
 
 export class BlackListUser extends BaseContract {
@@ -568,6 +584,34 @@ export class BlackListUser extends BaseContract {
     ): TypedEventFilter<
       [string, string, string],
       { role: string; account: string; sender: string }
+    >;
+
+    "SetAdmins(address,address[])"(
+      user?: null,
+      admins?: null
+    ): TypedEventFilter<[string, string[]], { user: string; admins: string[] }>;
+
+    SetAdmins(
+      user?: null,
+      admins?: null
+    ): TypedEventFilter<[string, string[]], { user: string; admins: string[] }>;
+
+    "SetUserStatus(address,address,uint256)"(
+      user?: null,
+      target?: null,
+      status?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; target: string; status: BigNumber }
+    >;
+
+    SetUserStatus(
+      user?: null,
+      target?: null,
+      status?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; target: string; status: BigNumber }
     >;
   };
 

@@ -428,14 +428,23 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     "CancelTransaction(address,address,uint256)": EventFragment;
     "DeleteShop(address,address,uint256)": EventFragment;
     "Deposit(address,address,uint256)": EventFragment;
+    "OwnerClaimToken(address,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ReleaseToken(address,address,address,uint256,uint256)": EventFragment;
+    "RevokeRole(address,address[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "SellerDeposit(address,address,uint256)": EventFragment;
+    "SetAdmins(address,address[])": EventFragment;
+    "SetBlackList(address,address)": EventFragment;
+    "SetValidator(address,address)": EventFragment;
+    "SetWBNB(address,address)": EventFragment;
+    "SetWNativeRelayer(address,address)": EventFragment;
     "SetupShop(address,address,uint256)": EventFragment;
     "UnlockToken(address,address,uint256)": EventFragment;
+    "UpdateFeeCalculator(address,address)": EventFragment;
+    "UpdateRewardCalculator(address,address)": EventFragment;
     "Withdraw(address,address,uint256)": EventFragment;
   };
 
@@ -444,14 +453,23 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "CancelTransaction"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DeleteShop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerClaimToken"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReleaseToken"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RevokeRole"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SellerDeposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetAdmins"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetBlackList"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetValidator"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetWBNB"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetWNativeRelayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SetupShop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UnlockToken"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateFeeCalculator"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateRewardCalculator"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
@@ -495,6 +513,14 @@ export type DepositEvent = TypedEvent<
   }
 >;
 
+export type OwnerClaimTokenEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    user: string;
+    token: string;
+    amount: BigNumber;
+  }
+>;
+
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
@@ -507,6 +533,10 @@ export type ReleaseTokenEvent = TypedEvent<
     amount: BigNumber;
     reward: BigNumber;
   }
+>;
+
+export type RevokeRoleEvent = TypedEvent<
+  [string, string[]] & { user: string; accounts: string[] }
 >;
 
 export type RoleAdminChangedEvent = TypedEvent<
@@ -533,6 +563,26 @@ export type SellerDepositEvent = TypedEvent<
   }
 >;
 
+export type SetAdminsEvent = TypedEvent<
+  [string, string[]] & { user: string; admins: string[] }
+>;
+
+export type SetBlackListEvent = TypedEvent<
+  [string, string] & { user: string; blackList: string }
+>;
+
+export type SetValidatorEvent = TypedEvent<
+  [string, string] & { user: string; validator: string }
+>;
+
+export type SetWBNBEvent = TypedEvent<
+  [string, string] & { user: string; wbnb: string }
+>;
+
+export type SetWNativeRelayerEvent = TypedEvent<
+  [string, string] & { user: string; wnativeRelayer: string }
+>;
+
 export type SetupShopEvent = TypedEvent<
   [string, string, BigNumber] & {
     seller: string;
@@ -547,6 +597,14 @@ export type UnlockTokenEvent = TypedEvent<
     buyer: string;
     amount: BigNumber;
   }
+>;
+
+export type UpdateFeeCalculatorEvent = TypedEvent<
+  [string, string] & { user: string; feeCalculator: string }
+>;
+
+export type UpdateRewardCalculatorEvent = TypedEvent<
+  [string, string] & { user: string; rewardCalculator: string }
 >;
 
 export type WithdrawEvent = TypedEvent<
@@ -1468,6 +1526,24 @@ export class MerchantMultiToken extends BaseContract {
       { seller: string; token: string; amount: BigNumber }
     >;
 
+    "OwnerClaimToken(address,address,uint256)"(
+      user?: null,
+      token?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; token: string; amount: BigNumber }
+    >;
+
+    OwnerClaimToken(
+      user?: null,
+      token?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; token: string; amount: BigNumber }
+    >;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -1516,6 +1592,22 @@ export class MerchantMultiToken extends BaseContract {
         amount: BigNumber;
         reward: BigNumber;
       }
+    >;
+
+    "RevokeRole(address,address[])"(
+      user?: null,
+      accounts?: null
+    ): TypedEventFilter<
+      [string, string[]],
+      { user: string; accounts: string[] }
+    >;
+
+    RevokeRole(
+      user?: null,
+      accounts?: null
+    ): TypedEventFilter<
+      [string, string[]],
+      { user: string; accounts: string[] }
     >;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
@@ -1590,6 +1682,62 @@ export class MerchantMultiToken extends BaseContract {
       { seller: string; merchant: string; amount: BigNumber }
     >;
 
+    "SetAdmins(address,address[])"(
+      user?: null,
+      admins?: null
+    ): TypedEventFilter<[string, string[]], { user: string; admins: string[] }>;
+
+    SetAdmins(
+      user?: null,
+      admins?: null
+    ): TypedEventFilter<[string, string[]], { user: string; admins: string[] }>;
+
+    "SetBlackList(address,address)"(
+      user?: null,
+      blackList?: null
+    ): TypedEventFilter<[string, string], { user: string; blackList: string }>;
+
+    SetBlackList(
+      user?: null,
+      blackList?: null
+    ): TypedEventFilter<[string, string], { user: string; blackList: string }>;
+
+    "SetValidator(address,address)"(
+      user?: null,
+      validator?: null
+    ): TypedEventFilter<[string, string], { user: string; validator: string }>;
+
+    SetValidator(
+      user?: null,
+      validator?: null
+    ): TypedEventFilter<[string, string], { user: string; validator: string }>;
+
+    "SetWBNB(address,address)"(
+      user?: null,
+      wbnb?: null
+    ): TypedEventFilter<[string, string], { user: string; wbnb: string }>;
+
+    SetWBNB(
+      user?: null,
+      wbnb?: null
+    ): TypedEventFilter<[string, string], { user: string; wbnb: string }>;
+
+    "SetWNativeRelayer(address,address)"(
+      user?: null,
+      wnativeRelayer?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; wnativeRelayer: string }
+    >;
+
+    SetWNativeRelayer(
+      user?: null,
+      wnativeRelayer?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; wnativeRelayer: string }
+    >;
+
     "SetupShop(address,address,uint256)"(
       seller?: null,
       token?: null,
@@ -1624,6 +1772,38 @@ export class MerchantMultiToken extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { seller: string; buyer: string; amount: BigNumber }
+    >;
+
+    "UpdateFeeCalculator(address,address)"(
+      user?: null,
+      feeCalculator?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; feeCalculator: string }
+    >;
+
+    UpdateFeeCalculator(
+      user?: null,
+      feeCalculator?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; feeCalculator: string }
+    >;
+
+    "UpdateRewardCalculator(address,address)"(
+      user?: null,
+      rewardCalculator?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; rewardCalculator: string }
+    >;
+
+    UpdateRewardCalculator(
+      user?: null,
+      rewardCalculator?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; rewardCalculator: string }
     >;
 
     "Withdraw(address,address,uint256)"(

@@ -22,7 +22,10 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
   using Counters for Counters.Counter;
   using Strings for uint256;
 
-  event Mint(address, uint256);
+  event Mint(address user, uint256 tokenId);
+  event SetPrice(address user, uint256 price);
+  event Claim(address user, uint256 amount);
+  event SetBaseURI(address user, string uri);
 
   Counters.Counter private _tokenIds;
   string public baseURI;
@@ -43,6 +46,8 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
 
   function setPrice(uint256 _price) external onlyOwner {
     _setPrice(_price);
+
+    emit SetPrice(msg.sender, _price);
   }
 
   // Mint all NFT on deploy and keep data for treading
@@ -59,8 +64,11 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
   }
 
   function claim() external onlyOwner {
-    (bool sent, ) = payable(owner()).call{ value: address(this).balance }("");
+    uint256 _amount = address(this).balance;
+    (bool sent, ) = payable(owner()).call{ value: _amount }("");
     require(sent, "Failed to send Ether");
+
+    emit Claim(msg.sender, _amount);
   }
 
   function getWeight() external pure returns (uint256) {
@@ -74,6 +82,8 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
 
   function setBaseURI(string memory _uri) external onlyOwner {
     baseURI = _uri;
+
+    emit SetBaseURI(msg.sender, _uri);
   }
 
   /**

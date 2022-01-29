@@ -72,6 +72,9 @@ contract Validator is Ownable {
   event ClaimReward(string txKey, address user, bool result);
   event EvaluateResult(string txKey, string result, uint256 buyerAmount, uint256 sellerAmount, uint256 updateAt);
   event DoneResult(string txKey, string result);
+  event SetAdmins(address user,address admin);
+  event SetMinPercent(address user,uint256 percent);
+  event SetMaxPercent(address user,uint256 percent);
 
   ERC20 public erc20Interface;
   IGOV gov;
@@ -110,14 +113,20 @@ contract Validator is Ownable {
 
   function setAdmin(address _admin, bool _isAdmin) external onlyOwner {
     adminRole[_admin] = _isAdmin;
+
+    emit SetAdmins(msg.sender, _admin);
   }
 
   function setMinPercent(uint256 _value) external onlyOwner {
     minPercentValue = _value;
+
+    emit SetMinPercent(msg.sender,_value);
   }
 
   function setMaxPercent(uint256 _value) external onlyOwner {
     maxPercentValue = _value;
+
+    emit SetMaxPercent(msg.sender, _value);
   }
 
   function addCase(

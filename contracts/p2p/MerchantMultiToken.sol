@@ -68,6 +68,15 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
   event ReleaseToken(address seller, address buyer, address token, uint256 amount, uint256 reward);
   event SellerDeposit(address seller, address merchant, uint256 amount);
   event UnlockToken(address seller, address buyer, uint256 amount);
+  event SetAdmins(address user, address[] admins);
+  event SetValidator(address user, address validator);
+  event SetWNativeRelayer(address user, address wnativeRelayer);
+  event SetWBNB(address user, address wbnb);
+  event RevokeRole(address user, address[] accounts);
+  event SetBlackList(address user, address blackList);
+  event OwnerClaimToken(address user, address token, uint256 amount);
+  event UpdateFeeCalculator(address user, address feeCalculator);
+  event UpdateRewardCalculator(address user, address rewardCalculator);
 
   enum TransactionStatus {
     INIT,
@@ -141,6 +150,8 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
 
   function setValidator(address _validator) external onlyOwner {
     validator = IValidator(_validator);
+
+    emit SetValidator(msg.sender, _validator);
   }
 
   function setAllowTokens(address[] memory _token, bool _allow) external onlyOwner {
@@ -156,20 +167,28 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
       admins.push(_admins[i]);
       _setupRole(ADMIN_ROLE, _admins[i]);
     }
+
+    emit SetAdmins(msg.sender, _admins);
   }
 
   function setWNativeRelayer(WNativeRelayer _wnativeRelayer) external onlyOwner {
     wnativeRelayer = _wnativeRelayer;
+
+    emit SetWNativeRelayer(msg.sender, address(_wnativeRelayer));
   }
 
   function setWBNB(address _wbnb) external onlyOwner {
     wbnb = IWBNB(_wbnb);
+
+    emit SetWBNB(msg.sender, _wbnb);
   }
 
   function revokeRoles(address[] memory _admins) public onlyOwner {
     for (uint256 i = 0; i < _admins.length; ++i) {
       revokeRole(ADMIN_ROLE, _admins[i]);
     }
+
+    emit RevokeRole(msg.sender, _admins);
   }
 
   // Merchant increase balance.
@@ -533,6 +552,8 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
 
   function setBlackList(address _blackList) external onlyOwner {
     blackListUser = BlackListUser(_blackList);
+
+    emit SetBlackList(msg.sender, _blackList);
   }
 
   function getFeeCollector() external view returns (address) {
@@ -541,17 +562,25 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
 
   // owner claimToken for emergency event.
   function ownerClaimToken(ERC20Upgradeable _token) external onlyOwner {
-    _token.transfer(owner(), _token.balanceOf(address(this)));
+    uint256 amount = _token.balanceOf(address(this));
+    require(amount > 0);
+    _token.transfer(owner(), amount);
+
+    emit OwnerClaimToken(msg.sender, address(_token), amount);
   }
 
   // update RewardCalculator
   function updateRewardCalculator(address _rewardCalculator) external onlyOwner {
     rewardCalculator = RewardCalculator(_rewardCalculator);
+
+    emit UpdateRewardCalculator(msg.sender, _rewardCalculator);
   }
 
   // update RewardCalculator
   function updateFeeCalculator(address _feeCalculator) external onlyOwner {
     feeCalculator = FeeCalculator(_feeCalculator);
+
+    emit UpdateFeeCalculator(msg.sender, _feeCalculator);
   }
 
   function getBuyerTransaction(address _seller, address _buyer)

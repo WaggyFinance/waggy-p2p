@@ -161,15 +161,21 @@ interface AvatarNFTInterface extends ethers.utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "Claim(address,uint256)": EventFragment;
     "Mint(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SetBaseURI(address,string)": EventFragment;
+    "SetPrice(address,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetBaseURI"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetPrice"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -189,12 +195,24 @@ export type ApprovalForAllEvent = TypedEvent<
   }
 >;
 
+export type ClaimEvent = TypedEvent<
+  [string, BigNumber] & { user: string; amount: BigNumber }
+>;
+
 export type MintEvent = TypedEvent<
-  [string, BigNumber] & { arg0: string; arg1: BigNumber }
+  [string, BigNumber] & { user: string; tokenId: BigNumber }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type SetBaseURIEvent = TypedEvent<
+  [string, string] & { user: string; uri: string }
+>;
+
+export type SetPriceEvent = TypedEvent<
+  [string, BigNumber] & { user: string; price: BigNumber }
 >;
 
 export type TransferEvent = TypedEvent<
@@ -575,15 +593,37 @@ export class AvatarNFT extends BaseContract {
       { owner: string; operator: string; approved: boolean }
     >;
 
+    "Claim(address,uint256)"(
+      user?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; amount: BigNumber }
+    >;
+
+    Claim(
+      user?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; amount: BigNumber }
+    >;
+
     "Mint(address,uint256)"(
-      undefined?: null,
-      undefined?: null
-    ): TypedEventFilter<[string, BigNumber], { arg0: string; arg1: BigNumber }>;
+      user?: null,
+      tokenId?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; tokenId: BigNumber }
+    >;
 
     Mint(
-      undefined?: null,
-      undefined?: null
-    ): TypedEventFilter<[string, BigNumber], { arg0: string; arg1: BigNumber }>;
+      user?: null,
+      tokenId?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; tokenId: BigNumber }
+    >;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -599,6 +639,32 @@ export class AvatarNFT extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "SetBaseURI(address,string)"(
+      user?: null,
+      uri?: null
+    ): TypedEventFilter<[string, string], { user: string; uri: string }>;
+
+    SetBaseURI(
+      user?: null,
+      uri?: null
+    ): TypedEventFilter<[string, string], { user: string; uri: string }>;
+
+    "SetPrice(address,uint256)"(
+      user?: null,
+      price?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; price: BigNumber }
+    >;
+
+    SetPrice(
+      user?: null,
+      price?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; price: BigNumber }
     >;
 
     "Transfer(address,address,uint256)"(

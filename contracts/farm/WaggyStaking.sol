@@ -51,6 +51,9 @@ contract WaggyStaking is OwnableUpgradeable {
   event Withdraw(address indexed user, uint256 amount);
   event Claim(address indexed user, uint256 amount);
   event EmergencyWithdraw(address indexed user, uint256 amount);
+  event AddPool(address user, address lpToken, uint256 allocPoint);
+  event RemoveAllPool(address user);
+  event SetAdmin(address user, address newAdmin);
 
   function initialize(
     ERC20 _lp,
@@ -85,15 +88,21 @@ contract WaggyStaking is OwnableUpgradeable {
         accWagPerShare: 0
       })
     );
+
+    emit AddPool(msg.sender, address(_lpToken), _allocPoint);
   }
 
-  function removeAllPool() external onlyOwner{
+  function removeAllPool() external onlyOwner {
     delete poolInfo;
-  } 
+
+    emit RemoveAllPool(msg.sender);
+  }
 
   // Update admin address by the previous dev.
   function setAdmin(address _adminAddress) external onlyOwner {
     adminAddress = _adminAddress;
+
+    emit SetAdmin(msg.sender, _adminAddress);
   }
 
   // View function to see pending Reward on frontend.

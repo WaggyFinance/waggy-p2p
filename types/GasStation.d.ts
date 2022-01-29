@@ -144,17 +144,23 @@ interface GasStationInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "SetAdmin(address,address)": EventFragment;
     "Stake(address,address,uint256,uint256)": EventFragment;
     "UnStake(address,address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stake"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UnStake"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type SetAdminEvent = TypedEvent<
+  [string, string] & { user: string; adminAddress: string }
 >;
 
 export type StakeEvent = TypedEvent<
@@ -491,6 +497,22 @@ export class GasStation extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "SetAdmin(address,address)"(
+      user?: null,
+      adminAddress?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; adminAddress: string }
+    >;
+
+    SetAdmin(
+      user?: null,
+      adminAddress?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; adminAddress: string }
     >;
 
     "Stake(address,address,uint256,uint256)"(

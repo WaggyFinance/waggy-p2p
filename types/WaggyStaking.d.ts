@@ -149,19 +149,33 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "AddPool(address,address,uint256)": EventFragment;
     "Claim(address,uint256)": EventFragment;
     "Deposit(address,uint256)": EventFragment;
     "EmergencyWithdraw(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "RemoveAllPool(address)": EventFragment;
+    "SetAdmin(address,address)": EventFragment;
     "Withdraw(address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AddPool"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RemoveAllPool"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetAdmin"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
+
+export type AddPoolEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    user: string;
+    lpToken: string;
+    allocPoint: BigNumber;
+  }
+>;
 
 export type ClaimEvent = TypedEvent<
   [string, BigNumber] & { user: string; amount: BigNumber }
@@ -177,6 +191,12 @@ export type EmergencyWithdrawEvent = TypedEvent<
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type RemoveAllPoolEvent = TypedEvent<[string] & { user: string }>;
+
+export type SetAdminEvent = TypedEvent<
+  [string, string] & { user: string; newAdmin: string }
 >;
 
 export type WithdrawEvent = TypedEvent<
@@ -525,6 +545,24 @@ export class WaggyStaking extends BaseContract {
   };
 
   filters: {
+    "AddPool(address,address,uint256)"(
+      user?: null,
+      lpToken?: null,
+      allocPoint?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; lpToken: string; allocPoint: BigNumber }
+    >;
+
+    AddPool(
+      user?: null,
+      lpToken?: null,
+      allocPoint?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; lpToken: string; allocPoint: BigNumber }
+    >;
+
     "Claim(address,uint256)"(
       user?: string | null,
       amount?: null
@@ -588,6 +626,22 @@ export class WaggyStaking extends BaseContract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    "RemoveAllPool(address)"(
+      user?: null
+    ): TypedEventFilter<[string], { user: string }>;
+
+    RemoveAllPool(user?: null): TypedEventFilter<[string], { user: string }>;
+
+    "SetAdmin(address,address)"(
+      user?: null,
+      newAdmin?: null
+    ): TypedEventFilter<[string, string], { user: string; newAdmin: string }>;
+
+    SetAdmin(
+      user?: null,
+      newAdmin?: null
+    ): TypedEventFilter<[string, string], { user: string; newAdmin: string }>;
 
     "Withdraw(address,uint256)"(
       user?: string | null,

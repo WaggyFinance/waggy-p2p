@@ -20,11 +20,15 @@ contract RewardCalculator is Ownable {
 
     uint256 public payRate = 800; //8%
 
+    event UpdateRewardCalculatorRate(address user, uint256 rate);
+
     function calculateReward(uint256 _amount) external view returns(uint256){
         return _amount.mul(payRate).div(10000);
     }
 
     function updateRewardRate(uint256 _rate) external onlyOwner{
         payRate = _rate;
+
+        emit UpdateRewardCalculatorRate(msg.sender, _rate);
     }
 }

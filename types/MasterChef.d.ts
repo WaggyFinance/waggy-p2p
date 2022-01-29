@@ -236,17 +236,39 @@ interface MasterChefInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "AddPool(address,address,uint256)": EventFragment;
+    "ChangeDevAddress(address,address)": EventFragment;
     "Deposit(address,uint256,uint256)": EventFragment;
     "EmergencyWithdraw(address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SetLockRewardPercent(address,uint256)": EventFragment;
+    "UpdateAllocPoint(address,uint256,uint256)": EventFragment;
+    "UpdateMultiplier(address,uint256)": EventFragment;
     "Withdraw(address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AddPool"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ChangeDevAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetLockRewardPercent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateAllocPoint"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateMultiplier"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
+
+export type AddPoolEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    user: string;
+    lpToken: string;
+    allocPoint: BigNumber;
+  }
+>;
+
+export type ChangeDevAddressEvent = TypedEvent<
+  [string, string] & { user: string; newDevAddress: string }
+>;
 
 export type DepositEvent = TypedEvent<
   [string, BigNumber, BigNumber] & {
@@ -266,6 +288,22 @@ export type EmergencyWithdrawEvent = TypedEvent<
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type SetLockRewardPercentEvent = TypedEvent<
+  [string, BigNumber] & { user: string; percent: BigNumber }
+>;
+
+export type UpdateAllocPointEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    poolId: BigNumber;
+    allocPoint: BigNumber;
+  }
+>;
+
+export type UpdateMultiplierEvent = TypedEvent<
+  [string, BigNumber] & { user: string; multiplier: BigNumber }
 >;
 
 export type WithdrawEvent = TypedEvent<
@@ -729,6 +767,40 @@ export class MasterChef extends BaseContract {
   };
 
   filters: {
+    "AddPool(address,address,uint256)"(
+      user?: null,
+      lpToken?: null,
+      allocPoint?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; lpToken: string; allocPoint: BigNumber }
+    >;
+
+    AddPool(
+      user?: null,
+      lpToken?: null,
+      allocPoint?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { user: string; lpToken: string; allocPoint: BigNumber }
+    >;
+
+    "ChangeDevAddress(address,address)"(
+      user?: null,
+      newDevAddress?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; newDevAddress: string }
+    >;
+
+    ChangeDevAddress(
+      user?: null,
+      newDevAddress?: null
+    ): TypedEventFilter<
+      [string, string],
+      { user: string; newDevAddress: string }
+    >;
+
     "Deposit(address,uint256,uint256)"(
       user?: string | null,
       pid?: BigNumberish | null,
@@ -779,6 +851,56 @@ export class MasterChef extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "SetLockRewardPercent(address,uint256)"(
+      user?: null,
+      percent?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; percent: BigNumber }
+    >;
+
+    SetLockRewardPercent(
+      user?: null,
+      percent?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; percent: BigNumber }
+    >;
+
+    "UpdateAllocPoint(address,uint256,uint256)"(
+      user?: null,
+      poolId?: null,
+      allocPoint?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; poolId: BigNumber; allocPoint: BigNumber }
+    >;
+
+    UpdateAllocPoint(
+      user?: null,
+      poolId?: null,
+      allocPoint?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; poolId: BigNumber; allocPoint: BigNumber }
+    >;
+
+    "UpdateMultiplier(address,uint256)"(
+      user?: null,
+      multiplier?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; multiplier: BigNumber }
+    >;
+
+    UpdateMultiplier(
+      user?: null,
+      multiplier?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; multiplier: BigNumber }
     >;
 
     "Withdraw(address,uint256,uint256)"(

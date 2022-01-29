@@ -69,13 +69,19 @@ interface RewardCalculatorInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "UpdateRewardCalculatorRate(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateRewardCalculatorRate"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type UpdateRewardCalculatorRateEvent = TypedEvent<
+  [string, BigNumber] & { user: string; rate: BigNumber }
 >;
 
 export class RewardCalculator extends BaseContract {
@@ -208,6 +214,16 @@ export class RewardCalculator extends BaseContract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    "UpdateRewardCalculatorRate(address,uint256)"(
+      user?: null,
+      rate?: null
+    ): TypedEventFilter<[string, BigNumber], { user: string; rate: BigNumber }>;
+
+    UpdateRewardCalculatorRate(
+      user?: null,
+      rate?: null
+    ): TypedEventFilter<[string, BigNumber], { user: string; rate: BigNumber }>;
   };
 
   estimateGas: {

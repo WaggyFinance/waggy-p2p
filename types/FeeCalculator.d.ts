@@ -69,13 +69,19 @@ interface FeeCalculatorInterface extends ethers.utils.Interface {
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
+    "UpdateFeeRate(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateFeeRate"): EventFragment;
 }
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type UpdateFeeRateEvent = TypedEvent<
+  [string, BigNumber] & { user: string; rate: BigNumber }
 >;
 
 export class FeeCalculator extends BaseContract {
@@ -208,6 +214,16 @@ export class FeeCalculator extends BaseContract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    "UpdateFeeRate(address,uint256)"(
+      user?: null,
+      rate?: null
+    ): TypedEventFilter<[string, BigNumber], { user: string; rate: BigNumber }>;
+
+    UpdateFeeRate(
+      user?: null,
+      rate?: null
+    ): TypedEventFilter<[string, BigNumber], { user: string; rate: BigNumber }>;
   };
 
   estimateGas: {

@@ -209,6 +209,9 @@ interface ValidatorInterface extends ethers.utils.Interface {
     "DoneResult(string,string)": EventFragment;
     "EvaluateResult(string,string,uint256,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SetAdmins(address,address)": EventFragment;
+    "SetMaxPercent(address,uint256)": EventFragment;
+    "SetMinPercent(address,uint256)": EventFragment;
     "UserDecision(address,string,uint256,bytes32,string)": EventFragment;
   };
 
@@ -221,6 +224,9 @@ interface ValidatorInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "DoneResult"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EvaluateResult"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetAdmins"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetMaxPercent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetMinPercent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UserDecision"): EventFragment;
 }
 
@@ -274,6 +280,18 @@ export type EvaluateResultEvent = TypedEvent<
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type SetAdminsEvent = TypedEvent<
+  [string, string] & { user: string; admin: string }
+>;
+
+export type SetMaxPercentEvent = TypedEvent<
+  [string, BigNumber] & { user: string; percent: BigNumber }
+>;
+
+export type SetMinPercentEvent = TypedEvent<
+  [string, BigNumber] & { user: string; percent: BigNumber }
 >;
 
 export type UserDecisionEvent = TypedEvent<
@@ -917,6 +935,48 @@ export class Validator extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "SetAdmins(address,address)"(
+      user?: null,
+      admin?: null
+    ): TypedEventFilter<[string, string], { user: string; admin: string }>;
+
+    SetAdmins(
+      user?: null,
+      admin?: null
+    ): TypedEventFilter<[string, string], { user: string; admin: string }>;
+
+    "SetMaxPercent(address,uint256)"(
+      user?: null,
+      percent?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; percent: BigNumber }
+    >;
+
+    SetMaxPercent(
+      user?: null,
+      percent?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; percent: BigNumber }
+    >;
+
+    "SetMinPercent(address,uint256)"(
+      user?: null,
+      percent?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; percent: BigNumber }
+    >;
+
+    SetMinPercent(
+      user?: null,
+      percent?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; percent: BigNumber }
     >;
 
     "UserDecision(address,string,uint256,bytes32,string)"(
