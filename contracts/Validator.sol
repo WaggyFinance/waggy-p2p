@@ -73,9 +73,9 @@ contract Validator is Ownable {
   event ClaimReward(string txKey, address user, bool result);
   event EvaluateResult(string txKey, string result, uint256 buyerAmount, uint256 sellerAmount, uint256 updateAt);
   event DoneResult(string txKey, string result);
-  event SetAdmins(address user,address admin);
-  event SetMinPercent(address user,uint256 percent);
-  event SetMaxPercent(address user,uint256 percent);
+  event SetAdmins(address user, address admin);
+  event SetMinPercent(address user, uint256 percent);
+  event SetMaxPercent(address user, uint256 percent);
 
   ERC20 public erc20Interface;
   IGOV gov;
@@ -121,7 +121,7 @@ contract Validator is Ownable {
   function setMinPercent(uint256 _value) external onlyOwner {
     minPercentValue = _value;
 
-    emit SetMinPercent(msg.sender,_value);
+    emit SetMinPercent(msg.sender, _value);
   }
 
   function setMaxPercent(uint256 _value) external onlyOwner {
@@ -172,7 +172,9 @@ contract Validator is Ownable {
     CaseInfo storage caseInfo = casesInfo[_key];
     require(caseInfo.status == CaseStatus.DONE, "Status is wrong");
     UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[_userAddress];
-    bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, caseInfo.decryptKey, addressToString(_userAddress)));
+    bytes32 correctAnswer = keccak256(
+      abi.encodePacked(caseInfo.result, caseInfo.decryptKey, addressToString(_userAddress))
+    );
 
     _isWin = (userReplyAnswer.answer == correctAnswer);
     _betAmount = userReplyAnswer.amount;
@@ -182,22 +184,26 @@ contract Validator is Ownable {
     CaseInfo storage caseInfo = casesInfo[_key];
     require(caseInfo.status == CaseStatus.DONE, "Status is wrong");
     UserReplyAnswer storage user = caseInfo.usersReplyAnswer[msg.sender];
-    require(user.receiveReward, "you lose.");
+    require(user.amount > 0, "user is claimed.");
+    if (keccak256(abi.encodePacked(caseInfo.result)) == keccak256(abi.encodePacked(EQUIVALENT))) {
+      ERC20(caseInfo.token).safeTransfer(msg.sender, user.amount);
+      user.amount = 0;
+    } else {
+      require(user.receiveReward, "you lose.");
+      user.receiveReward = false;
 
-    user.receiveReward = false;
-
-    uint256 reward = user.amount;
-    if (caseInfo.fund > 0) {
-      reward = reward.add(caseInfo.fund.div(caseInfo.winnerAmount));
+      uint256 reward = user.amount;
+      if (caseInfo.fund > 0) {
+        reward = reward.add(caseInfo.fund.div(caseInfo.winnerAmount));
+      }
+      // distribute gov reward.
+      uint256 govReward = reward.mul(25).div(10000);
+      gov.mint(msg.sender, govReward);
+      ERC20(caseInfo.token).safeTransfer(msg.sender, reward);
     }
-    // distribute gov reward.
-    uint256 govReward = reward.mul(25).div(10000);
-    gov.mint(msg.sender, govReward);
-    ERC20(caseInfo.token).safeTransfer(msg.sender, reward);
-
   }
 
-  function userCanClaimReward(string memory _key,address _user) external view returns (bool) {
+  function userCanClaimReward(string memory _key, address _user) external view returns (bool) {
     CaseInfo storage caseInfo = casesInfo[_key];
     UserReplyAnswer storage user = caseInfo.usersReplyAnswer[_user];
     return user.receiveReward;
@@ -224,7 +230,11 @@ contract Validator is Ownable {
     return keccak256(abi.encodePacked(key));
   }
 
-  function decideByAdmin(string memory _key, string memory _decryptKey, string memory _result) external onlyAdmin {
+  function decideByAdmin(
+    string memory _key,
+    string memory _decryptKey,
+    string memory _result
+  ) external onlyAdmin {
     CaseInfo storage caseInfo = casesInfo[_key];
     caseInfo.result = _result;
 
@@ -268,7 +278,7 @@ contract Validator is Ownable {
   }
 
   // System order to evaluate
-  function evaluate(string memory _key,string memory _decryptKey)
+  function evaluate(string memory _key, string memory _decryptKey)
     external
     onlyAdmin
     returns (
