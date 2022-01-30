@@ -61,6 +61,7 @@ contract Validator is Ownable {
     bytes32 randomness;
     uint256 remark;
     CaseStatus status;
+    string decryptKey;
   }
 
   event UserDecision(address sender, string txKey, uint256 amount, bytes32 answer, string remark);
@@ -171,7 +172,7 @@ contract Validator is Ownable {
     CaseInfo storage caseInfo = casesInfo[_key];
     require(caseInfo.status == CaseStatus.DONE, "Status is wrong");
     UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[_userAddress];
-    bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, addressToString(_userAddress)));
+    bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, caseInfo.decryptKey, addressToString(_userAddress)));
 
     _isWin = (userReplyAnswer.answer == correctAnswer);
     _betAmount = userReplyAnswer.amount;
@@ -223,7 +224,7 @@ contract Validator is Ownable {
     return keccak256(abi.encodePacked(key));
   }
 
-  function decideByAdmin(string memory _key, string memory _result) external onlyAdmin {
+  function decideByAdmin(string memory _key, string memory _decryptKey, string memory _result) external onlyAdmin {
     CaseInfo storage caseInfo = casesInfo[_key];
     caseInfo.result = _result;
 
@@ -232,7 +233,7 @@ contract Validator is Ownable {
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
       UserReplyAnswer storage userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, addressToString(userAddress)));
+      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _decryptKey, addressToString(userAddress)));
       if (userReplyAnswer.answer != correctAnswer) {
         fund = fund.add(userReplyAnswer.amount);
       } else {
@@ -244,6 +245,7 @@ contract Validator is Ownable {
     caseInfo.status = CaseStatus.DONE;
     caseInfo.fund = fund.sub(fund.mul(10).div(100));
     caseInfo.resultAt = block.timestamp;
+    caseInfo.decryptKey = _decryptKey;
     totalCollateral = totalCollateral.sub(caseInfo.currentValue);
 
     emit DoneResult(_key, caseInfo.result);
@@ -266,7 +268,7 @@ contract Validator is Ownable {
   }
 
   // System order to evaluate
-  function evaluate(string memory _key)
+  function evaluate(string memory _key,string memory _decryptKey)
     external
     onlyAdmin
     returns (
@@ -286,7 +288,7 @@ contract Validator is Ownable {
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
       UserReplyAnswer memory userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      buyerAnswer = keccak256(abi.encodePacked(BUYER, _key, addressToString(userAddress)));
+      buyerAnswer = keccak256(abi.encodePacked(BUYER, _decryptKey, addressToString(userAddress)));
       if (userReplyAnswer.answer == buyerAnswer) {
         buyyerValueCount = buyyerValueCount.add(userReplyAnswer.amount);
       } else {
@@ -306,7 +308,7 @@ contract Validator is Ownable {
     for (uint256 i = 0; i < caseInfo.users.length; i++) {
       address userAddress = caseInfo.users[i];
       UserReplyAnswer storage userReplyAnswer = caseInfo.usersReplyAnswer[userAddress];
-      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _key, addressToString(userAddress)));
+      bytes32 correctAnswer = keccak256(abi.encodePacked(caseInfo.result, _decryptKey, addressToString(userAddress)));
       if (userReplyAnswer.answer != correctAnswer) {
         fund = fund.add(userReplyAnswer.amount);
       } else {
@@ -318,6 +320,7 @@ contract Validator is Ownable {
     caseInfo.status = CaseStatus.SUMMARY;
     caseInfo.fund = fund.sub(fund.mul(10).div(100));
     caseInfo.resultAt = block.timestamp;
+    caseInfo.decryptKey = _decryptKey;
     totalCollateral = totalCollateral.sub(caseInfo.currentValue);
 
     emit EvaluateResult(_key, caseInfo.result, buyyerValueCount, sellerValueCount, caseInfo.resultAt);
