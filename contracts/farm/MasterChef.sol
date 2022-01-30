@@ -39,6 +39,8 @@ contract MasterChef is Ownable {
   WaggyToken public wag;
   // Dev address.
   address public devaddr;
+  // WAG Pool address keep mint reward.
+  address public wagPool;
   // WAG tokens created per block.
   uint256 public wagPerBlock;
   // Bonus muliplier for early cake makers.
@@ -69,12 +71,14 @@ contract MasterChef is Ownable {
   constructor(
     address _wag,
     address _devaddr,
+    address _wagPool,
     uint256 _wagPerBlock,
     uint256 _startBlock
   ) {
     BONUS_MULTIPLIER = 1;
     lockRewardPercent = 900; //90%
     wag = WaggyToken(_wag);
+    wagPool = _wagPool;
     devaddr = _devaddr;
     wagPerBlock = _wagPerBlock;
     startBlock = _startBlock;
@@ -203,7 +207,7 @@ contract MasterChef is Ownable {
     uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
     uint256 wagReward = multiplier.mul(wagPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
     wag.mint(devaddr, wagReward.div(10));
-    wag.mint(address(this), wagReward);
+    wag.mint(wagPool, wagReward);
     pool.accWagPerShare = pool.accWagPerShare.add(wagReward.mul(1e12).div(lpSupply));
     pool.lastRewardBlock = block.number;
   }
@@ -315,7 +319,7 @@ contract MasterChef is Ownable {
 
   // Safe wag transfer function, just in case if rounding error causes pool to not have enough Wags.
   function safeWagTransfer(address _to, uint256 _amount) internal {
-    wag.transfer(_to, _amount);
+    wag.transferFrom(wagPool,_to, _amount);
     // lock after claim rewad
     uint256 lockAmount = _amount.mul(lockRewardPercent).div(1000);
     wag.lock(_to, lockAmount);
