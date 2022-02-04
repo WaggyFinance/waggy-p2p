@@ -36,11 +36,13 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     mapping(address => mapping(uint256 => bool)) stakedNFT; // user.stakedNFT[_nftAddress][_tokenId] = true;
     uint256[] tokenIds;
     uint256 weights;
+    uint256 depositBlock;
     uint256 rewardDebt; // Reward debt. See explanation below.
   }
   // Info of each pool.
   struct PoolInfo {
     ERC20 lpToken;
+    uint256 endBlock;
     uint256 supply; // Supply this token
     uint256 allocPoint; // How many allocation points assigned to this pool. Wags to distribute per block.
     uint256 lastRewardBlock; // Last block number that Wags distribution occurs.
@@ -58,7 +60,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
 
   event Stake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
   event UnStake(address indexed user, address nftAddress, uint256 tokenId, uint256 weight);
-  event SetAdmin(address user,address adminAddress);
+  event SetAdmin(address user, address adminAddress);
 
   mapping(address => bool) public isWhitelisted;
 
@@ -66,6 +68,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     __Ownable_init();
     poolInfo = PoolInfo({
       lpToken: _bnb,
+      endBlock: 0,
       supply: 0,
       allocPoint: 1000,
       lastRewardBlock: block.number,
@@ -97,18 +100,36 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     emit SetAdmin(msg.sender, _adminAddress);
   }
 
-  function pendingReward(address _user) external view returns (uint256) {
+  function pendingReward(address _user) public view returns (uint256) {
     PoolInfo storage pool = poolInfo;
     UserInfo storage user = userInfo[_user];
-    return user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+
+    if (user.depositBlock >= pool.endBlock) {
+      return 0;
+    }
+
+    uint256 fullPending = user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+
+    uint256 rewardBlockRange = pool.endBlock - pool.lastRewardBlock;
+    uint256 userStakeBlock = block.number - user.depositBlock;
+
+    if (userStakeBlock >= rewardBlockRange) {
+      return fullPending;
+    }
+
+    uint256 blockDiff = rewardBlockRange.sub(userStakeBlock);
+    uint256 multiplierDiff = 100 - (blockDiff.mul(100).div(rewardBlockRange));
+
+    return fullPending.mul(multiplierDiff).div(100);
   }
 
   // Refill reward in pool
-  function refillPool(uint256 _amount) external {
+  function refillPool(uint256 _amount, uint256 _endBlock) external {
     PoolInfo storage pool = poolInfo;
     pool.lpToken.transferFrom(msg.sender, address(this), _amount);
     pool.accWagPerShare = pool.accWagPerShare.add(_amount.mul(1e12).div(pool.supply));
     pool.lastRewardBlock = block.number;
+    pool.endBlock = _endBlock;
   }
 
   function stake(address _nftAddress, uint256 _tokenId) external {
@@ -118,7 +139,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
 
     // claim reward before new staking
     if (user.weights > 0) {
-      uint256 pending = user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+      uint256 pending = pendingReward(msg.sender);
       if (pending > 0) {
         pool.lpToken.transfer(address(msg.sender), pending);
       }
@@ -134,6 +155,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
       pool.supply = pool.supply.add(weight);
       user.weights = user.weights.add(weight);
     }
+    user.depositBlock = block.number;
     user.nftStake[_nftAddress] = user.nftStake[_nftAddress].add(1);
     user.tokenIds.push(_tokenId);
     user.rewardDebt = user.weights.mul(pool.accWagPerShare).div(1e12);
@@ -148,7 +170,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder {
     require(user.stakedNFT[_nftAddress][_tokenId], "Invalid _tokenId!");
     require(user.nftStake[_nftAddress] > 0, "No NFT Stake");
     // Claim reward before unstake
-    uint256 pending = user.weights.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+    uint256 pending = pendingReward(msg.sender);
     if (pending > 0) {
       pool.lpToken.transfer(address(msg.sender), pending);
     }

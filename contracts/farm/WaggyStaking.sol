@@ -25,11 +25,13 @@ contract WaggyStaking is OwnableUpgradeable {
   struct UserInfo {
     uint256 amount; // How many LP tokens the user has provided.
     uint256 rewardDebt; // Reward debt. See explanation below.
+    uint256 depositBlock;
     bool inBlackList;
   }
   // Info of each pool.
   struct PoolInfo {
     ERC20 lpToken;
+    uint256 endBlock;
     uint256 supply; // Supply this token
     uint256 allocPoint; // How many allocation points assigned to this pool. Wags to distribute per block.
     uint256 lastRewardBlock; // Last block number that Wags distribution occurs.
@@ -65,7 +67,7 @@ contract WaggyStaking is OwnableUpgradeable {
     __Ownable_init();
     // staking pool
     poolInfo.push(
-      PoolInfo({ lpToken: _lp, supply: 0, allocPoint: 1000, lastRewardBlock: block.number, accWagPerShare: 0 })
+      PoolInfo({ lpToken: _lp,endBlock:0, supply: 0, allocPoint: 1000, lastRewardBlock: block.number, accWagPerShare: 0 })
     );
     totalAllocPoint = 1000;
   }
@@ -75,13 +77,12 @@ contract WaggyStaking is OwnableUpgradeable {
     _;
   }
 
-  // Add a new lp to the pool. Can only be called by the owner.
-  // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
   function add(uint256 _allocPoint, ERC20 _lpToken) external onlyOwner {
     totalAllocPoint = totalAllocPoint.add(_allocPoint);
     poolInfo.push(
       PoolInfo({
         lpToken: _lpToken,
+        endBlock:0,
         supply: 0,
         allocPoint: _allocPoint,
         lastRewardBlock: block.number,
@@ -106,18 +107,37 @@ contract WaggyStaking is OwnableUpgradeable {
   }
 
   // View function to see pending Reward on frontend.
-  function pendingReward(uint256 _pid, address _user) external view returns (uint256) {
-    PoolInfo storage pool = poolInfo[_pid];
-    UserInfo storage user = userInfo[_pid][_user];
-    return user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+  function pendingReward(uint256 _pid, address _user) public view returns (uint256) {
+    PoolInfo memory pool = poolInfo[_pid];
+    UserInfo memory user = userInfo[_pid][_user];
+
+    if(user.depositBlock >= pool.endBlock) 
+    {
+      return 0;
+    }
+
+    uint256 fullPending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+
+    uint256 rewardBlockRange = pool.endBlock - pool.lastRewardBlock;
+    uint256 userStakeBlock = block.number - user.depositBlock;
+
+    if(userStakeBlock >= rewardBlockRange){
+      return fullPending;
+    } 
+    
+    uint256 blockDiff = rewardBlockRange.sub(userStakeBlock); 
+    uint256 multiplierDiff  = 100 - (blockDiff.mul(100).div(rewardBlockRange));
+
+    return fullPending.mul(multiplierDiff).div(100);
   }
 
   // Refill reward in pool
-  function refillPool(uint256 _pid, uint256 _amount) external {
+  function refillPool(uint256 _pid, uint256 _amount,uint256 _endBlock) external {
     PoolInfo storage pool = poolInfo[_pid];
     pool.lpToken.transferFrom(msg.sender, address(this), _amount);
     pool.accWagPerShare = pool.accWagPerShare.add(_amount.mul(1e12).div(pool.supply));
     pool.lastRewardBlock = block.number;
+    pool.endBlock =_endBlock;
   }
 
   function claimAll() public {
@@ -133,7 +153,7 @@ contract WaggyStaking is OwnableUpgradeable {
     require(!user.inBlackList, "in black list");
 
     if (user.amount > 0) {
-      uint256 pending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+      uint256 pending = pendingReward(_pid,msg.sender);
       if (pending > 0) {
         user.rewardDebt = user.amount.mul(pool.accWagPerShare).div(1e12);
         pool.lpToken.transfer(address(msg.sender), pending);
@@ -149,9 +169,9 @@ contract WaggyStaking is OwnableUpgradeable {
     UserInfo storage user = userInfo[_pid][msg.sender];
 
     require(!user.inBlackList, "in black list");
-    // refillPool(_pid, 0);
+
     if (user.amount > 0) {
-      uint256 pending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+      uint256 pending = pendingReward(_pid,msg.sender);
       if (pending > 0) {
         pool.lpToken.transfer(address(msg.sender), pending);
       }
@@ -161,6 +181,7 @@ contract WaggyStaking is OwnableUpgradeable {
       waggyToken.transferFrom(msg.sender, address(this), _amount);
       user.amount = user.amount.add(_amount);
     }
+    user.depositBlock = block.number;
     user.rewardDebt = user.amount.mul(pool.accWagPerShare).div(1e12);
 
     emit Deposit(msg.sender, _amount);
@@ -172,7 +193,7 @@ contract WaggyStaking is OwnableUpgradeable {
     UserInfo storage user = userInfo[_pid][msg.sender];
     require(user.amount >= _amount, "withdraw: not good");
     // refillPool(_pid, _amount);
-    uint256 pending = user.amount.mul(pool.accWagPerShare).div(1e12).sub(user.rewardDebt);
+    uint256 pending = pendingReward(_pid,msg.sender);
     if (pending > 0 && !user.inBlackList) {
       pool.lpToken.transfer(address(msg.sender), pending);
     }

@@ -31,6 +31,9 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   event Lock(address indexed to, uint256 value);
   event CapChanged(uint256 prevCap, uint256 newCap);
   event GovernorChanged(address prevGovernor, address newGovernor);
+  event SetEndReleaseBlock(address user, uint256 endBlock);
+  event SetMinter(address user, address[] minters);
+  event RevokeRole(address user, address[] accmintersount);
 
   /// @dev private state variables
   uint256 private _totalLock;
@@ -68,6 +71,8 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   /// @param _endReleaseBlock The new endReleaseBlock
   function setEndReleaseBlock(uint256 _endReleaseBlock) external onlyOwner {
     endReleaseBlock = _endReleaseBlock;
+
+    emit SetEndReleaseBlock(msg.sender, _endReleaseBlock);
   }
 
   /// @dev Set cap. Cap must lower than previous cap. Only Governor can adjust
@@ -94,6 +99,8 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
       minters.push(_minters[i]);
       _setupRole(MINTER_ROLE, _minters[i]);
     }
+
+    emit SetMinter(msg.sender, _minters);
   }
 
   function setMasterCheft(address _masterCheft) external onlyOwner {
@@ -106,6 +113,8 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
     for (uint256 i = 0; i < _minters.length; ++i) {
       revokeRole(MINTER_ROLE, _minters[i]);
     }
+
+    emit RevokeRole(msg.sender, _minters);
   }
 
   function mint(address _receiver, uint256 _amount) external {

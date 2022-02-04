@@ -101,18 +101,18 @@ async function main() {
   //   }
   // }
 
-  // const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
-  // const waggyToken = WaggyToken.attach(ContractJSON.waggyToken);
-  // // // //
-  // console.log("Set merchant minter role");
+  const WaggyToken = await hre.ethers.getContractFactory("WaggyToken");
+  const waggyToken = WaggyToken.attach(ContractJSON.waggyToken);
+  // // //
+  console.log("Set merchant minter role");
 
-  // await waggyToken.setMinter([
-  //   ContractJSON.waggyStaking,
-  //   ContractJSON.merchantMultiToken,
-  //   ContractJSON.validator,
-  //   deployer.address,
-  // ]);
-  // console.log(`Waggy set minter done`);
+  await waggyToken.setMinter([
+    ContractJSON.waggyStaking,
+    ContractJSON.merchantMultiToken,
+    ContractJSON.validator,
+    deployer.address,
+  ]);
+  console.log(`Waggy set minter done`);
   // // // // console.log("Set minter done")
 
   // const BlackListUser = await hre.ethers.getContractFactory("BlackListUser");
