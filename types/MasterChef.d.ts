@@ -52,6 +52,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     "userInfo(uint256,address)": FunctionFragment;
     "wag()": FunctionFragment;
     "wagPerBlock()": FunctionFragment;
+    "wagPool()": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
   };
 
@@ -155,6 +156,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "wagPerBlock",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "wagPool", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [BigNumberish, BigNumberish]
@@ -233,6 +235,7 @@ interface MasterChefInterface extends ethers.utils.Interface {
     functionFragment: "wagPerBlock",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "wagPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
@@ -492,6 +495,8 @@ export class MasterChef extends BaseContract {
 
     wagPerBlock(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    wagPool(overrides?: CallOverrides): Promise<[string]>;
+
     withdraw(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -633,6 +638,8 @@ export class MasterChef extends BaseContract {
 
   wagPerBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
+  wagPool(overrides?: CallOverrides): Promise<string>;
+
   withdraw(
     _pid: BigNumberish,
     _amount: BigNumberish,
@@ -758,6 +765,8 @@ export class MasterChef extends BaseContract {
     wag(overrides?: CallOverrides): Promise<string>;
 
     wagPerBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    wagPool(overrides?: CallOverrides): Promise<string>;
 
     withdraw(
       _pid: BigNumberish,
@@ -1045,6 +1054,8 @@ export class MasterChef extends BaseContract {
 
     wagPerBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
+    wagPool(overrides?: CallOverrides): Promise<BigNumber>;
+
     withdraw(
       _pid: BigNumberish,
       _amount: BigNumberish,
@@ -1183,6 +1194,8 @@ export class MasterChef extends BaseContract {
     wag(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     wagPerBlock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    wagPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
       _pid: BigNumberish,

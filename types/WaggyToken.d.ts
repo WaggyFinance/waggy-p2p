@@ -334,9 +334,12 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     "GovernorChanged(address,address)": EventFragment;
     "Lock(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "RevokeRole(address,address[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "SetEndReleaseBlock(address,uint256)": EventFragment;
+    "SetMinter(address,address[])": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
@@ -345,9 +348,12 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "GovernorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Lock"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RevokeRole"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetEndReleaseBlock"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetMinter"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -375,6 +381,10 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
+export type RevokeRoleEvent = TypedEvent<
+  [string, string[]] & { user: string; accmintersount: string[] }
+>;
+
 export type RoleAdminChangedEvent = TypedEvent<
   [string, string, string] & {
     role: string;
@@ -389,6 +399,14 @@ export type RoleGrantedEvent = TypedEvent<
 
 export type RoleRevokedEvent = TypedEvent<
   [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type SetEndReleaseBlockEvent = TypedEvent<
+  [string, BigNumber] & { user: string; endBlock: BigNumber }
+>;
+
+export type SetMinterEvent = TypedEvent<
+  [string, string[]] & { user: string; minters: string[] }
 >;
 
 export type TransferEvent = TypedEvent<
@@ -1046,6 +1064,22 @@ export class WaggyToken extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
+    "RevokeRole(address,address[])"(
+      user?: null,
+      accmintersount?: null
+    ): TypedEventFilter<
+      [string, string[]],
+      { user: string; accmintersount: string[] }
+    >;
+
+    RevokeRole(
+      user?: null,
+      accmintersount?: null
+    ): TypedEventFilter<
+      [string, string[]],
+      { user: string; accmintersount: string[] }
+    >;
+
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
       previousAdminRole?: BytesLike | null,
@@ -1098,6 +1132,38 @@ export class WaggyToken extends BaseContract {
     ): TypedEventFilter<
       [string, string, string],
       { role: string; account: string; sender: string }
+    >;
+
+    "SetEndReleaseBlock(address,uint256)"(
+      user?: null,
+      endBlock?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; endBlock: BigNumber }
+    >;
+
+    SetEndReleaseBlock(
+      user?: null,
+      endBlock?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { user: string; endBlock: BigNumber }
+    >;
+
+    "SetMinter(address,address[])"(
+      user?: null,
+      minters?: null
+    ): TypedEventFilter<
+      [string, string[]],
+      { user: string; minters: string[] }
+    >;
+
+    SetMinter(
+      user?: null,
+      minters?: null
+    ): TypedEventFilter<
+      [string, string[]],
+      { user: string; minters: string[] }
     >;
 
     "Transfer(address,address,uint256)"(

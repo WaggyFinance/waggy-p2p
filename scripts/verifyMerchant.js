@@ -18,11 +18,11 @@ async function main() {
   //   contract: "contracts/p2p/Merchant.sol:Merchant",
   //   constructorArguments: [],
   // });
-  await hre.run("verify:verify", {
-    address: "0xae7d83baf44055cd29df5199a58371fb32fde9c9",
-    contract: "contracts/p2p/MerchantMultiToken.sol:MerchantMultiToken",
-    constructorArguments: [],
-  });
+  // await hre.run("verify:verify", {
+  //   address: "0xae7d83baf44055cd29df5199a58371fb32fde9c9",
+  //   contract: "contracts/p2p/MerchantMultiToken.sol:MerchantMultiToken",
+  //   constructorArguments: [],
+  // });
 
   // await hre.run("verify:verify", {
   //   address: "0x6b6e983a10b2c814db720C8ee837ECED1B648bdB",
@@ -32,11 +32,11 @@ async function main() {
   //   ],
   // });
 
-  // await hre.run("verify:verify", {
-  //   address: "0x3b53a1ab77104c846d64e32f47cee60a61f32a61",
-  //   contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
-  //   constructorArguments: [],
-  // });
+  await hre.run("verify:verify", {
+    address: "0x17381deb2f90bde6f0e4fe93f2fc1181dfb74c63",
+    contract: "contracts/p2p/WaggyToken.sol:WaggyToken",
+    constructorArguments: [],
+  });
 
   //   await hre.run("verify:verify", {
   //   address: "0x810e84ad66fbf8fbbe1073653800e4d8092f9e04",

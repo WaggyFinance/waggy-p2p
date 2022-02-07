@@ -181,6 +181,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WNativeRelayer__factory>;
     getContractFactory(
+      name: "Timelock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Timelock__factory>;
+    getContractFactory(
       name: "IGOV",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IGOV__factory>;
@@ -399,6 +403,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WNativeRelayer>;
+    getContractAt(
+      name: "Timelock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Timelock>;
     getContractAt(
       name: "IGOV",
       address: string,
