@@ -30,7 +30,7 @@ interface GasStationInterface extends ethers.utils.Interface {
     "owner()": FunctionFragment;
     "pendingReward(address)": FunctionFragment;
     "poolInfo()": FunctionFragment;
-    "refillPool(uint256)": FunctionFragment;
+    "refillPool(uint256,uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
     "setWhitelistedNFT(address,bool)": FunctionFragment;
@@ -67,7 +67,7 @@ interface GasStationInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "poolInfo", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "refillPool",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -261,8 +261,9 @@ export class GasStation extends BaseContract {
     poolInfo(
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         lpToken: string;
+        endBlock: BigNumber;
         supply: BigNumber;
         allocPoint: BigNumber;
         lastRewardBlock: BigNumber;
@@ -272,6 +273,7 @@ export class GasStation extends BaseContract {
 
     refillPool(
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -313,7 +315,11 @@ export class GasStation extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { weights: BigNumber; rewardDebt: BigNumber }
+      [BigNumber, BigNumber, BigNumber] & {
+        weights: BigNumber;
+        depositBlock: BigNumber;
+        rewardDebt: BigNumber;
+      }
     >;
   };
 
@@ -350,8 +356,9 @@ export class GasStation extends BaseContract {
   poolInfo(
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       lpToken: string;
+      endBlock: BigNumber;
       supply: BigNumber;
       allocPoint: BigNumber;
       lastRewardBlock: BigNumber;
@@ -361,6 +368,7 @@ export class GasStation extends BaseContract {
 
   refillPool(
     _amount: BigNumberish,
+    _endBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -402,7 +410,11 @@ export class GasStation extends BaseContract {
     arg0: string,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber] & { weights: BigNumber; rewardDebt: BigNumber }
+    [BigNumber, BigNumber, BigNumber] & {
+      weights: BigNumber;
+      depositBlock: BigNumber;
+      rewardDebt: BigNumber;
+    }
   >;
 
   callStatic: {
@@ -434,8 +446,9 @@ export class GasStation extends BaseContract {
     poolInfo(
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         lpToken: string;
+        endBlock: BigNumber;
         supply: BigNumber;
         allocPoint: BigNumber;
         lastRewardBlock: BigNumber;
@@ -443,7 +456,11 @@ export class GasStation extends BaseContract {
       }
     >;
 
-    refillPool(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    refillPool(
+      _amount: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -478,7 +495,11 @@ export class GasStation extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { weights: BigNumber; rewardDebt: BigNumber }
+      [BigNumber, BigNumber, BigNumber] & {
+        weights: BigNumber;
+        depositBlock: BigNumber;
+        rewardDebt: BigNumber;
+      }
     >;
   };
 
@@ -611,6 +632,7 @@ export class GasStation extends BaseContract {
 
     refillPool(
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -692,6 +714,7 @@ export class GasStation extends BaseContract {
 
     refillPool(
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

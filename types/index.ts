@@ -41,6 +41,7 @@ export type { RewardCalculator } from "./RewardCalculator";
 export type { WaggyToken } from "./WaggyToken";
 export type { WERC20 } from "./WERC20";
 export type { WNativeRelayer } from "./WNativeRelayer";
+export type { Timelock } from "./Timelock";
 export type { Validator } from "./Validator";
 
 export { AccessControlUpgradeable__factory } from "./factories/AccessControlUpgradeable__factory";
@@ -83,4 +84,5 @@ export { RewardCalculator__factory } from "./factories/RewardCalculator__factory
 export { WaggyToken__factory } from "./factories/WaggyToken__factory";
 export { WERC20__factory } from "./factories/WERC20__factory";
 export { WNativeRelayer__factory } from "./factories/WNativeRelayer__factory";
+export { Timelock__factory } from "./factories/Timelock__factory";
 export { Validator__factory } from "./factories/Validator__factory";

@@ -31,7 +31,7 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     "owner()": FunctionFragment;
     "pendingReward(uint256,address)": FunctionFragment;
     "poolInfo(uint256)": FunctionFragment;
-    "refillPool(uint256,uint256)": FunctionFragment;
+    "refillPool(uint256,uint256,uint256)": FunctionFragment;
     "removeAllPool()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
@@ -75,7 +75,7 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "refillPool",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "removeAllPool",
@@ -294,8 +294,9 @@ export class WaggyStaking extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         lpToken: string;
+        endBlock: BigNumber;
         supply: BigNumber;
         allocPoint: BigNumber;
         lastRewardBlock: BigNumber;
@@ -306,6 +307,7 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -334,9 +336,10 @@ export class WaggyStaking extends BaseContract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, boolean] & {
+      [BigNumber, BigNumber, BigNumber, boolean] & {
         amount: BigNumber;
         rewardDebt: BigNumber;
+        depositBlock: BigNumber;
         inBlackList: boolean;
       }
     >;
@@ -397,8 +400,9 @@ export class WaggyStaking extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       lpToken: string;
+      endBlock: BigNumber;
       supply: BigNumber;
       allocPoint: BigNumber;
       lastRewardBlock: BigNumber;
@@ -409,6 +413,7 @@ export class WaggyStaking extends BaseContract {
   refillPool(
     _pid: BigNumberish,
     _amount: BigNumberish,
+    _endBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -437,9 +442,10 @@ export class WaggyStaking extends BaseContract {
     arg1: string,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, boolean] & {
+    [BigNumber, BigNumber, BigNumber, boolean] & {
       amount: BigNumber;
       rewardDebt: BigNumber;
+      depositBlock: BigNumber;
       inBlackList: boolean;
     }
   >;
@@ -495,8 +501,9 @@ export class WaggyStaking extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         lpToken: string;
+        endBlock: BigNumber;
         supply: BigNumber;
         allocPoint: BigNumber;
         lastRewardBlock: BigNumber;
@@ -507,6 +514,7 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -528,9 +536,10 @@ export class WaggyStaking extends BaseContract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, boolean] & {
+      [BigNumber, BigNumber, BigNumber, boolean] & {
         amount: BigNumber;
         rewardDebt: BigNumber;
+        depositBlock: BigNumber;
         inBlackList: boolean;
       }
     >;
@@ -709,6 +718,7 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -799,6 +809,7 @@ export class WaggyStaking extends BaseContract {
     refillPool(
       _pid: BigNumberish,
       _amount: BigNumberish,
+      _endBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -25,10 +25,10 @@ interface ValidatorInterface extends ethers.utils.Interface {
     "adminRole(address)": FunctionFragment;
     "appeal(string)": FunctionFragment;
     "casesInfo(string)": FunctionFragment;
-    "decideByAdmin(string,string)": FunctionFragment;
+    "decideByAdmin(string,string,string)": FunctionFragment;
     "encode(string)": FunctionFragment;
     "erc20Interface()": FunctionFragment;
-    "evaluate(string)": FunctionFragment;
+    "evaluate(string,string)": FunctionFragment;
     "fee()": FunctionFragment;
     "getTotalCollateral()": FunctionFragment;
     "getUserDecision(string,address)": FunctionFragment;
@@ -57,14 +57,17 @@ interface ValidatorInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "casesInfo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "decideByAdmin",
-    values: [string, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "encode", values: [string]): string;
   encodeFunctionData(
     functionFragment: "erc20Interface",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "evaluate", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "evaluate",
+    values: [string, string]
+  ): string;
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTotalCollateral",
@@ -381,7 +384,8 @@ export class Validator extends BaseContract {
         BigNumber,
         string,
         BigNumber,
-        number
+        number,
+        string
       ] & {
         seller: string;
         buyer: string;
@@ -395,11 +399,13 @@ export class Validator extends BaseContract {
         randomness: string;
         remark: BigNumber;
         status: number;
+        decryptKey: string;
       }
     >;
 
     decideByAdmin(
       _key: string,
+      _decryptKey: string,
       _result: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -410,6 +416,7 @@ export class Validator extends BaseContract {
 
     evaluate(
       _key: string,
+      _decryptKey: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -522,7 +529,8 @@ export class Validator extends BaseContract {
       BigNumber,
       string,
       BigNumber,
-      number
+      number,
+      string
     ] & {
       seller: string;
       buyer: string;
@@ -536,11 +544,13 @@ export class Validator extends BaseContract {
       randomness: string;
       remark: BigNumber;
       status: number;
+      decryptKey: string;
     }
   >;
 
   decideByAdmin(
     _key: string,
+    _decryptKey: string,
     _result: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -551,6 +561,7 @@ export class Validator extends BaseContract {
 
   evaluate(
     _key: string,
+    _decryptKey: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -658,7 +669,8 @@ export class Validator extends BaseContract {
         BigNumber,
         string,
         BigNumber,
-        number
+        number,
+        string
       ] & {
         seller: string;
         buyer: string;
@@ -672,11 +684,13 @@ export class Validator extends BaseContract {
         randomness: string;
         remark: BigNumber;
         status: number;
+        decryptKey: string;
       }
     >;
 
     decideByAdmin(
       _key: string,
+      _decryptKey: string,
       _result: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -687,6 +701,7 @@ export class Validator extends BaseContract {
 
     evaluate(
       _key: string,
+      _decryptKey: string,
       overrides?: CallOverrides
     ): Promise<[string, BigNumber, BigNumber, BigNumber]>;
 
@@ -1036,6 +1051,7 @@ export class Validator extends BaseContract {
 
     decideByAdmin(
       _key: string,
+      _decryptKey: string,
       _result: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1046,6 +1062,7 @@ export class Validator extends BaseContract {
 
     evaluate(
       _key: string,
+      _decryptKey: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1151,6 +1168,7 @@ export class Validator extends BaseContract {
 
     decideByAdmin(
       _key: string,
+      _decryptKey: string,
       _result: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1164,6 +1182,7 @@ export class Validator extends BaseContract {
 
     evaluate(
       _key: string,
+      _decryptKey: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
