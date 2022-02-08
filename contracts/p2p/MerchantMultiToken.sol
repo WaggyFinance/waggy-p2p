@@ -348,12 +348,6 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     successTransactionInfo.totalSellAmount = successTransactionInfo.totalSellAmount.add(transaction.amount);
     successTransactionInfo.totalSellCount = successTransactionInfo.totalSellCount.add(1);
 
-    // pay reward after complete transaction
-    uint256 reward = transaction.amount.mul(700).div(10000);
-    gov.mint(msg.sender, reward);
-    reward = transaction.amount.mul(300).div(10000);
-    gov.mint(_buyer, reward);
-
     emit ReleaseToken(msg.sender, _buyer, address(_token), transaction.amount, reward);
   }
 
