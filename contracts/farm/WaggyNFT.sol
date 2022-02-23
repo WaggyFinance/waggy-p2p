@@ -50,6 +50,7 @@ contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
   mapping(address => bool) private alreadyBuy;
   mapping(uint256 => address) public nftOwner;
   AvatarNFT private oldAvatarNFT;
+  mapping(uint256 =>uint256) public weights;
 
   constructor(
     string memory _name,
@@ -67,8 +68,8 @@ contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
     _setPrice(_price);
   }
 
-  function getWeight() external pure returns (uint256) {
-    return 10;
+  function getWeight(uint256 _tokenId) external pure returns (uint256) {
+    return weights[_tokenId];
   }
 
   function setOldAvatar(address _oldAvatar) external onlyOwner {
@@ -79,7 +80,7 @@ contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
     allowToTransfer[_address] = _allow;
   }
 
-  function mintAvatar() external payable {
+  function mintAvatar(uint256 _weight) external payable {
     require(oldAvatarNFT.balanceOf(msg.sender) == 0, "User swapOldAvatar instead.");
     require(balanceOf(msg.sender) == 0, "Maximun to mint.");
     require(alreadyBuy[msg.sender] == false, "already buy.");
@@ -90,16 +91,18 @@ contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
     _mint(msg.sender, tokenId);
     nftOwner[tokenId] = msg.sender;
     alreadyBuy[msg.sender] = true;
+    weights[tokenId] = _weight;
     _sellIndex.increment();
 
     emit BuyAvatar(msg.sender, tokenId);
   }
 
   // Mint all NFT on deploy and keep data for treading
-  function mint(string memory _uri) external onlyOwner {
+  function mint(string memory _uri,uint256 _weight) external onlyOwner {
     uint256 newItemId = _tokenIds.current();
     uri[newItemId] = _uri;
     mintTokenIds.push(newItemId);
+    weights[newItemId] = _weight;
     _tokenIds.increment();
 
     emit Mint(address(this), newItemId);

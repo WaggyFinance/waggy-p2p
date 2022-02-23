@@ -9,6 +9,7 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('@openzeppelin/hardhat-upgrades');
 require("dotenv").config();
+require("hardhat-laika");
 // require('hardhat-contract-sizer');
 
 // require('hardhat-docgen');
@@ -96,7 +97,7 @@ module.exports = {
     externalArtifacts: ["externalArtifacts/*.json"], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
   },
   solidity: {
-    version: "0.8.11",
+    version: "0.8.12",
     settings: {
       optimizer: {
         enabled: true,

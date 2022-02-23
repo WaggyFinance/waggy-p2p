@@ -27,7 +27,7 @@
     "test:unit:validator": "hardhat test --no-compile ./test/unit/Validator.test.js",
     "test:unit:merchantSell": "hardhat test --no-compile ./test/unit/MerchantSell.test.js",
     "test:unit:merchantBuy": "hardhat test --no-compile ./test/unit/MerchantBuy.test.js",
-    "test:script":"echo $1"
+    "test:script": "echo $1"
   },
   "version": "1.1.0",
   "main": "index.js",
@@ -72,6 +72,7 @@
     "@openzeppelin/contracts": "^4.3.0",
     "@openzeppelin/contracts-upgradeable": "^4.3.2",
     "dotenv": "^10.0.0",
+    "hardhat-laika": "^0.1.0",
     "hardhat-tracer": "^1.0.0-alpha.6",
     "typescript": "^4.4.3"
   }
