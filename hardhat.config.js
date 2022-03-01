@@ -97,7 +97,7 @@ module.exports = {
     externalArtifacts: ["externalArtifacts/*.json"], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
   },
   solidity: {
-    version: "0.8.12",
+    version: "0.8.11",
     settings: {
       optimizer: {
         enabled: true,
