@@ -7,9 +7,8 @@
 #    \__/\  /  \____|__  / \______  / \______  / / ______|
 #         \/           \/         \/         \/  \/       
 */
-pragma solidity 0.8.12;
+pragma solidity 0.8.11;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -265,7 +264,7 @@ contract WaggyStaking is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
   }
 
-  /// @notice Stake Staking tokens to DripBar
+  /// @notice Stake Staking tokens
   function deposit(uint256 _campaignID, uint256 _amount) external nonReentrant {
     CampaignInfo storage campaign = campaignInfo[_campaignID];
     UserInfo storage user = userInfo[_campaignID][msg.sender];

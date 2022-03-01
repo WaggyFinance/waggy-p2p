@@ -68,7 +68,7 @@ contract WaggyNFT is Ownable, ERC721URIStorage, ERC721Holder {
     _setPrice(_price);
   }
 
-  function getWeight(uint256 _tokenId) external pure returns (uint256) {
+  function getWeight(uint256 _tokenId) external view returns (uint256) {
     return weights[_tokenId];
   }
 

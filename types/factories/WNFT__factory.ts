@@ -8,7 +8,13 @@ import type { WNFT, WNFTInterface } from "../WNFT";
 
 const _abi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
     name: "getWeight",
     outputs: [
       {

@@ -7,9 +7,8 @@
 #    \__/\  /  \____|__  / \______  / \______  / / ______|
 #         \/           \/         \/         \/  \/       
 */
-pragma solidity 0.8.12;
+pragma solidity 0.8.11;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -342,7 +341,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
 
     uint256 _amount = campaign.stakingToken.getWeight(_tokenId);
     campaign.totalStaked = campaign.totalStaked.sub(_amount);
-    
+
     user.amount = user.amount.sub(_amount);
     user.rewardDebt = user.amount.mul(campaign.accRewardPerShare).div(1e12);
     user.stakedNFT[address(campaign.stakingToken)][_tokenId] = false;

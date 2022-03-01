@@ -21,39 +21,80 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface GasStationInterface extends ethers.utils.Interface {
   functions: {
-    "adminAddress()": FunctionFragment;
-    "claim()": FunctionFragment;
-    "getUserOwnedNFT(address)": FunctionFragment;
+    "addCampaignInfo(address,address,uint256)": FunctionFragment;
+    "addRewardInfo(uint256,uint256,uint256)": FunctionFragment;
+    "campaignInfo(uint256)": FunctionFragment;
+    "campaignInfoLen()": FunctionFragment;
+    "campaignRewardInfo(uint256,uint256)": FunctionFragment;
+    "currentEndBlock(uint256)": FunctionFragment;
+    "currentRewardPerBlock(uint256)": FunctionFragment;
+    "deposit(uint256,uint256)": FunctionFragment;
+    "emergencyWithdraw(uint256,uint256)": FunctionFragment;
+    "getMultiplier(uint256,uint256,uint256)": FunctionFragment;
+    "harvest(uint256[])": FunctionFragment;
     "initialize(address)": FunctionFragment;
-    "isWhitelisted(address)": FunctionFragment;
+    "massUpdateCampaigns()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "pendingReward(address)": FunctionFragment;
-    "poolInfo()": FunctionFragment;
-    "refillPool(uint256,uint256)": FunctionFragment;
+    "pendingReward(uint256,address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setAdmin(address)": FunctionFragment;
-    "setWhitelistedNFT(address,bool)": FunctionFragment;
-    "stake(address,uint256)": FunctionFragment;
-    "totalAllocPoint()": FunctionFragment;
+    "rewardHolder()": FunctionFragment;
+    "rewardInfoLen(uint256)": FunctionFragment;
+    "setRewardHolder(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "unStake(address,uint256)": FunctionFragment;
-    "userInfo(address)": FunctionFragment;
+    "updateCampaign(uint256)": FunctionFragment;
+    "userInfo(uint256,address)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "adminAddress",
+    functionFragment: "addCampaignInfo",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRewardInfo",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignInfo",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignInfoLen",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "claim", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getUserOwnedNFT",
-    values: [string]
+    functionFragment: "campaignRewardInfo",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentEndBlock",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentRewardPerBlock",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deposit",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyWithdraw",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMultiplier",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "harvest",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "isWhitelisted",
-    values: [string]
+    functionFragment: "massUpdateCampaigns",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
@@ -62,52 +103,82 @@ interface GasStationInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "pendingReward",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "poolInfo", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "refillPool",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "setAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "setWhitelistedNFT",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stake",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalAllocPoint",
+    functionFragment: "rewardHolder",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rewardInfoLen",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRewardHolder",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "unStake",
-    values: [string, BigNumberish]
+    functionFragment: "updateCampaign",
+    values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "userInfo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "userInfo",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [BigNumberish, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "adminAddress",
+    functionFragment: "addCampaignInfo",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getUserOwnedNFT",
+    functionFragment: "addRewardInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignInfoLen",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignRewardInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentEndBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentRewardPerBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyWithdraw",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMultiplier",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isWhitelisted",
+    functionFragment: "massUpdateCampaigns",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -119,65 +190,99 @@ interface GasStationInterface extends ethers.utils.Interface {
     functionFragment: "pendingReward",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "poolInfo", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "refillPool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setWhitelistedNFT",
+    functionFragment: "rewardHolder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "totalAllocPoint",
+    functionFragment: "rewardInfoLen",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRewardHolder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unStake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateCampaign",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "userInfo", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "AddCampaignInfo(uint256,address,address,uint256)": EventFragment;
+    "AddRewardInfo(uint256,uint256,uint256,uint256)": EventFragment;
+    "Deposit(address,uint256,uint256)": EventFragment;
+    "EmergencyWithdraw(address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "SetAdmin(address,address)": EventFragment;
-    "Stake(address,address,uint256,uint256)": EventFragment;
-    "UnStake(address,address,uint256,uint256)": EventFragment;
+    "SetRewardHolder(address)": EventFragment;
+    "Withdraw(address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AddCampaignInfo"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AddRewardInfo"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetAdmin"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Stake"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UnStake"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetRewardHolder"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
+
+export type AddCampaignInfoEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber] & {
+    campaignID: BigNumber;
+    stakingToken: string;
+    rewardToken: string;
+    startBlock: BigNumber;
+  }
+>;
+
+export type AddRewardInfoEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    campaignID: BigNumber;
+    phase: BigNumber;
+    endBlock: BigNumber;
+    rewardPerBlock: BigNumber;
+  }
+>;
+
+export type DepositEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+    campaign: BigNumber;
+  }
+>;
+
+export type EmergencyWithdrawEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+    campaign: BigNumber;
+  }
+>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type SetAdminEvent = TypedEvent<
-  [string, string] & { user: string; adminAddress: string }
+export type SetRewardHolderEvent = TypedEvent<
+  [string] & { rewardHolder: string }
 >;
 
-export type StakeEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber] & {
+export type WithdrawEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
     user: string;
-    nftAddress: string;
-    tokenId: BigNumber;
-    weight: BigNumber;
-  }
->;
-
-export type UnStakeEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber] & {
-    user: string;
-    nftAddress: string;
-    tokenId: BigNumber;
-    weight: BigNumber;
+    amount: BigNumber;
+    campaign: BigNumber;
   }
 >;
 
@@ -225,23 +330,98 @@ export class GasStation extends BaseContract {
   interface: GasStationInterface;
 
   functions: {
-    adminAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    claim(
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getUserOwnedNFT(
-      _user: string,
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    campaignInfo(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { tokenIds: BigNumber[] }>;
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+        lastRewardBlock: BigNumber;
+        accRewardPerShare: BigNumber;
+        totalStaked: BigNumber;
+        totalRewards: BigNumber;
+      }
+    >;
+
+    campaignInfoLen(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    deposit(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    emergencyWithdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     initialize(
-      _bnb: string,
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+    massUpdateCampaigns(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     onERC721Received(
       arg0: string,
@@ -254,92 +434,137 @@ export class GasStation extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pendingReward(
+      _campaignID: BigNumberish,
       _user: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    poolInfo(
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lpToken: string;
-        endBlock: BigNumber;
-        supply: BigNumber;
-        allocPoint: BigNumber;
-        lastRewardBlock: BigNumber;
-        accWagPerShare: BigNumber;
-      }
-    >;
-
-    refillPool(
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setAdmin(
-      _adminAddress: string,
+    rewardHolder(overrides?: CallOverrides): Promise<[string]>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    setWhitelistedNFT(
-      _nftAddress: string,
-      status: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    stake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    totalAllocPoint(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    unStake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     userInfo(
-      arg0: string,
+      arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        weights: BigNumber;
+        amount: BigNumber;
         depositBlock: BigNumber;
         rewardDebt: BigNumber;
       }
     >;
+
+    withdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  adminAddress(overrides?: CallOverrides): Promise<string>;
-
-  claim(
+  addCampaignInfo(
+    _stakingToken: string,
+    _rewardToken: string,
+    _startBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getUserOwnedNFT(
-    _user: string,
+  addRewardInfo(
+    _campaignID: BigNumberish,
+    _endBlock: BigNumberish,
+    _rewardPerBlock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  campaignInfo(
+    arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+  ): Promise<
+    [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      stakingToken: string;
+      rewardToken: string;
+      startBlock: BigNumber;
+      lastRewardBlock: BigNumber;
+      accRewardPerShare: BigNumber;
+      totalStaked: BigNumber;
+      totalRewards: BigNumber;
+    }
+  >;
+
+  campaignInfoLen(overrides?: CallOverrides): Promise<BigNumber>;
+
+  campaignRewardInfo(
+    arg0: BigNumberish,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { endBlock: BigNumber; rewardPerBlock: BigNumber }
+  >;
+
+  currentEndBlock(
+    _campaignID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  currentRewardPerBlock(
+    _campaignID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  deposit(
+    _campaignID: BigNumberish,
+    _tokenId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  emergencyWithdraw(
+    _campaignID: BigNumberish,
+    _tokenId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  getMultiplier(
+    _from: BigNumberish,
+    _to: BigNumberish,
+    _endBlock: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  harvest(
+    _campaignIDs: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   initialize(
-    _bnb: string,
+    _rewardHolder: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+  massUpdateCampaigns(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   onERC721Received(
     arg0: string,
@@ -351,85 +576,144 @@ export class GasStation extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  pendingReward(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  poolInfo(
+  pendingReward(
+    _campaignID: BigNumberish,
+    _user: string,
     overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      lpToken: string;
-      endBlock: BigNumber;
-      supply: BigNumber;
-      allocPoint: BigNumber;
-      lastRewardBlock: BigNumber;
-      accWagPerShare: BigNumber;
-    }
-  >;
-
-  refillPool(
-    _amount: BigNumberish,
-    _endBlock: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  ): Promise<BigNumber>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setAdmin(
-    _adminAddress: string,
+  rewardHolder(overrides?: CallOverrides): Promise<string>;
+
+  rewardInfoLen(
+    _campaignID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  setRewardHolder(
+    _rewardHolder: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  setWhitelistedNFT(
-    _nftAddress: string,
-    status: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  stake(
-    _nftAddress: string,
-    _tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  totalAllocPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  unStake(
-    _nftAddress: string,
-    _tokenId: BigNumberish,
+  updateCampaign(
+    _campaignID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   userInfo(
-    arg0: string,
+    arg0: BigNumberish,
+    arg1: string,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
-      weights: BigNumber;
+      amount: BigNumber;
       depositBlock: BigNumber;
       rewardDebt: BigNumber;
     }
   >;
 
+  withdraw(
+    _campaignID: BigNumberish,
+    _tokenId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    adminAddress(overrides?: CallOverrides): Promise<string>;
-
-    claim(overrides?: CallOverrides): Promise<void>;
-
-    getUserOwnedNFT(
-      _user: string,
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<void>;
 
-    initialize(_bnb: string, overrides?: CallOverrides): Promise<void>;
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+    campaignInfo(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+        lastRewardBlock: BigNumber;
+        accRewardPerShare: BigNumber;
+        totalStaked: BigNumber;
+        totalRewards: BigNumber;
+      }
+    >;
+
+    campaignInfoLen(overrides?: CallOverrides): Promise<BigNumber>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    deposit(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    emergencyWithdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initialize(_rewardHolder: string, overrides?: CallOverrides): Promise<void>;
+
+    massUpdateCampaigns(overrides?: CallOverrides): Promise<void>;
 
     onERC721Received(
       arg0: string,
@@ -441,69 +725,152 @@ export class GasStation extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    pendingReward(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    poolInfo(
+    pendingReward(
+      _campaignID: BigNumberish,
+      _user: string,
       overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lpToken: string;
-        endBlock: BigNumber;
-        supply: BigNumber;
-        allocPoint: BigNumber;
-        lastRewardBlock: BigNumber;
-        accWagPerShare: BigNumber;
-      }
-    >;
-
-    refillPool(
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    setAdmin(_adminAddress: string, overrides?: CallOverrides): Promise<void>;
+    rewardHolder(overrides?: CallOverrides): Promise<string>;
 
-    setWhitelistedNFT(
-      _nftAddress: string,
-      status: boolean,
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    stake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    totalAllocPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    unStake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     userInfo(
-      arg0: string,
+      arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        weights: BigNumber;
+        amount: BigNumber;
         depositBlock: BigNumber;
         rewardDebt: BigNumber;
       }
     >;
+
+    withdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
+    "AddCampaignInfo(uint256,address,address,uint256)"(
+      campaignID?: BigNumberish | null,
+      stakingToken?: null,
+      rewardToken?: null,
+      startBlock?: null
+    ): TypedEventFilter<
+      [BigNumber, string, string, BigNumber],
+      {
+        campaignID: BigNumber;
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+      }
+    >;
+
+    AddCampaignInfo(
+      campaignID?: BigNumberish | null,
+      stakingToken?: null,
+      rewardToken?: null,
+      startBlock?: null
+    ): TypedEventFilter<
+      [BigNumber, string, string, BigNumber],
+      {
+        campaignID: BigNumber;
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+      }
+    >;
+
+    "AddRewardInfo(uint256,uint256,uint256,uint256)"(
+      campaignID?: BigNumberish | null,
+      phase?: BigNumberish | null,
+      endBlock?: null,
+      rewardPerBlock?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        campaignID: BigNumber;
+        phase: BigNumber;
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    AddRewardInfo(
+      campaignID?: BigNumberish | null,
+      phase?: BigNumberish | null,
+      endBlock?: null,
+      rewardPerBlock?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        campaignID: BigNumber;
+        phase: BigNumber;
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    "Deposit(address,uint256,uint256)"(
+      user?: string | null,
+      amount?: null,
+      campaign?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
+    >;
+
+    Deposit(
+      user?: string | null,
+      amount?: null,
+      campaign?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
+    >;
+
+    "EmergencyWithdraw(address,uint256,uint256)"(
+      user?: string | null,
+      amount?: null,
+      campaign?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
+    >;
+
+    EmergencyWithdraw(
+      user?: string | null,
+      amount?: null,
+      campaign?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
+    >;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -520,101 +887,103 @@ export class GasStation extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "SetAdmin(address,address)"(
-      user?: null,
-      adminAddress?: null
-    ): TypedEventFilter<
-      [string, string],
-      { user: string; adminAddress: string }
-    >;
+    "SetRewardHolder(address)"(
+      rewardHolder?: null
+    ): TypedEventFilter<[string], { rewardHolder: string }>;
 
-    SetAdmin(
-      user?: null,
-      adminAddress?: null
-    ): TypedEventFilter<
-      [string, string],
-      { user: string; adminAddress: string }
-    >;
+    SetRewardHolder(
+      rewardHolder?: null
+    ): TypedEventFilter<[string], { rewardHolder: string }>;
 
-    "Stake(address,address,uint256,uint256)"(
+    "Withdraw(address,uint256,uint256)"(
       user?: string | null,
-      nftAddress?: null,
-      tokenId?: null,
-      weight?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        user: string;
-        nftAddress: string;
-        tokenId: BigNumber;
-        weight: BigNumber;
-      }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
-    Stake(
+    Withdraw(
       user?: string | null,
-      nftAddress?: null,
-      tokenId?: null,
-      weight?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        user: string;
-        nftAddress: string;
-        tokenId: BigNumber;
-        weight: BigNumber;
-      }
-    >;
-
-    "UnStake(address,address,uint256,uint256)"(
-      user?: string | null,
-      nftAddress?: null,
-      tokenId?: null,
-      weight?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        user: string;
-        nftAddress: string;
-        tokenId: BigNumber;
-        weight: BigNumber;
-      }
-    >;
-
-    UnStake(
-      user?: string | null,
-      nftAddress?: null,
-      tokenId?: null,
-      weight?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        user: string;
-        nftAddress: string;
-        tokenId: BigNumber;
-        weight: BigNumber;
-      }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
   };
 
   estimateGas: {
-    adminAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    claim(
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getUserOwnedNFT(
-      _user: string,
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    campaignInfo(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      _bnb: string,
+    campaignInfoLen(overrides?: CallOverrides): Promise<BigNumber>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    deposit(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    isWhitelisted(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    emergencyWithdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initialize(
+      _rewardHolder: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    massUpdateCampaigns(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     onERC721Received(
       arg0: string,
@@ -626,73 +995,120 @@ export class GasStation extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pendingReward(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    poolInfo(overrides?: CallOverrides): Promise<BigNumber>;
-
-    refillPool(
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    pendingReward(
+      _campaignID: BigNumberish,
+      _user: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setAdmin(
-      _adminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    rewardHolder(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setWhitelistedNFT(
-      _nftAddress: string,
-      status: boolean,
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    stake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    totalAllocPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    unStake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    userInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    userInfo(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    adminAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    claim(
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getUserOwnedNFT(
-      _user: string,
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    campaignInfo(
+      arg0: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    campaignInfoLen(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    deposit(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    emergencyWithdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _bnb: string,
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    isWhitelisted(
-      arg0: string,
-      overrides?: CallOverrides
+    massUpdateCampaigns(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     onERC721Received(
@@ -706,55 +1122,47 @@ export class GasStation extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pendingReward(
+      _campaignID: BigNumberish,
       _user: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    poolInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    refillPool(
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setAdmin(
-      _adminAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    rewardHolder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    setWhitelistedNFT(
-      _nftAddress: string,
-      status: boolean,
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    stake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    totalAllocPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    unStake(
-      _nftAddress: string,
-      _tokenId: BigNumberish,
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     userInfo(
-      arg0: string,
+      arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      _campaignID: BigNumberish,
+      _tokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

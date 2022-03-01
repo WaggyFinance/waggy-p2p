@@ -65,7 +65,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
   event AppealTransaction(address seller, address buyer, uint256 balance);
   event ApproveTransaction(address seller, address token, uint256 amount);
   event CancelTransaction(address seller, address token, uint256 amount);
-  event ReleaseToken(address seller, address buyer, address token, uint256 amount, uint256 reward);
+  event ReleaseToken(address seller, address buyer, address token, uint256 amount);
   event SellerDeposit(address seller, address merchant, uint256 amount);
   event UnlockToken(address seller, address buyer, uint256 amount);
   event SetAdmins(address user, address[] admins);
@@ -348,7 +348,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     successTransactionInfo.totalSellAmount = successTransactionInfo.totalSellAmount.add(transaction.amount);
     successTransactionInfo.totalSellCount = successTransactionInfo.totalSellCount.add(1);
 
-    emit ReleaseToken(msg.sender, _buyer, address(_token), transaction.amount, reward);
+    emit ReleaseToken(msg.sender, _buyer, address(_token), transaction.amount);
   }
 
   /* 
@@ -392,7 +392,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
       getTotalLockBalance(_seller, address(_token)).sub(transaction.amount)
     );
 
-    emit ReleaseToken(_seller, _buyer, address(_token), transaction.amount, 0);
+    emit ReleaseToken(_seller, _buyer, address(_token), transaction.amount);
   }
 
   function unlockTokenByAdmin(address _seller, address _buyer) external {

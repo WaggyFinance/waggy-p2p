@@ -29,10 +29,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     "claim()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getLastTokenId()": FunctionFragment;
-    "getWeight()": FunctionFragment;
+    "getWeight(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(string)": FunctionFragment;
-    "mintAvatar()": FunctionFragment;
+    "mint(string,uint256)": FunctionFragment;
+    "mintAvatar(uint256)": FunctionFragment;
     "mintTokenIds(uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nftOwner(uint256)": FunctionFragment;
@@ -52,6 +52,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "weights(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -73,15 +74,21 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     functionFragment: "getLastTokenId",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getWeight", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getWeight",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
-  encodeFunctionData(functionFragment: "mint", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "mintAvatar",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mintTokenIds",
@@ -146,6 +153,10 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "weights",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -223,6 +234,7 @@ interface WaggyNFTInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "weights", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -353,7 +365,10 @@ export class WaggyNFT extends BaseContract {
 
     getLastTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getWeight(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getWeight(
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     isApprovedForAll(
       owner: string,
@@ -363,10 +378,12 @@ export class WaggyNFT extends BaseContract {
 
     mint(
       _uri: string,
+      _weight: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     mintAvatar(
+      _weight: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -468,6 +485,11 @@ export class WaggyNFT extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    weights(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   allowToTransfer(arg0: string, overrides?: CallOverrides): Promise<boolean>;
@@ -493,7 +515,10 @@ export class WaggyNFT extends BaseContract {
 
   getLastTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getWeight(overrides?: CallOverrides): Promise<BigNumber>;
+  getWeight(
+    _tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   isApprovedForAll(
     owner: string,
@@ -503,10 +528,12 @@ export class WaggyNFT extends BaseContract {
 
   mint(
     _uri: string,
+    _weight: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   mintAvatar(
+    _weight: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -603,6 +630,8 @@ export class WaggyNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  weights(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
     allowToTransfer(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -625,7 +654,10 @@ export class WaggyNFT extends BaseContract {
 
     getLastTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getWeight(overrides?: CallOverrides): Promise<BigNumber>;
+    getWeight(
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isApprovedForAll(
       owner: string,
@@ -633,9 +665,13 @@ export class WaggyNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint(_uri: string, overrides?: CallOverrides): Promise<void>;
+    mint(
+      _uri: string,
+      _weight: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    mintAvatar(overrides?: CallOverrides): Promise<void>;
+    mintAvatar(_weight: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     mintTokenIds(
       arg0: BigNumberish,
@@ -721,6 +757,8 @@ export class WaggyNFT extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    weights(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -872,7 +910,10 @@ export class WaggyNFT extends BaseContract {
 
     getLastTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getWeight(overrides?: CallOverrides): Promise<BigNumber>;
+    getWeight(
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isApprovedForAll(
       owner: string,
@@ -882,10 +923,12 @@ export class WaggyNFT extends BaseContract {
 
     mint(
       _uri: string,
+      _weight: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     mintAvatar(
+      _weight: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -987,6 +1030,8 @@ export class WaggyNFT extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    weights(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1019,7 +1064,10 @@ export class WaggyNFT extends BaseContract {
 
     getLastTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getWeight(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getWeight(
+      _tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       owner: string,
@@ -1029,10 +1077,12 @@ export class WaggyNFT extends BaseContract {
 
     mint(
       _uri: string,
+      _weight: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     mintAvatar(
+      _weight: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1136,6 +1186,11 @@ export class WaggyNFT extends BaseContract {
     transferOwnership(
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    weights(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -21,11 +21,14 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface WNFTInterface extends ethers.utils.Interface {
   functions: {
-    "getWeight()": FunctionFragment;
+    "getWeight(uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "getWeight", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getWeight",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
@@ -85,6 +88,7 @@ export class WNFT extends BaseContract {
 
   functions: {
     getWeight(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -97,6 +101,7 @@ export class WNFT extends BaseContract {
   };
 
   getWeight(
+    tokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -108,7 +113,10 @@ export class WNFT extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getWeight(overrides?: CallOverrides): Promise<BigNumber>;
+    getWeight(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     safeTransferFrom(
       from: string,
@@ -122,6 +130,7 @@ export class WNFT extends BaseContract {
 
   estimateGas: {
     getWeight(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -135,6 +144,7 @@ export class WNFT extends BaseContract {
 
   populateTransaction: {
     getWeight(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

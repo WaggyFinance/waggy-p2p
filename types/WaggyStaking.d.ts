@@ -21,48 +21,85 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface WaggyStakingInterface extends ethers.utils.Interface {
   functions: {
-    "add(uint256,address)": FunctionFragment;
-    "adminAddress()": FunctionFragment;
-    "claim(uint256)": FunctionFragment;
-    "claimAll()": FunctionFragment;
+    "addCampaignInfo(address,address,uint256)": FunctionFragment;
+    "addRewardInfo(uint256,uint256,uint256)": FunctionFragment;
+    "campaignInfo(uint256)": FunctionFragment;
+    "campaignInfoLen()": FunctionFragment;
+    "campaignRewardInfo(uint256,uint256)": FunctionFragment;
+    "currentEndBlock(uint256)": FunctionFragment;
+    "currentRewardPerBlock(uint256)": FunctionFragment;
     "deposit(uint256,uint256)": FunctionFragment;
+    "emergencyRewardWithdraw(uint256,uint256,address)": FunctionFragment;
     "emergencyWithdraw(uint256)": FunctionFragment;
-    "initialize(address,address,address)": FunctionFragment;
+    "getMultiplier(uint256,uint256,uint256)": FunctionFragment;
+    "harvest(uint256[])": FunctionFragment;
+    "initialize(address)": FunctionFragment;
+    "massUpdateCampaigns()": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingReward(uint256,address)": FunctionFragment;
-    "poolInfo(uint256)": FunctionFragment;
-    "refillPool(uint256,uint256,uint256)": FunctionFragment;
-    "removeAllPool()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setAdmin(address)": FunctionFragment;
-    "totalAllocPoint()": FunctionFragment;
+    "rewardHolder()": FunctionFragment;
+    "rewardInfoLen(uint256)": FunctionFragment;
+    "rewardInfoLimit()": FunctionFragment;
+    "setRewardHolder(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "updateCampaign(uint256)": FunctionFragment;
     "userInfo(uint256,address)": FunctionFragment;
-    "waggyToken()": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "add",
-    values: [BigNumberish, string]
+    functionFragment: "addCampaignInfo",
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "adminAddress",
+    functionFragment: "addRewardInfo",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignInfo",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignInfoLen",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "claimAll", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "campaignRewardInfo",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentEndBlock",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentRewardPerBlock",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyRewardWithdraw",
+    values: [BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "emergencyWithdraw",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, string]
+    functionFragment: "getMultiplier",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "harvest",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "massUpdateCampaigns",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -70,137 +107,198 @@ interface WaggyStakingInterface extends ethers.utils.Interface {
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "poolInfo",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "refillPool",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeAllPool",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "setAdmin", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "totalAllocPoint",
+    functionFragment: "rewardHolder",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rewardInfoLen",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rewardInfoLimit",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRewardHolder",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "userInfo",
-    values: [BigNumberish, string]
+    functionFragment: "updateCampaign",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "waggyToken",
-    values?: undefined
+    functionFragment: "userInfo",
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [BigNumberish, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "adminAddress",
+    functionFragment: "addCampaignInfo",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "claimAll", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addRewardInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignInfoLen",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignRewardInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentEndBlock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentRewardPerBlock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyRewardWithdraw",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "emergencyWithdraw",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMultiplier",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "massUpdateCampaigns",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pendingReward",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "poolInfo", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "refillPool", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeAllPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "totalAllocPoint",
+    functionFragment: "rewardHolder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rewardInfoLen",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rewardInfoLimit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRewardHolder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateCampaign",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "userInfo", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "waggyToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "AddPool(address,address,uint256)": EventFragment;
-    "Claim(address,uint256)": EventFragment;
-    "Deposit(address,uint256)": EventFragment;
-    "EmergencyWithdraw(address,uint256)": EventFragment;
+    "AddCampaignInfo(uint256,address,address,uint256)": EventFragment;
+    "AddRewardInfo(uint256,uint256,uint256,uint256)": EventFragment;
+    "Deposit(address,uint256,uint256)": EventFragment;
+    "EmergencyWithdraw(address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "RemoveAllPool(address)": EventFragment;
-    "SetAdmin(address,address)": EventFragment;
-    "Withdraw(address,uint256)": EventFragment;
+    "SetRewardHolder(address)": EventFragment;
+    "SetRewardInfoLimit(uint256)": EventFragment;
+    "Withdraw(address,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AddPool"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AddCampaignInfo"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AddRewardInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RemoveAllPool"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetAdmin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetRewardHolder"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetRewardInfoLimit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
-export type AddPoolEvent = TypedEvent<
-  [string, string, BigNumber] & {
-    user: string;
-    lpToken: string;
-    allocPoint: BigNumber;
+export type AddCampaignInfoEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber] & {
+    campaignID: BigNumber;
+    stakingToken: string;
+    rewardToken: string;
+    startBlock: BigNumber;
   }
 >;
 
-export type ClaimEvent = TypedEvent<
-  [string, BigNumber] & { user: string; amount: BigNumber }
+export type AddRewardInfoEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    campaignID: BigNumber;
+    phase: BigNumber;
+    endBlock: BigNumber;
+    rewardPerBlock: BigNumber;
+  }
 >;
 
 export type DepositEvent = TypedEvent<
-  [string, BigNumber] & { user: string; amount: BigNumber }
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+    campaign: BigNumber;
+  }
 >;
 
 export type EmergencyWithdrawEvent = TypedEvent<
-  [string, BigNumber] & { user: string; amount: BigNumber }
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+    campaign: BigNumber;
+  }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type RemoveAllPoolEvent = TypedEvent<[string] & { user: string }>;
+export type SetRewardHolderEvent = TypedEvent<
+  [string] & { rewardHolder: string }
+>;
 
-export type SetAdminEvent = TypedEvent<
-  [string, string] & { user: string; newAdmin: string }
+export type SetRewardInfoLimitEvent = TypedEvent<
+  [BigNumber] & { rewardInfoLimit: BigNumber }
 >;
 
 export type WithdrawEvent = TypedEvent<
-  [string, BigNumber] & { user: string; amount: BigNumber }
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+    campaign: BigNumber;
+  }
 >;
 
 export class WaggyStaking extends BaseContract {
@@ -247,87 +345,138 @@ export class WaggyStaking extends BaseContract {
   interface: WaggyStakingInterface;
 
   functions: {
-    add(
-      _allocPoint: BigNumberish,
-      _lpToken: string,
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    adminAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    claim(
-      _pid: BigNumberish,
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    claimAll(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    campaignInfo(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+        lastRewardBlock: BigNumber;
+        accRewardPerShare: BigNumber;
+        totalStaked: BigNumber;
+        totalRewards: BigNumber;
+      }
+    >;
+
+    campaignInfoLen(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     deposit(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    emergencyRewardWithdraw(
+      _campaignID: BigNumberish,
+      _amount: BigNumberish,
+      _beneficiary: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     emergencyWithdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     initialize(
-      _lp: string,
-      _adminAddress: string,
-      _waggyToken: string,
+      _rewardHolder: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    massUpdateCampaigns(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pendingReward(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _user: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    poolInfo(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lpToken: string;
-        endBlock: BigNumber;
-        supply: BigNumber;
-        allocPoint: BigNumber;
-        lastRewardBlock: BigNumber;
-        accWagPerShare: BigNumber;
-      }
-    >;
-
-    refillPool(
-      _pid: BigNumberish,
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    removeAllPool(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setAdmin(
-      _adminAddress: string,
+    rewardHolder(overrides?: CallOverrides): Promise<[string]>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    rewardInfoLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    totalAllocPoint(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -336,104 +485,137 @@ export class WaggyStaking extends BaseContract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, boolean] & {
-        amount: BigNumber;
-        rewardDebt: BigNumber;
-        depositBlock: BigNumber;
-        inBlackList: boolean;
-      }
+      [BigNumber, BigNumber] & { amount: BigNumber; rewardDebt: BigNumber }
     >;
 
-    waggyToken(overrides?: CallOverrides): Promise<[string]>;
-
     withdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  add(
-    _allocPoint: BigNumberish,
-    _lpToken: string,
+  addCampaignInfo(
+    _stakingToken: string,
+    _rewardToken: string,
+    _startBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  adminAddress(overrides?: CallOverrides): Promise<string>;
-
-  claim(
-    _pid: BigNumberish,
+  addRewardInfo(
+    _campaignID: BigNumberish,
+    _endBlock: BigNumberish,
+    _rewardPerBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  claimAll(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  campaignInfo(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      stakingToken: string;
+      rewardToken: string;
+      startBlock: BigNumber;
+      lastRewardBlock: BigNumber;
+      accRewardPerShare: BigNumber;
+      totalStaked: BigNumber;
+      totalRewards: BigNumber;
+    }
+  >;
+
+  campaignInfoLen(overrides?: CallOverrides): Promise<BigNumber>;
+
+  campaignRewardInfo(
+    arg0: BigNumberish,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { endBlock: BigNumber; rewardPerBlock: BigNumber }
+  >;
+
+  currentEndBlock(
+    _campaignID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  currentRewardPerBlock(
+    _campaignID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   deposit(
-    _pid: BigNumberish,
+    _campaignID: BigNumberish,
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  emergencyRewardWithdraw(
+    _campaignID: BigNumberish,
+    _amount: BigNumberish,
+    _beneficiary: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   emergencyWithdraw(
-    _pid: BigNumberish,
+    _campaignID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  getMultiplier(
+    _from: BigNumberish,
+    _to: BigNumberish,
+    _endBlock: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  harvest(
+    _campaignIDs: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   initialize(
-    _lp: string,
-    _adminAddress: string,
-    _waggyToken: string,
+    _rewardHolder: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  massUpdateCampaigns(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   pendingReward(
-    _pid: BigNumberish,
+    _campaignID: BigNumberish,
     _user: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  poolInfo(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      lpToken: string;
-      endBlock: BigNumber;
-      supply: BigNumber;
-      allocPoint: BigNumber;
-      lastRewardBlock: BigNumber;
-      accWagPerShare: BigNumber;
-    }
-  >;
-
-  refillPool(
-    _pid: BigNumberish,
-    _amount: BigNumberish,
-    _endBlock: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeAllPool(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setAdmin(
-    _adminAddress: string,
+  rewardHolder(overrides?: CallOverrides): Promise<string>;
+
+  rewardInfoLen(
+    _campaignID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  rewardInfoLimit(overrides?: CallOverrides): Promise<BigNumber>;
+
+  setRewardHolder(
+    _rewardHolder: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  totalAllocPoint(overrides?: CallOverrides): Promise<BigNumber>;
-
   transferOwnership(
     newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  updateCampaign(
+    _campaignID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -442,92 +624,141 @@ export class WaggyStaking extends BaseContract {
     arg1: string,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, boolean] & {
-      amount: BigNumber;
-      rewardDebt: BigNumber;
-      depositBlock: BigNumber;
-      inBlackList: boolean;
-    }
+    [BigNumber, BigNumber] & { amount: BigNumber; rewardDebt: BigNumber }
   >;
 
-  waggyToken(overrides?: CallOverrides): Promise<string>;
-
   withdraw(
-    _pid: BigNumberish,
+    _campaignID: BigNumberish,
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    add(
-      _allocPoint: BigNumberish,
-      _lpToken: string,
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    adminAddress(overrides?: CallOverrides): Promise<string>;
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    claim(_pid: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    campaignInfo(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+        lastRewardBlock: BigNumber;
+        accRewardPerShare: BigNumber;
+        totalStaked: BigNumber;
+        totalRewards: BigNumber;
+      }
+    >;
 
-    claimAll(overrides?: CallOverrides): Promise<void>;
+    campaignInfoLen(overrides?: CallOverrides): Promise<BigNumber>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     deposit(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    emergencyRewardWithdraw(
+      _campaignID: BigNumberish,
+      _amount: BigNumberish,
+      _beneficiary: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     emergencyWithdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    initialize(
-      _lp: string,
-      _adminAddress: string,
-      _waggyToken: string,
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    initialize(_rewardHolder: string, overrides?: CallOverrides): Promise<void>;
+
+    massUpdateCampaigns(overrides?: CallOverrides): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     pendingReward(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    poolInfo(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lpToken: string;
-        endBlock: BigNumber;
-        supply: BigNumber;
-        allocPoint: BigNumber;
-        lastRewardBlock: BigNumber;
-        accWagPerShare: BigNumber;
-      }
-    >;
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    refillPool(
-      _pid: BigNumberish,
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
+    rewardHolder(overrides?: CallOverrides): Promise<string>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    rewardInfoLimit(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    removeAllPool(overrides?: CallOverrides): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    setAdmin(_adminAddress: string, overrides?: CallOverrides): Promise<void>;
-
-    totalAllocPoint(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -536,88 +767,111 @@ export class WaggyStaking extends BaseContract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, boolean] & {
-        amount: BigNumber;
-        rewardDebt: BigNumber;
-        depositBlock: BigNumber;
-        inBlackList: boolean;
-      }
+      [BigNumber, BigNumber] & { amount: BigNumber; rewardDebt: BigNumber }
     >;
 
-    waggyToken(overrides?: CallOverrides): Promise<string>;
-
     withdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    "AddPool(address,address,uint256)"(
-      user?: null,
-      lpToken?: null,
-      allocPoint?: null
+    "AddCampaignInfo(uint256,address,address,uint256)"(
+      campaignID?: BigNumberish | null,
+      stakingToken?: null,
+      rewardToken?: null,
+      startBlock?: null
     ): TypedEventFilter<
-      [string, string, BigNumber],
-      { user: string; lpToken: string; allocPoint: BigNumber }
+      [BigNumber, string, string, BigNumber],
+      {
+        campaignID: BigNumber;
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+      }
     >;
 
-    AddPool(
-      user?: null,
-      lpToken?: null,
-      allocPoint?: null
+    AddCampaignInfo(
+      campaignID?: BigNumberish | null,
+      stakingToken?: null,
+      rewardToken?: null,
+      startBlock?: null
     ): TypedEventFilter<
-      [string, string, BigNumber],
-      { user: string; lpToken: string; allocPoint: BigNumber }
+      [BigNumber, string, string, BigNumber],
+      {
+        campaignID: BigNumber;
+        stakingToken: string;
+        rewardToken: string;
+        startBlock: BigNumber;
+      }
     >;
 
-    "Claim(address,uint256)"(
+    "AddRewardInfo(uint256,uint256,uint256,uint256)"(
+      campaignID?: BigNumberish | null,
+      phase?: BigNumberish | null,
+      endBlock?: null,
+      rewardPerBlock?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        campaignID: BigNumber;
+        phase: BigNumber;
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    AddRewardInfo(
+      campaignID?: BigNumberish | null,
+      phase?: BigNumberish | null,
+      endBlock?: null,
+      rewardPerBlock?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        campaignID: BigNumber;
+        phase: BigNumber;
+        endBlock: BigNumber;
+        rewardPerBlock: BigNumber;
+      }
+    >;
+
+    "Deposit(address,uint256,uint256)"(
       user?: string | null,
-      amount?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
-    >;
-
-    Claim(
-      user?: string | null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
-    >;
-
-    "Deposit(address,uint256)"(
-      user?: string | null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
     Deposit(
       user?: string | null,
-      amount?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
-    "EmergencyWithdraw(address,uint256)"(
+    "EmergencyWithdraw(address,uint256,uint256)"(
       user?: string | null,
-      amount?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
     EmergencyWithdraw(
       user?: string | null,
-      amount?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
     "OwnershipTransferred(address,address)"(
@@ -636,109 +890,151 @@ export class WaggyStaking extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "RemoveAllPool(address)"(
-      user?: null
-    ): TypedEventFilter<[string], { user: string }>;
+    "SetRewardHolder(address)"(
+      rewardHolder?: null
+    ): TypedEventFilter<[string], { rewardHolder: string }>;
 
-    RemoveAllPool(user?: null): TypedEventFilter<[string], { user: string }>;
+    SetRewardHolder(
+      rewardHolder?: null
+    ): TypedEventFilter<[string], { rewardHolder: string }>;
 
-    "SetAdmin(address,address)"(
-      user?: null,
-      newAdmin?: null
-    ): TypedEventFilter<[string, string], { user: string; newAdmin: string }>;
+    "SetRewardInfoLimit(uint256)"(
+      rewardInfoLimit?: null
+    ): TypedEventFilter<[BigNumber], { rewardInfoLimit: BigNumber }>;
 
-    SetAdmin(
-      user?: null,
-      newAdmin?: null
-    ): TypedEventFilter<[string, string], { user: string; newAdmin: string }>;
+    SetRewardInfoLimit(
+      rewardInfoLimit?: null
+    ): TypedEventFilter<[BigNumber], { rewardInfoLimit: BigNumber }>;
 
-    "Withdraw(address,uint256)"(
+    "Withdraw(address,uint256,uint256)"(
       user?: string | null,
-      amount?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
     Withdraw(
       user?: string | null,
-      amount?: null
+      amount?: null,
+      campaign?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { user: string; amount: BigNumber }
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
     >;
   };
 
   estimateGas: {
-    add(
-      _allocPoint: BigNumberish,
-      _lpToken: string,
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    adminAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    claim(
-      _pid: BigNumberish,
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    claimAll(
-      overrides?: Overrides & { from?: string | Promise<string> }
+    campaignInfo(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    campaignInfoLen(overrides?: CallOverrides): Promise<BigNumber>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     deposit(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    emergencyRewardWithdraw(
+      _campaignID: BigNumberish,
+      _amount: BigNumberish,
+      _beneficiary: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     emergencyWithdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     initialize(
-      _lp: string,
-      _adminAddress: string,
-      _waggyToken: string,
+      _rewardHolder: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    massUpdateCampaigns(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pendingReward(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _user: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    poolInfo(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    refillPool(
-      _pid: BigNumberish,
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    removeAllPool(
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setAdmin(
-      _adminAddress: string,
+    rewardHolder(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    rewardInfoLimit(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    totalAllocPoint(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -748,88 +1044,123 @@ export class WaggyStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    waggyToken(overrides?: CallOverrides): Promise<BigNumber>;
-
     withdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    add(
-      _allocPoint: BigNumberish,
-      _lpToken: string,
+    addCampaignInfo(
+      _stakingToken: string,
+      _rewardToken: string,
+      _startBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    adminAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    claim(
-      _pid: BigNumberish,
+    addRewardInfo(
+      _campaignID: BigNumberish,
+      _endBlock: BigNumberish,
+      _rewardPerBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    claimAll(
-      overrides?: Overrides & { from?: string | Promise<string> }
+    campaignInfo(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    campaignInfoLen(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    campaignRewardInfo(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentEndBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentRewardPerBlock(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     deposit(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    emergencyRewardWithdraw(
+      _campaignID: BigNumberish,
+      _amount: BigNumberish,
+      _beneficiary: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     emergencyWithdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getMultiplier(
+      _from: BigNumberish,
+      _to: BigNumberish,
+      _endBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    harvest(
+      _campaignIDs: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _lp: string,
-      _adminAddress: string,
-      _waggyToken: string,
+      _rewardHolder: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    massUpdateCampaigns(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pendingReward(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _user: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    poolInfo(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    refillPool(
-      _pid: BigNumberish,
-      _amount: BigNumberish,
-      _endBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeAllPool(
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setAdmin(
-      _adminAddress: string,
+    rewardHolder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewardInfoLen(
+      _campaignID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    rewardInfoLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setRewardHolder(
+      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    totalAllocPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateCampaign(
+      _campaignID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -839,10 +1170,8 @@ export class WaggyStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    waggyToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     withdraw(
-      _pid: BigNumberish,
+      _campaignID: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

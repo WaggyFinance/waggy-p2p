@@ -7,7 +7,7 @@
 #    \__/\  /  \____|__  / \______  / \______  / / ______|
 #         \/           \/         \/         \/  \/       
 */
-pragma solidity 0.8.12;
+pragma solidity 0.8.11;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";

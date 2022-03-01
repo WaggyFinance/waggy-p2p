@@ -430,7 +430,7 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     "Deposit(address,address,uint256)": EventFragment;
     "OwnerClaimToken(address,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ReleaseToken(address,address,address,uint256,uint256)": EventFragment;
+    "ReleaseToken(address,address,address,uint256)": EventFragment;
     "RevokeRole(address,address[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -526,12 +526,11 @@ export type OwnershipTransferredEvent = TypedEvent<
 >;
 
 export type ReleaseTokenEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber] & {
+  [string, string, string, BigNumber] & {
     seller: string;
     buyer: string;
     token: string;
     amount: BigNumber;
-    reward: BigNumber;
   }
 >;
 
@@ -1560,38 +1559,24 @@ export class MerchantMultiToken extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    "ReleaseToken(address,address,address,uint256,uint256)"(
+    "ReleaseToken(address,address,address,uint256)"(
       seller?: null,
       buyer?: null,
       token?: null,
-      amount?: null,
-      reward?: null
+      amount?: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
-      {
-        seller: string;
-        buyer: string;
-        token: string;
-        amount: BigNumber;
-        reward: BigNumber;
-      }
+      [string, string, string, BigNumber],
+      { seller: string; buyer: string; token: string; amount: BigNumber }
     >;
 
     ReleaseToken(
       seller?: null,
       buyer?: null,
       token?: null,
-      amount?: null,
-      reward?: null
+      amount?: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
-      {
-        seller: string;
-        buyer: string;
-        token: string;
-        amount: BigNumber;
-        reward: BigNumber;
-      }
+      [string, string, string, BigNumber],
+      { seller: string; buyer: string; token: string; amount: BigNumber }
     >;
 
     "RevokeRole(address,address[])"(
