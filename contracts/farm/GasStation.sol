@@ -347,20 +347,4 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
 
     emit Harvest(msg.sender, pending, _campaignID);
   }
-
-  /// @notice Withdraw without caring about rewards. EMERGENCY ONLY.
-  function emergencyWithdraw(uint256 _campaignID, uint256 _tokenId) external nonReentrant {
-    CampaignInfo storage campaign = campaignInfo[_campaignID];
-    UserInfo storage user = userInfo[_campaignID][msg.sender];
-    require(user.stakedNFT[address(campaign.stakingToken)][_tokenId], "GS::withdraw::bad withdraw tokenId");
-
-    uint256 _amount = campaign.stakingToken.getWeight(_tokenId);
-    campaign.totalStaked = campaign.totalStaked.sub(_amount);
-
-    user.amount = user.amount.sub(_amount);
-    user.rewardDebt = user.amount.mul(campaign.accRewardPerShare).div(1e12);
-    user.stakedNFT[address(campaign.stakingToken)][_tokenId] = false;
-    campaign.stakingToken.transferFrom(address(this), address(msg.sender), _tokenId);
-    emit EmergencyWithdraw(msg.sender, _amount, _campaignID);
-  }
 }
