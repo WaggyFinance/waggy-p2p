@@ -327,9 +327,9 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
   }
 
   /// @notice method for harvest campaigns (used when the user want to claim their reward token based on specified campaigns)
-  function harvest(uint256[] calldata _campaignIDs) external nonReentrant {
+  function harvest(uint256[] calldata _campaignIDs, uint256 _tokenId) external nonReentrant {
     for (uint256 i = 0; i < _campaignIDs.length; ++i) {
-      _withdraw(_campaignIDs[i], 0);
+      _withdraw(_campaignIDs[i], _tokenId);
     }
   }
 
