@@ -76,6 +76,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
   event AddCampaignInfo(uint256 indexed campaignID, address stakingToken, IERC20 rewardToken, uint256 startBlock);
   event AddRewardInfo(uint256 indexed campaignID, uint256 indexed phase, uint256 endBlock, uint256 rewardPerBlock);
   event SetRewardHolder(address rewardHolder);
+  event Havest(address indexed user, uint256 amount, uint256 campaign);
 
   function initialize(address _rewardHolder) public initializer {
     OwnableUpgradeable.__Ownable_init();
@@ -327,10 +328,24 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
   }
 
   /// @notice method for harvest campaigns (used when the user want to claim their reward token based on specified campaigns)
-  function harvest(uint256[] calldata _campaignIDs, uint256 _tokenId) external nonReentrant {
-    for (uint256 i = 0; i < _campaignIDs.length; ++i) {
-      _withdraw(_campaignIDs[i], _tokenId);
+  function harvest(uint256 _campaignID, uint256[] calldata _tokenIds) external nonReentrant {
+    for (uint256 i = 0; i < _tokenIds.length; ++i) {
+      _harvest(_campaignID, _tokenIds[i]);
     }
+  }
+
+  function _harvest(uint256 _campaignID, uint256 _tokenId) internal {
+    CampaignInfo memory campaign = campaignInfo[_campaignID];
+    UserInfo storage user = userInfo[_campaignID][msg.sender];
+    require(user.stakedNFT[address(campaign.stakingToken)][_tokenId], "GS::havest::bad havest tokenId");
+    _updateCampaign(_campaignID);
+    uint256 pending = user.amount.mul(campaign.accRewardPerShare).div(1e12).sub(user.rewardDebt);
+    if (pending > 0) {
+      user.rewardDebt = user.amount.mul(campaign.accRewardPerShare).div(1e12);
+      campaign.rewardToken.safeTransfer(address(msg.sender), pending);
+    }
+
+    emit Havest(msg.sender, pending, _campaignID);
   }
 
   /// @notice Withdraw without caring about rewards. EMERGENCY ONLY.
