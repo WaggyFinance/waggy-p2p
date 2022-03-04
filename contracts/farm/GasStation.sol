@@ -76,7 +76,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
   event AddCampaignInfo(uint256 indexed campaignID, address stakingToken, IERC20 rewardToken, uint256 startBlock);
   event AddRewardInfo(uint256 indexed campaignID, uint256 indexed phase, uint256 endBlock, uint256 rewardPerBlock);
   event SetRewardHolder(address rewardHolder);
-  event Havest(address indexed user, uint256 amount, uint256 campaign);
+  event Harvest(address indexed user, uint256 amount, uint256 campaign);
 
   function initialize(address _rewardHolder) public initializer {
     OwnableUpgradeable.__Ownable_init();
@@ -345,7 +345,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
       campaign.rewardToken.safeTransfer(address(msg.sender), pending);
     }
 
-    emit Havest(msg.sender, pending, _campaignID);
+    emit Harvest(msg.sender, pending, _campaignID);
   }
 
   /// @notice Withdraw without caring about rewards. EMERGENCY ONLY.

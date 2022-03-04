@@ -222,7 +222,7 @@ interface GasStationInterface extends ethers.utils.Interface {
     "AddRewardInfo(uint256,uint256,uint256,uint256)": EventFragment;
     "Deposit(address,uint256,uint256)": EventFragment;
     "EmergencyWithdraw(address,uint256,uint256)": EventFragment;
-    "Havest(address,uint256,uint256)": EventFragment;
+    "Harvest(address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "SetRewardHolder(address)": EventFragment;
     "Withdraw(address,uint256,uint256)": EventFragment;
@@ -232,7 +232,7 @@ interface GasStationInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AddRewardInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Havest"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Harvest"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SetRewardHolder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
@@ -272,7 +272,7 @@ export type EmergencyWithdrawEvent = TypedEvent<
   }
 >;
 
-export type HavestEvent = TypedEvent<
+export type HarvestEvent = TypedEvent<
   [string, BigNumber, BigNumber] & {
     user: string;
     amount: BigNumber;
@@ -884,7 +884,7 @@ export class GasStation extends BaseContract {
       { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
-    "Havest(address,uint256,uint256)"(
+    "Harvest(address,uint256,uint256)"(
       user?: string | null,
       amount?: null,
       campaign?: null
@@ -893,7 +893,7 @@ export class GasStation extends BaseContract {
       { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
-    Havest(
+    Harvest(
       user?: string | null,
       amount?: null,
       campaign?: null
