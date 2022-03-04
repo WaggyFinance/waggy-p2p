@@ -44,7 +44,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "safeTransferFrom",
+    name: "transferFrom",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

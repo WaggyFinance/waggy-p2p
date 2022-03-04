@@ -22,7 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface WNFTInterface extends ethers.utils.Interface {
   functions: {
     "getWeight(uint256)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256)": FunctionFragment;
+    "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -30,13 +30,13 @@ interface WNFTInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeTransferFrom",
+    functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "getWeight", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "safeTransferFrom",
+    functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
 
@@ -92,7 +92,7 @@ export class WNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    safeTransferFrom(
+    transferFrom(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -105,7 +105,7 @@ export class WNFT extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  safeTransferFrom(
+  transferFrom(
     from: string,
     to: string,
     tokenId: BigNumberish,
@@ -118,7 +118,7 @@ export class WNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    safeTransferFrom(
+    transferFrom(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -134,7 +134,7 @@ export class WNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    safeTransferFrom(
+    transferFrom(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -148,7 +148,7 @@ export class WNFT extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    safeTransferFrom(
+    transferFrom(
       from: string,
       to: string,
       tokenId: BigNumberish,

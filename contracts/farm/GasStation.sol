@@ -21,7 +21,7 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 interface WNFT {
   function getWeight(uint256 tokenId) external returns (uint256);
 
-  function safeTransferFrom(
+  function transferFrom(
     address from,
     address to,
     uint256 tokenId
@@ -292,7 +292,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
       user.amount = user.amount.add(_amount);
       user.stakedNFT[address(campaign.stakingToken)][_tokenId] = true;
       campaign.totalStaked = campaign.totalStaked.add(_amount);
-      campaign.stakingToken.safeTransferFrom(address(msg.sender), address(this), _tokenId);
+      campaign.stakingToken.transferFrom(address(msg.sender), address(this), _tokenId);
     }
     user.rewardDebt = user.amount.mul(campaign.accRewardPerShare).div(1e12);
     emit Deposit(msg.sender, _amount, _campaignID);
@@ -319,7 +319,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
     if (_amount > 0) {
       user.amount = user.amount.sub(_amount);
       user.stakedNFT[address(campaign.stakingToken)][_tokenId] = false;
-      campaign.stakingToken.safeTransferFrom(address(this), msg.sender, _tokenId);
+      campaign.stakingToken.transferFrom(address(this), msg.sender, _tokenId);
       campaign.totalStaked = campaign.totalStaked.sub(_amount);
     }
     user.rewardDebt = user.amount.mul(campaign.accRewardPerShare).div(1e12);
@@ -360,7 +360,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
     user.amount = user.amount.sub(_amount);
     user.rewardDebt = user.amount.mul(campaign.accRewardPerShare).div(1e12);
     user.stakedNFT[address(campaign.stakingToken)][_tokenId] = false;
-    campaign.stakingToken.safeTransferFrom(address(this), address(msg.sender), _tokenId);
+    campaign.stakingToken.transferFrom(address(this), address(msg.sender), _tokenId);
     emit EmergencyWithdraw(msg.sender, _amount, _campaignID);
   }
 }

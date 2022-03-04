@@ -31,7 +31,7 @@ interface GasStationInterface extends ethers.utils.Interface {
     "deposit(uint256,uint256)": FunctionFragment;
     "emergencyWithdraw(uint256,uint256)": FunctionFragment;
     "getMultiplier(uint256,uint256,uint256)": FunctionFragment;
-    "harvest(uint256[])": FunctionFragment;
+    "harvest(uint256,uint256[])": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "massUpdateCampaigns()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
@@ -89,7 +89,7 @@ interface GasStationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "harvest",
-    values: [BigNumberish[]]
+    values: [BigNumberish, BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(
@@ -222,6 +222,7 @@ interface GasStationInterface extends ethers.utils.Interface {
     "AddRewardInfo(uint256,uint256,uint256,uint256)": EventFragment;
     "Deposit(address,uint256,uint256)": EventFragment;
     "EmergencyWithdraw(address,uint256,uint256)": EventFragment;
+    "Havest(address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "SetRewardHolder(address)": EventFragment;
     "Withdraw(address,uint256,uint256)": EventFragment;
@@ -231,6 +232,7 @@ interface GasStationInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AddRewardInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyWithdraw"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Havest"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SetRewardHolder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
@@ -263,6 +265,14 @@ export type DepositEvent = TypedEvent<
 >;
 
 export type EmergencyWithdrawEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+    campaign: BigNumber;
+  }
+>;
+
+export type HavestEvent = TypedEvent<
   [string, BigNumber, BigNumber] & {
     user: string;
     amount: BigNumber;
@@ -410,7 +420,8 @@ export class GasStation extends BaseContract {
     ): Promise<[BigNumber]>;
 
     harvest(
-      _campaignIDs: BigNumberish[],
+      _campaignID: BigNumberish,
+      _tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -553,7 +564,8 @@ export class GasStation extends BaseContract {
   ): Promise<BigNumber>;
 
   harvest(
-    _campaignIDs: BigNumberish[],
+    _campaignID: BigNumberish,
+    _tokenIds: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -707,7 +719,8 @@ export class GasStation extends BaseContract {
     ): Promise<BigNumber>;
 
     harvest(
-      _campaignIDs: BigNumberish[],
+      _campaignID: BigNumberish,
+      _tokenIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -871,6 +884,24 @@ export class GasStation extends BaseContract {
       { user: string; amount: BigNumber; campaign: BigNumber }
     >;
 
+    "Havest(address,uint256,uint256)"(
+      user?: string | null,
+      amount?: null,
+      campaign?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
+    >;
+
+    Havest(
+      user?: string | null,
+      amount?: null,
+      campaign?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { user: string; amount: BigNumber; campaign: BigNumber }
+    >;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -972,7 +1003,8 @@ export class GasStation extends BaseContract {
     ): Promise<BigNumber>;
 
     harvest(
-      _campaignIDs: BigNumberish[],
+      _campaignID: BigNumberish,
+      _tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1098,7 +1130,8 @@ export class GasStation extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     harvest(
-      _campaignIDs: BigNumberish[],
+      _campaignID: BigNumberish,
+      _tokenIds: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
