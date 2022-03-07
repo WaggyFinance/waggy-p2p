@@ -38,10 +38,8 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     "getFeeCollector()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getTransactionByIndex(address,address,uint256)": FunctionFragment;
-    "gov()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "initialize(address,address,address,address,address)": FunctionFragment;
     "lockTokenInfo(address,address)": FunctionFragment;
     "lockUserTokenInfo(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -52,7 +50,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeRoles(address[])": FunctionFragment;
-    "rewardCalculator()": FunctionFragment;
     "setAdmins(address[])": FunctionFragment;
     "setAllowTokens(address[],bool)": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
@@ -67,7 +64,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     "transferOwnership(address)": FunctionFragment;
     "unlockTokenByAdmin(address,address)": FunctionFragment;
     "updateFeeCalculator(address)": FunctionFragment;
-    "updateRewardCalculator(address)": FunctionFragment;
     "validator()": FunctionFragment;
     "wbnb()": FunctionFragment;
     "withdraw(address,uint256)": FunctionFragment;
@@ -139,7 +135,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     functionFragment: "getTransactionByIndex",
     values: [string, string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "gov", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "grantRole",
     values: [BytesLike, string]
@@ -147,10 +142,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "hasRole",
     values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "lockTokenInfo",
@@ -188,10 +179,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRoles",
     values: [string[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardCalculator",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "setAdmins", values: [string[]]): string;
   encodeFunctionData(
@@ -241,10 +228,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateFeeCalculator",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateRewardCalculator",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "validator", values?: undefined): string;
@@ -314,10 +297,8 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
     functionFragment: "getTransactionByIndex",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "gov", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lockTokenInfo",
     data: BytesLike
@@ -350,10 +331,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "revokeRoles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardCalculator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setAdmins", data: BytesLike): Result;
@@ -404,10 +381,6 @@ interface MerchantMultiTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateFeeCalculator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateRewardCalculator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "validator", data: BytesLike): Result;
@@ -743,8 +716,6 @@ export class MerchantMultiToken extends BaseContract {
       }
     >;
 
-    gov(overrides?: CallOverrides): Promise<[string]>;
-
     grantRole(
       role: BytesLike,
       account: string,
@@ -756,15 +727,6 @@ export class MerchantMultiToken extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    initialize(
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _feeCollector: string,
-      _blackListUser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     lockTokenInfo(
       arg0: string,
@@ -818,8 +780,6 @@ export class MerchantMultiToken extends BaseContract {
       _admins: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    rewardCalculator(overrides?: CallOverrides): Promise<[string]>;
 
     setAdmins(
       _admins: string[],
@@ -898,11 +858,6 @@ export class MerchantMultiToken extends BaseContract {
 
     updateFeeCalculator(
       _feeCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updateRewardCalculator(
-      _rewardCalculator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1009,8 +964,6 @@ export class MerchantMultiToken extends BaseContract {
     }
   >;
 
-  gov(overrides?: CallOverrides): Promise<string>;
-
   grantRole(
     role: BytesLike,
     account: string,
@@ -1022,15 +975,6 @@ export class MerchantMultiToken extends BaseContract {
     account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  initialize(
-    _gov: string,
-    _rewardCalculator: string,
-    _feeCalculator: string,
-    _feeCollector: string,
-    _blackListUser: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   lockTokenInfo(
     arg0: string,
@@ -1084,8 +1028,6 @@ export class MerchantMultiToken extends BaseContract {
     _admins: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  rewardCalculator(overrides?: CallOverrides): Promise<string>;
 
   setAdmins(
     _admins: string[],
@@ -1164,11 +1106,6 @@ export class MerchantMultiToken extends BaseContract {
 
   updateFeeCalculator(
     _feeCalculator: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updateRewardCalculator(
-    _rewardCalculator: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1273,8 +1210,6 @@ export class MerchantMultiToken extends BaseContract {
       }
     >;
 
-    gov(overrides?: CallOverrides): Promise<string>;
-
     grantRole(
       role: BytesLike,
       account: string,
@@ -1286,15 +1221,6 @@ export class MerchantMultiToken extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    initialize(
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _feeCollector: string,
-      _blackListUser: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     lockTokenInfo(
       arg0: string,
@@ -1340,8 +1266,6 @@ export class MerchantMultiToken extends BaseContract {
     ): Promise<void>;
 
     revokeRoles(_admins: string[], overrides?: CallOverrides): Promise<void>;
-
-    rewardCalculator(overrides?: CallOverrides): Promise<string>;
 
     setAdmins(_admins: string[], overrides?: CallOverrides): Promise<void>;
 
@@ -1408,11 +1332,6 @@ export class MerchantMultiToken extends BaseContract {
 
     updateFeeCalculator(
       _feeCalculator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateRewardCalculator(
-      _rewardCalculator: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1881,8 +1800,6 @@ export class MerchantMultiToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    gov(overrides?: CallOverrides): Promise<BigNumber>;
-
     grantRole(
       role: BytesLike,
       account: string,
@@ -1893,15 +1810,6 @@ export class MerchantMultiToken extends BaseContract {
       role: BytesLike,
       account: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _feeCollector: string,
-      _blackListUser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     lockTokenInfo(
@@ -1956,8 +1864,6 @@ export class MerchantMultiToken extends BaseContract {
       _admins: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    rewardCalculator(overrides?: CallOverrides): Promise<BigNumber>;
 
     setAdmins(
       _admins: string[],
@@ -2031,11 +1937,6 @@ export class MerchantMultiToken extends BaseContract {
 
     updateFeeCalculator(
       _feeCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateRewardCalculator(
-      _rewardCalculator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2133,8 +2034,6 @@ export class MerchantMultiToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    gov(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     grantRole(
       role: BytesLike,
       account: string,
@@ -2145,15 +2044,6 @@ export class MerchantMultiToken extends BaseContract {
       role: BytesLike,
       account: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      _gov: string,
-      _rewardCalculator: string,
-      _feeCalculator: string,
-      _feeCollector: string,
-      _blackListUser: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     lockTokenInfo(
@@ -2208,8 +2098,6 @@ export class MerchantMultiToken extends BaseContract {
       _admins: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    rewardCalculator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setAdmins(
       _admins: string[],
@@ -2283,11 +2171,6 @@ export class MerchantMultiToken extends BaseContract {
 
     updateFeeCalculator(
       _feeCalculator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateRewardCalculator(
-      _rewardCalculator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -9,15 +9,14 @@
 */
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "./RewardCalculator.sol";
 import "./FeeCalculator.sol";
 import "./../BlackListUser.sol";
 import "./WNativeRelayer.sol";
@@ -47,14 +46,10 @@ interface IWBNB {
   function withdraw(uint256 wad) external;
 }
 
-interface IGOV {
-  function mint(address _receive, uint256 _amount) external;
-}
-
 // Not support deflationary token โทเคนที่มีการหัก%
-contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
-  using SafeMathUpgradeable for uint256;
-  using SafeERC20Upgradeable for ERC20Upgradeable;
+contract MerchantMultiToken is Ownable, AccessControl {
+  using SafeMath for uint256;
+  using SafeERC20 for ERC20;
 
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
@@ -86,7 +81,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     FINISH
   }
   struct Transaction {
-    ERC20Upgradeable token;
+    ERC20 token;
     TransactionStatus status;
     uint256 amount;
     string remark;
@@ -112,14 +107,12 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
   mapping(address => mapping(address => uint256)) public totalLockBalance;
   mapping(address => mapping(address => UserInfo)) internal buyerInfo;
 
-  RewardCalculator public rewardCalculator;
   FeeCalculator public feeCalculator;
   address public feeCollector;
   BlackListUser public blackListUser;
   IValidator public validator;
 
   address[] public admins;
-  IGOV public gov;
   IWBNB public wbnb;
   WNativeRelayer public wnativeRelayer;
 
@@ -131,16 +124,11 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
   }
 
   // create merchant with token for p2p transaction
-  function initialize(
-    address _gov,
-    address _rewardCalculator,
+  constructor(
     address _feeCalculator,
     address _feeCollector,
     address _blackListUser
-  ) public initializer {
-    __Ownable_init();
-    gov = IGOV(_gov);
-    rewardCalculator = RewardCalculator(_rewardCalculator);
+  ) {
     feeCalculator = FeeCalculator(_feeCalculator);
     feeCollector = _feeCollector;
     blackListUser = BlackListUser(_blackListUser);
@@ -202,7 +190,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     emit Deposit(msg.sender, address(wbnb), msg.value);
   }
 
-  function deposit(ERC20Upgradeable _token, uint256 _amount) external notSuspendUser checkAllowToken(address(_token)) {
+  function deposit(ERC20 _token, uint256 _amount) external notSuspendUser checkAllowToken(address(_token)) {
     require(_token.allowance(msg.sender, address(this)) >= _amount, "credit not enougth");
     _token.safeTransferFrom(msg.sender, address(this), _amount);
     setShopBalance(address(_token), msg.sender, getShopBalance(msg.sender, address(_token)).add(_amount));
@@ -216,7 +204,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     require(ownerShopBalance > 0 && ownerShopBalance >= _amount, "balance not enougth");
     setShopBalance(address(wbnb), msg.sender, getShopBalance(msg.sender, address(wbnb)).sub(_amount));
     // transfer wbnb to wnativeRelayer
-    ERC20Upgradeable(address(wbnb)).transfer(address(wnativeRelayer), _amount);
+    ERC20(address(wbnb)).transfer(address(wnativeRelayer), _amount);
     // order withdraw
     wnativeRelayer.withdraw(_amount);
     // trasfer bnb to user
@@ -225,7 +213,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     emit Withdraw(msg.sender, address(wbnb), _amount);
   }
 
-  function withdraw(ERC20Upgradeable _token, uint256 _amount) external notSuspendUser checkAllowToken(address(_token)) {
+  function withdraw(ERC20 _token, uint256 _amount) external notSuspendUser checkAllowToken(address(_token)) {
     uint256 ownerShopBalance = shopBalance[msg.sender][address(_token)];
     require(ownerShopBalance > 0 && ownerShopBalance >= _amount, "balance not enougth");
     setShopBalance(address(_token), msg.sender, getShopBalance(msg.sender, address(_token)).sub(_amount));
@@ -241,7 +229,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     _amount is value of buyer want it.
     */
   function approveTransaction(
-    ERC20Upgradeable _token,
+    ERC20 _token,
     uint256 _amount,
     address _buyer
   ) external checkAllowToken(address(_token)) {
@@ -316,7 +304,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     _address is a receipt waller address
     _amount is value of token to transfer
     */
-  function releaseTokenBySeller(address _buyer, ERC20Upgradeable _token) external checkAllowToken(address(_token)) {
+  function releaseTokenBySeller(address _buyer, ERC20 _token) external checkAllowToken(address(_token)) {
     UserInfo storage buyerInfoData = buyerInfo[msg.sender][_buyer];
     uint256 transactionLength = buyerInfoData.transactions.length;
     require(transactionLength != 0, "Not found transaction");
@@ -360,7 +348,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
   function releaseTokenByAdmin(
     address _seller,
     address _buyer,
-    ERC20Upgradeable _token
+    ERC20 _token
   ) external {
     require(hasRole(ADMIN_ROLE, msg.sender), "DOES_NOT_HAVE_ADMIN_ROLE");
     UserInfo storage buyerInfoData = buyerInfo[_seller][_buyer];
@@ -555,7 +543,7 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
   }
 
   // owner claimToken for emergency event.
-  function ownerClaimToken(ERC20Upgradeable _token) external onlyOwner {
+  function ownerClaimToken(ERC20 _token) external onlyOwner {
     uint256 amount = _token.balanceOf(address(this));
     require(amount > 0);
     _token.transfer(owner(), amount);
@@ -563,14 +551,8 @@ contract MerchantMultiToken is OwnableUpgradeable, AccessControlUpgradeable {
     emit OwnerClaimToken(msg.sender, address(_token), amount);
   }
 
-  // update RewardCalculator
-  function updateRewardCalculator(address _rewardCalculator) external onlyOwner {
-    rewardCalculator = RewardCalculator(_rewardCalculator);
 
-    emit UpdateRewardCalculator(msg.sender, _rewardCalculator);
-  }
-
-  // update RewardCalculator
+  // update FeeCalculator
   function updateFeeCalculator(address _feeCalculator) external onlyOwner {
     feeCalculator = FeeCalculator(_feeCalculator);
 

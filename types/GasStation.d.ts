@@ -29,7 +29,6 @@ interface GasStationInterface extends ethers.utils.Interface {
     "currentEndBlock(uint256)": FunctionFragment;
     "currentRewardPerBlock(uint256)": FunctionFragment;
     "deposit(uint256,uint256)": FunctionFragment;
-    "emergencyWithdraw(uint256,uint256)": FunctionFragment;
     "getMultiplier(uint256,uint256,uint256)": FunctionFragment;
     "harvest(uint256,uint256[])": FunctionFragment;
     "initialize(address)": FunctionFragment;
@@ -77,10 +76,6 @@ interface GasStationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "emergencyWithdraw",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -167,10 +162,6 @@ interface GasStationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "emergencyWithdraw",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getMultiplier",
     data: BytesLike
@@ -406,12 +397,6 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    emergencyWithdraw(
-      _campaignID: BigNumberish,
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getMultiplier(
       _from: BigNumberish,
       _to: BigNumberish,
@@ -545,12 +530,6 @@ export class GasStation extends BaseContract {
   ): Promise<BigNumber>;
 
   deposit(
-    _campaignID: BigNumberish,
-    _tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  emergencyWithdraw(
     _campaignID: BigNumberish,
     _tokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -700,12 +679,6 @@ export class GasStation extends BaseContract {
     ): Promise<BigNumber>;
 
     deposit(
-      _campaignID: BigNumberish,
-      _tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    emergencyWithdraw(
       _campaignID: BigNumberish,
       _tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -989,12 +962,6 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    emergencyWithdraw(
-      _campaignID: BigNumberish,
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getMultiplier(
       _from: BigNumberish,
       _to: BigNumberish,
@@ -1111,12 +1078,6 @@ export class GasStation extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     deposit(
-      _campaignID: BigNumberish,
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    emergencyWithdraw(
       _campaignID: BigNumberish,
       _tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
