@@ -7,7 +7,7 @@ require("@typechain/hardhat");
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
-require('@openzeppelin/hardhat-upgrades');
+require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 require("hardhat-laika");
 // require('hardhat-contract-sizer');
@@ -17,8 +17,6 @@ require("hardhat-laika");
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   // const accounts = await hre.ethers.getSigners();
-
-  
 });
 
 /**
@@ -44,7 +42,7 @@ module.exports = {
         interval: 5000,
       },
     },
-    // 
+    //
     testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
@@ -62,6 +60,14 @@ module.exports = {
       accounts: { mnemonic: process.env.mnemonic },
       gas: 2100000,
       gasPrice: 8000000000,
+    },
+    harmony: {
+      url: `https://api.harmony.one`,
+      accounts: [process.env.private_key],
+    },
+    harmony_test: {
+      url: `https://api.s0.b.hmny.io`,
+      accounts: [process.env.private_key_test],
     },
     kovan: {
       url: "https://kovan.infura.io/v3/b87b958442314159a5c79f682ccee74d",
