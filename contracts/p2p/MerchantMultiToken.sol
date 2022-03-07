@@ -16,9 +16,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "./FeeCalculator.sol";
-import "./../BlackListUser.sol";
-import "./WNativeRelayer.sol";
 
 enum ValidatorRemark {
   NOT_TRANSFER,
@@ -26,6 +23,22 @@ enum ValidatorRemark {
   SELLER_APPEAL,
   BUYER_CANCEL_TRANSACTION,
   SELLER_CANCEL_TRANSACTION
+}
+
+interface IWNativeRelayer {
+  function withdraw(uint256 _amount) external;
+}
+
+interface IBlackListUser {
+  function checkUserStatus(address _user) external returns (uint256);
+
+  function warningUser(address _user) external;
+
+  function getUserStatus(address _user) external returns (uint256);
+}
+
+interface IFeeCalculator {
+  function calculateFee(uint256 _amount) external returns (uint256);
 }
 
 interface IValidator {
@@ -106,14 +119,14 @@ contract MerchantMultiToken is Ownable, AccessControl {
   mapping(address => mapping(address => uint256)) public totalLockBalance;
   mapping(address => mapping(address => UserInfo)) internal buyerInfo;
 
-  FeeCalculator public feeCalculator;
+  IFeeCalculator public feeCalculator;
   address public feeCollector;
-  BlackListUser public blackListUser;
+  IBlackListUser public blackListUser;
   IValidator public validator;
 
   address[] public admins;
   IWBNB public wbnb;
-  WNativeRelayer public wnativeRelayer;
+  IWNativeRelayer public wnativeRelayer;
 
   mapping(address => bool) private allowToken;
 
@@ -128,9 +141,9 @@ contract MerchantMultiToken is Ownable, AccessControl {
     address _feeCollector,
     address _blackListUser
   ) {
-    feeCalculator = FeeCalculator(_feeCalculator);
+    feeCalculator = IFeeCalculator(_feeCalculator);
     feeCollector = _feeCollector;
-    blackListUser = BlackListUser(_blackListUser);
+    blackListUser = IBlackListUser(_blackListUser);
 
     _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
@@ -158,7 +171,7 @@ contract MerchantMultiToken is Ownable, AccessControl {
     emit SetAdmins(msg.sender, _admins);
   }
 
-  function setWNativeRelayer(WNativeRelayer _wnativeRelayer) external onlyOwner {
+  function setWNativeRelayer(IWNativeRelayer _wnativeRelayer) external onlyOwner {
     wnativeRelayer = _wnativeRelayer;
 
     emit SetWNativeRelayer(msg.sender, address(_wnativeRelayer));
@@ -532,7 +545,7 @@ contract MerchantMultiToken is Ownable, AccessControl {
   }
 
   function setBlackList(address _blackList) external onlyOwner {
-    blackListUser = BlackListUser(_blackList);
+    blackListUser = IBlackListUser(_blackList);
 
     emit SetBlackList(msg.sender, _blackList);
   }
@@ -550,10 +563,9 @@ contract MerchantMultiToken is Ownable, AccessControl {
     emit OwnerClaimToken(msg.sender, address(_token), amount);
   }
 
-
   // update FeeCalculator
   function updateFeeCalculator(address _feeCalculator) external onlyOwner {
-    feeCalculator = FeeCalculator(_feeCalculator);
+    feeCalculator = IFeeCalculator(_feeCalculator);
 
     emit UpdateFeeCalculator(msg.sender, _feeCalculator);
   }

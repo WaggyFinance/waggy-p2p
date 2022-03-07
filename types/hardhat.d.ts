@@ -145,6 +145,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeCalculator__factory>;
     getContractFactory(
+      name: "IBlackListUser",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IBlackListUser__factory>;
+    getContractFactory(
+      name: "IFeeCalculator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFeeCalculator__factory>;
+    getContractFactory(
       name: "IValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IValidator__factory>;
@@ -152,6 +160,10 @@ declare module "hardhat/types/runtime" {
       name: "IWBNB",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWBNB__factory>;
+    getContractFactory(
+      name: "IWNativeRelayer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWNativeRelayer__factory>;
     getContractFactory(
       name: "MerchantMultiToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -355,6 +367,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FeeCalculator>;
     getContractAt(
+      name: "IBlackListUser",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IBlackListUser>;
+    getContractAt(
+      name: "IFeeCalculator",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFeeCalculator>;
+    getContractAt(
       name: "IValidator",
       address: string,
       signer?: ethers.Signer
@@ -364,6 +386,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IWBNB>;
+    getContractAt(
+      name: "IWNativeRelayer",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWNativeRelayer>;
     getContractAt(
       name: "MerchantMultiToken",
       address: string,
