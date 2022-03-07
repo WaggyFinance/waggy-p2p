@@ -31,7 +31,6 @@ interface GasStationInterface extends ethers.utils.Interface {
     "deposit(uint256,uint256)": FunctionFragment;
     "getMultiplier(uint256,uint256,uint256)": FunctionFragment;
     "harvest(uint256,uint256[])": FunctionFragment;
-    "initialize(address)": FunctionFragment;
     "massUpdateCampaigns()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -86,7 +85,6 @@ interface GasStationInterface extends ethers.utils.Interface {
     functionFragment: "harvest",
     values: [BigNumberish, BigNumberish[]]
   ): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(
     functionFragment: "massUpdateCampaigns",
     values?: undefined
@@ -167,7 +165,6 @@ interface GasStationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "massUpdateCampaigns",
     data: BytesLike
@@ -410,11 +407,6 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    initialize(
-      _rewardHolder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     massUpdateCampaigns(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -545,11 +537,6 @@ export class GasStation extends BaseContract {
   harvest(
     _campaignID: BigNumberish,
     _tokenIds: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initialize(
-    _rewardHolder: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -696,8 +683,6 @@ export class GasStation extends BaseContract {
       _tokenIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    initialize(_rewardHolder: string, overrides?: CallOverrides): Promise<void>;
 
     massUpdateCampaigns(overrides?: CallOverrides): Promise<void>;
 
@@ -975,11 +960,6 @@ export class GasStation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    initialize(
-      _rewardHolder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     massUpdateCampaigns(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1093,11 +1073,6 @@ export class GasStation extends BaseContract {
     harvest(
       _campaignID: BigNumberish,
       _tokenIds: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      _rewardHolder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

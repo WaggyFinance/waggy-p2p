@@ -145,10 +145,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeCalculator__factory>;
     getContractFactory(
-      name: "IGOV",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IGOV__factory>;
-    getContractFactory(
       name: "IValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IValidator__factory>;
@@ -358,11 +354,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FeeCalculator>;
-    getContractAt(
-      name: "IGOV",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IGOV>;
     getContractAt(
       name: "IValidator",
       address: string,

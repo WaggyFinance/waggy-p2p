@@ -9,14 +9,13 @@
 */
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 interface WNFT {
   function getWeight(uint256 tokenId) external returns (uint256);
@@ -28,7 +27,7 @@ interface WNFT {
   ) external;
 }
 
-contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradeable {
+contract GasStation is Ownable, ERC721Holder, ReentrancyGuard {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
@@ -78,10 +77,7 @@ contract GasStation is OwnableUpgradeable, ERC721Holder, ReentrancyGuardUpgradea
   event SetRewardHolder(address rewardHolder);
   event Harvest(address indexed user, uint256 amount, uint256 campaign);
 
-  function initialize(address _rewardHolder) public initializer {
-    OwnableUpgradeable.__Ownable_init();
-    ReentrancyGuardUpgradeable.__ReentrancyGuard_init();
-
+  constructor(address _rewardHolder) {
     rewardHolder = _rewardHolder;
   }
 
