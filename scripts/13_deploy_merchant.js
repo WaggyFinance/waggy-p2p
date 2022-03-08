@@ -8,7 +8,8 @@ async function main() {
   console.log(`Start deploy merchant on chain ${networkName}`);
   const [deployer, feeCollector] = await ethers.getSigners();
   // const wbnbAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";//testnet
-  const wbnbAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //mainnet
+  // const wbnbAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; //mainnet
+  const wbnbAddress = "0x7466d7d0c21fa05f32f5a0fa27e12bdc06348ce2"; //harmony testnet
   // const wbnbAddress = "0xdf032bc4b9dc2782bb09352007d4c57b75160b15"; //rinkeby
 
   const WNativeRelayer = await ethers.getContractFactory("WNativeRelayer");
@@ -28,11 +29,11 @@ async function main() {
   const Merchant = await ethers.getContractFactory("MerchantMultiToken");
   console.log(`deployer ${deployer.address}`)
 
-  console.log(`Start upgrade merchant ${ContractJSON.merchantMultiToken}`);
-  const merchant = await upgrades.upgradeProxy(ContractJSON.merchantMultiToken, Merchant);
-  await merchant.deployed();
+  // console.log(`Start upgrade merchant ${ContractJSON.merchantMultiToken}`);
+  // const merchant = await upgrades.upgradeProxy(ContractJSON.merchantMultiToken, Merchant);
+  // await merchant.deployed();
   // console.log(`Upgrade done at ${merchant.address}`);
-  // const merchant = await Merchant.attach(ContractJSON.merchantMultiToken);
+  const merchant = await Merchant.attach(ContractJSON.merchantMultiToken);
 
   // const Merchant = await ethers.getContractFactory("Merchant");
   //   //  Deploy new merchamt contract
@@ -43,7 +44,7 @@ async function main() {
   //   deployer.address,
   //   ContractJSON.blackListUser,
   // ]);
-  // await merchant.deployed();
+  await merchant.deployed();
   // console.log(`Deploy merchant at ${merchant.address}`);
   // ContractJSON.merchantMultiToken = merchant.address;
   // const jsonString = JSON.stringify(ContractJSON, null, 2);
@@ -57,30 +58,33 @@ async function main() {
   //     ContractJSON.usdtToken,
   //     ContractJSON.daiToken,
   //     ContractJSON.usdcToken,
-  //     ContractJSON.wbnbToken,
-  //     ContractJSON.oneToken,
-  //     ContractJSON.BCOIN,
-  //     ContractJSON.CCAR,
-  //     ContractJSON.CPAN,
-  //     ContractJSON.CGAR,
-  //     ContractJSON.SIP,
-  //     ContractJSON.SPG,
-  //     ContractJSON.FHTN,
-  //     ContractJSON.THG,
-  //     ContractJSON.THC,
+  //     ContractJSON.UST,
+  //     ContractJSON.JEWEL,
+  //     ContractJSON.BNB,
+  //     // ContractJSON.BCOIN,
+  //     // ContractJSON.CCAR,
+  //     // ContractJSON.CPAN,
+  //     // ContractJSON.CGAR,
+  //     // ContractJSON.SIP,
+  //     // ContractJSON.SPG,
+  //     // ContractJSON.FHTN,
+  //     // ContractJSON.THG,
+  //     // ContractJSON.THC,
   //   ],
   //   true
   // );
   // console.log("set allow token done.");
   // // await merchant.deployed();
-  // await merchant.setValidator(ContractJSON.validator,{gasPrice:ethers.utils.parseUnits('6','gwei')});
-  // await merchant.setWNativeRelayer(ContractJSON.wnativeRelayer,{gasPrice:ethers.utils.parseUnits('10','gwei')});
-  // await merchant.setWBNB(wbnbAddress,{gasPrice:ethers.utils.parseUnits('10','gwei')});
-  // await merchant.setAdmins([deployer.address, offchainAddress],{gasPrice:ethers.utils.parseUnits('10','gwei')});
+  await merchant.connect(deployer).setValidator(ContractJSON.validator);
+  // await merchant.connect(deployer).setWNativeRelayer(ContractJSON.wnativeRelayer,{gasPrice:ethers.utils.parseUnits('40','gwei')});
+  // await merchant.connect(deployer).setWBNB(wbnbAddress,{gasPrice:ethers.utils.parseUnits('40','gwei')});
+  // await merchant.connect(deployer).setAdmins([deployer.address, offchainAddress],{gasPrice:ethers.utils.parseUnits('40','gwei')});
   // console.log("initial merchant done.");
   // const merchantsAddress = merchant.address;
 
   // };
+
+  console.log("Setup merchant complete");
 
   // const tokenData = {
   //   merchantONE: ContractJSON.oneToken,
@@ -106,8 +110,8 @@ async function main() {
   // // //
   console.log("Set merchant minter role");
 
-  await waggyToken.setMinter([
-    ContractJSON.waggyStaking,
+  await waggyToken.connect(deployer).setMinter([
+    // ContractJSON.waggyStaking,
     ContractJSON.merchantMultiToken,
     ContractJSON.validator,
     deployer.address,

@@ -8,15 +8,12 @@
 #         \/           \/         \/         \/  \/       
 */
 pragma solidity 0.8.11;
-
-import "hardhat/console.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgradeable {
+contract WaggyToken is ERC20, Ownable, AccessControl {
   using SafeMath for uint256;
 
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -50,14 +47,12 @@ contract WaggyToken is ERC20Upgradeable, OwnableUpgradeable, AccessControlUpgrad
   address[] public minters;
   address public masterCheftRole;
 
-  function initialize(
+  constructor(
     address _governor,
     uint256 _startReleaseBlock,
     uint256 _endReleaseBlock
-  ) public initializer {
-    __ERC20_init("Waggy Token", "WAG");
-    __Ownable_init();
-    __AccessControl_init();
+  ) ERC20("Waggy Token", "WAG"){
+   
     require(_endReleaseBlock > _startReleaseBlock, "WAG::constructor::endReleaseBlock < startReleaseBlock");
     cap = 240000000000000000000000000;
     governor = _governor;

@@ -8,7 +8,6 @@
 #         \/           \/         \/         \/  \/       
 */
 pragma solidity 0.8.11;
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -142,7 +141,6 @@ contract Validator is Ownable {
       uint256(keccak256(abi.encodePacked("waggy", block.timestamp, _token, _seller, _buyer, _remark, _amount)))
     );
 
-    console.log("Generate Key ", txKey);
     CaseInfo storage caseInfo = casesInfo[txKey];
     caseInfo.seller = _seller;
     caseInfo.buyer = _buyer;
@@ -226,7 +224,7 @@ contract Validator is Ownable {
   function encode(string memory _key) external view returns (bytes32) {
     string memory userAddress = addressToString(msg.sender);
     string memory key = string(abi.encodePacked(BUYER, _key, userAddress));
-    console.log("abi encode ", key);
+ 
     return keccak256(abi.encodePacked(key));
   }
 

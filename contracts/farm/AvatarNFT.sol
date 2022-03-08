@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract AvatarNFT is Ownable, ERC721URIStorage {
   using SafeMath for uint256;
@@ -26,11 +27,14 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
   event SetPrice(address user, uint256 price);
   event Claim(address user, uint256 amount);
   event SetBaseURI(address user, string uri);
+  event UpdatePriceFeed(address user, address feed);
 
   Counters.Counter private _tokenIds;
   string public baseURI;
   uint256 private nftPrice;
   mapping(address => uint256) public userOwnerTokenId;
+
+  AggregatorV3Interface internal onePriceFeed;
 
   constructor(
     string memory _name,
@@ -38,10 +42,22 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
     uint256 _price
   ) ERC721(_name, _symbol) {
     _setPrice(_price);
+    onePriceFeed = AggregatorV3Interface(0xdCD81FbbD6c4572A69a534D8b8152c562dA8AbEF);
+  }
+
+  function setPriceFeed(address _address) external onlyOwner {
+    onePriceFeed = AggregatorV3Interface(_address);
+
+    emit UpdatePriceFeed(msg.sender, _address);
   }
 
   function _setPrice(uint256 _price) internal {
     nftPrice = _price;
+  }
+
+  function getONERate() public view returns (uint256) {
+    (, int256 price, , , ) = onePriceFeed.latestRoundData();
+    return uint256(price);
   }
 
   function setPrice(uint256 _price) external onlyOwner {
@@ -50,10 +66,21 @@ contract AvatarNFT is Ownable, ERC721URIStorage {
     emit SetPrice(msg.sender, _price);
   }
 
+  function getPrice() public view returns (uint256) {
+    uint256 rate = getONERate();
+    require(rate != 0, "Not found rate for swap.");
+
+    uint256 payAmountPerDollar = uint256((1000000000000000000 / uint256(rate))).mul(100000000);
+    return nftPrice.mul(payAmountPerDollar);
+  }
+
   // Mint all NFT on deploy and keep data for treading
   function mint(address _receiver) external payable {
-    require(msg.value == nftPrice, "Price missmatch");
     require(userOwnerTokenId[msg.sender] == 0, "Maximun to mint");
+
+    uint256 payAmount = getPrice();
+    require(msg.value >= payAmount, "pay amount mismatch");
+
     uint256 newItemId = _tokenIds.current();
     _mint(_receiver, newItemId);
     _tokenIds.increment();

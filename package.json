@@ -7,7 +7,7 @@
     "deploy:calculator": "npx hardhat clean; npx hardhat run --network bsc scripts/2_deployCalculator.js",
     "deploy:test": "npx hardhat clean; npx hardhat run --network testnet scripts/deployTest.js",
     "deploy:merchant": "npx hardhat run --network rinkeby scripts/makeMerchant.js",
-    "deploy:merchantMultiToken": "npx hardhat run --network rinkeby scripts/13_deploy_merchant.js",
+    "deploy:merchantMultiToken": "npx hardhat run --network harmony_test scripts/13_deploy_merchant.js",
     "verify:merchant": "npx hardhat run --network rinkeby scripts/verifyMerchant.js",
     "deploy:masterWaggy": "npx hardhat clean; npx hardhat run --network testnet scripts/4_deployMasterWaggy.js",
     "deploy:quickSwap": "npx hardhat clean; npx hardhat run --network rinkeby scripts/12_deploy_quickSwap.js",
@@ -67,6 +67,7 @@
     "web3": "^1.5.2"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.4.0",
     "@nomiclabs/buidler": "^1.4.8",
     "@nomiclabs/hardhat-etherscan": "^2.1.6",
     "@openzeppelin/contracts": "^4.3.0",

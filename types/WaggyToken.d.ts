@@ -37,7 +37,6 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,uint256,uint256)": FunctionFragment;
     "lastUnlockBlock(address)": FunctionFragment;
     "lock(address,uint256)": FunctionFragment;
     "lockOf(address)": FunctionFragment;
@@ -119,10 +118,6 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "lastUnlockBlock",
@@ -253,7 +248,6 @@ interface WaggyTokenInterface extends ethers.utils.Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastUnlockBlock",
     data: BytesLike
@@ -516,13 +510,6 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    initialize(
-      _governor: string,
-      _startReleaseBlock: BigNumberish,
-      _endReleaseBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     lastUnlockBlock(
       _account: string,
       overrides?: CallOverrides
@@ -695,13 +682,6 @@ export class WaggyToken extends BaseContract {
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initialize(
-    _governor: string,
-    _startReleaseBlock: BigNumberish,
-    _endReleaseBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -879,13 +859,6 @@ export class WaggyToken extends BaseContract {
       addedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    initialize(
-      _governor: string,
-      _startReleaseBlock: BigNumberish,
-      _endReleaseBlock: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     lastUnlockBlock(
       _account: string,
@@ -1248,13 +1221,6 @@ export class WaggyToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    initialize(
-      _governor: string,
-      _startReleaseBlock: BigNumberish,
-      _endReleaseBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     lastUnlockBlock(
       _account: string,
       overrides?: CallOverrides
@@ -1438,13 +1404,6 @@ export class WaggyToken extends BaseContract {
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      _governor: string,
-      _startReleaseBlock: BigNumberish,
-      _endReleaseBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
